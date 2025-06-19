@@ -4,10 +4,12 @@ import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/t
 
 interface CardValidationResult {
   allowed: boolean;
-  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'duplicate_accessory' | 'duplicate_upgrade' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached';
+  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'duplicate_accessory' | 'duplicate_upgrade' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached' | 'weapon_cost_limit';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
   area?: CardArea;
+  weaponCost?: number;
+  pointLimit?: number;
 }
 
 interface CardStore {
@@ -77,6 +79,19 @@ export const useCardStore = create<CardStore>()(
         }          // Not enough points
         if (!canAdd) {
           return { allowed: false, reason: 'not_enough_points' };
+        }
+        
+        // Special rule: Weapons that cost 6 or more cannot be equipped in games using 24 BP or less
+        if (card.type === 'Weapon' && card.buildPointCost >= 6) {
+          // Check if the current deck has 24 BP or less
+          if (state.currentDeck.pointLimits.buildPoints <= 24) {
+            return { 
+              allowed: false, 
+              reason: 'weapon_cost_limit', 
+              weaponCost: card.buildPointCost,
+              pointLimit: state.currentDeck.pointLimits.buildPoints
+            };
+          }
         }
           // Special rules for Gear and Sidearm cards:
         if ((card.type === 'Gear' || card.type === 'Sidearm') && state.currentDeck.cards.length > 0) {

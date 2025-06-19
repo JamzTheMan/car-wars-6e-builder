@@ -100,6 +100,12 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         case 'duplicate_upgrade':
           alert(`You cannot equip multiple copies of the same upgrade: "${card.name}"`);
           break;
+        case 'weapon_cost_limit':
+          alert(
+            `Weapons that cost 6 or more build points cannot be equipped in games with 24 or fewer build points.\n` +
+              `This weapon costs ${validationResult.weaponCost} points, but your point limit is ${validationResult.pointLimit}.`
+          );
+          break;
         case 'crew_limit_reached':
           alert(
             `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`
