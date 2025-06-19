@@ -4,9 +4,10 @@ import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/t
 
 interface CardValidationResult {
   allowed: boolean;
-  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached';
+  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
+  area?: CardArea;
 }
 
 interface CardStore {
@@ -163,6 +164,23 @@ export const useCardStore = create<CardStore>()(
               }
             }
           }
+        }        // Special rules for Structure cards - limit to 1 structure card per side
+        if (card.type === 'Structure' && state.currentDeck.cards.length > 0) {
+          // Count total structure cards
+          const totalStructures = state.currentDeck.cards.filter(c => c.type === 'Structure').length;
+          
+          // Check if already have 4 structure cards (maximum allowed)
+          if (totalStructures >= 4) {
+            return {
+              allowed: false,
+              reason: 'structure_limit_reached'
+            };
+          }
+          
+          // We can't check specific areas here since when checking if a card can be added,
+          // we don't know which area it will be added to yet.
+          // The actual area-specific validation will be done in the addToDeck and
+          // DeckLayout's drop handler.
         }
         return { allowed: true };
       },
@@ -238,14 +256,21 @@ export const useCardStore = create<CardStore>()(
 
           // If no deck, just clear the collection
           return { collectionCards: [] };
-        }),
-      addToDeck: (cardId: string, area?: CardArea) =>
+        }),      addToDeck: (cardId: string, area?: CardArea) =>
         set(state => {
           if (!state.currentDeck) return state;
 
           // Find the card in the collection
           const cardTemplate = state.collectionCards.find(card => card.id === cardId);
           if (!cardTemplate) return state;
+          
+          // First, check if we can add this card using the canAddCardToDeck function
+          const validationResult = useCardStore.getState().canAddCardToDeck(cardTemplate);
+          if (!validationResult.allowed) {
+            // Don't add the card if validation fails
+            // Note: Error messages are handled by the components that call this function
+            return state;
+          }
 
           // Determine default area based on card type
           let defaultArea: CardArea | undefined = area;
@@ -257,6 +282,24 @@ export const useCardStore = create<CardStore>()(
             } else {
               // Default location for weapons, accessories, and structure
               defaultArea = CardArea.Front;
+            }
+          }
+          
+          // For Structure cards, check if there's already a structure in the target area
+          if (cardTemplate.type === 'Structure') {
+            // Only check if the target area is a vehicle location (not crew or gear/upgrade)
+            const isVehicleLocation = [CardArea.Front, CardArea.Back, CardArea.Left, CardArea.Right].includes(defaultArea);
+            
+            if (isVehicleLocation) {
+              const hasStructureInArea = state.currentDeck.cards.some(c => 
+                c.type === 'Structure' && c.area === defaultArea
+              );
+              
+              if (hasStructureInArea) {
+                // Return state unchanged, the calling code should handle this rejection
+                alert(`You cannot add more than one structure card to the ${defaultArea} of your car.`);
+                return state;
+              }
             }
           }
 

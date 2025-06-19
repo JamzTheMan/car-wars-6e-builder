@@ -297,6 +297,15 @@ export function DeckLayout() {
                     `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`
                   );
                   break;
+                case 'structure_limit_reached':
+                  if (validationResult.area) {
+                    alert(
+                      `You cannot add another structure card to the ${validationResult.area} of your car.`
+                    );
+                  } else {
+                    alert(`You cannot add more than 4 structure cards to your car.`);
+                  }
+                  break;
                 case 'same_subtype':
                   if (validationResult.conflictingCard) {
                     const cardType = item.type.toLowerCase();
@@ -317,6 +326,21 @@ export function DeckLayout() {
               }
             }
           } else if (item.source === 'deck') {
+            // For Structure cards, check if target area already has a structure card
+            if (item.type === 'Structure') {
+              // Check if there's already a structure in this area
+              const hasStructureInArea = currentDeck.cards.some(
+                c => c.type === 'Structure' && c.area === area && c.id !== item.id
+              );
+
+              if (hasStructureInArea) {
+                alert(
+                  `You cannot move this structure card to the ${area} of your car as another structure is already placed there.`
+                );
+                return;
+              }
+            }
+
             // Move card between areas
             updateCardArea(item.id, area);
           }
