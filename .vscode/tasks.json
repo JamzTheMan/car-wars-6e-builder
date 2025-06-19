@@ -7,6 +7,47 @@
       "command": "npm",
       "args": ["run", "dev"],
       "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^(Compiling|Starting|Ready).*",
+          "endsPattern": "^(Compiled successfully|Ready|webpack compiled successfully).*"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Next.js: Build",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Next.js: Start Production",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "start"],
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Format All Files",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "format"],
       "problemMatcher": []
     }
   ]

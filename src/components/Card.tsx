@@ -134,12 +134,11 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         }}
         className={`relative w-32 h-48 rounded-lg shadow-lg overflow-hidden transition-transform ${
           isDragging ? 'opacity-50' : ''
-        } ${isDraggable && !isPreviewOpen ? 'cursor-move' : 'cursor-default'} group`}
-        style={{
-          transform: card.position
-            ? `translate(${card.position.x}px, ${card.position.y}px)`
-            : undefined,
-        }}
+        } ${isDraggable && !isPreviewOpen ? 'cursor-move' : 'cursor-default'} group ${
+          card.position ? 'card-positioned' : ''
+        }`}
+        data-x={card.position?.x ?? undefined}
+        data-y={card.position?.y ?? undefined}
         onClick={openPreview}
       >
         {/* Cost badge: magenta for Sidearm, Crew, Gear; green for others, now flush to edge */}

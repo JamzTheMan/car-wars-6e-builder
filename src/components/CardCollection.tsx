@@ -359,7 +359,9 @@ export function CardCollection() {
               </div>{' '}
               {/* Subtype Filter */}
               <div>
-                <label htmlFor="filter-subtype" className="font-medium text-sm">Subtype</label>
+                <label htmlFor="filter-subtype" className="font-medium text-sm">
+                  Subtype
+                </label>
                 <select
                   id="filter-subtype"
                   value={filterSubtype}
@@ -389,7 +391,9 @@ export function CardCollection() {
               {/* Cost Filter (Build or Crew Point Cost) */}
               <div>
                 <label className="font-medium text-sm">Cost (BP or CP)</label>
-                <label htmlFor="filter-cost" className="font-medium text-sm sr-only">Cost (BP or CP)</label>
+                <label htmlFor="filter-cost" className="font-medium text-sm sr-only">
+                  Cost (BP or CP)
+                </label>
                 <select
                   id="filter-cost"
                   title="Cost (BP or CP)"
@@ -410,7 +414,9 @@ export function CardCollection() {
               {/* Source Filter */}
               <div>
                 <label className="font-medium text-sm">Source</label>
-                <label htmlFor="filter-source" className="font-medium text-sm sr-only">Source</label>
+                <label htmlFor="filter-source" className="font-medium text-sm sr-only">
+                  Source
+                </label>
                 <select
                   id="filter-source"
                   title="Source"
