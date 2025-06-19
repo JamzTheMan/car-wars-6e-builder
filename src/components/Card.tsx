@@ -110,18 +110,11 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         <div className="text-xs text-gray-300">
           {card.type} {card.subtype ? `- ${card.subtype}` : ''}
         </div>
-        <div className="text-xs flex justify-between">
-          {card.buildPointCost > 0 && (
-            <span className="text-blue-300">BP: {card.buildPointCost}</span>
-          )}
-          {card.crewPointCost > 0 && (
-            <span className="text-green-300">CP: {card.crewPointCost}</span>
-          )}
-          {card.source && (
-            <span className="text-gray-400 text-xs truncate ml-1" title={card.source}>
-              {card.source}
-            </span>
-          )}
+        <div className="text-xs flex justify-end">
+          {(() => {
+            const cost = (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
+            return <span className="text-blue-200">{cost}</span>;
+          })()}
         </div>
       </div>
     </div>
