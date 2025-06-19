@@ -7,7 +7,7 @@ import { CardType, CardTypeCategories } from '@/types/types';
 import { useCardUpload } from '@/context/CardUploadContext';
 import { uploadCardImage } from '@/utils/cardUpload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloudUploadAlt, faFileImport, faTrash, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faCloudUploadAlt, faFileImport, faTrash, faUndo, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { processCSVToCards } from '@/utils/csvProcessing';
@@ -21,7 +21,17 @@ export function CardCollection() {
     newNumberAllowed, setNewNumberAllowed,
     newSource, setNewSource
   } = useCardUpload();
-  const [isUploading, setIsUploading] = useState(false); const {
+  const [isUploading, setIsUploading] = useState(false);
+  
+  // Filter states
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const [filterCardType, setFilterCardType] = useState<string>("");
+  const [filterSubtype, setFilterSubtype] = useState<string>("");
+  const [filterBuildPointCost, setFilterBuildPointCost] = useState<number | null>(null);
+  const [filterCrewPointCost, setFilterCrewPointCost] = useState<number | null>(null);
+  const [filterSource, setFilterSource] = useState<string>("");
+  
+  const {
     collectionCards: cards,
     addToCollection: addCard,
     addToCollectionWithId,
@@ -52,6 +62,47 @@ export function CardCollection() {
     });
     return Array.from(sources).sort();
   }, [cards]);
+  
+  // Filter cards based on filter criteria
+  const filteredCards = useMemo(() => {
+    return cards.filter(card => {
+      // Filter by card type
+      if (filterCardType && card.type !== filterCardType) {
+        return false;
+      }
+      
+      // Filter by subtype
+      if (filterSubtype && (!card.subtype || card.subtype !== filterSubtype)) {
+        return false;
+      }
+      
+      // Filter by build point cost
+      if (filterBuildPointCost !== null && card.buildPointCost !== filterBuildPointCost) {
+        return false;
+      }
+      
+      // Filter by crew point cost
+      if (filterCrewPointCost !== null && card.crewPointCost !== filterCrewPointCost) {
+        return false;
+      }
+      
+      // Filter by source
+      if (filterSource && (!card.source || card.source !== filterSource)) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [cards, filterCardType, filterSubtype, filterBuildPointCost, filterCrewPointCost, filterSource]);
+  
+  // Reset all filters
+  const resetFilters = () => {
+    setFilterCardType("");
+    setFilterSubtype("");
+    setFilterBuildPointCost(null);
+    setFilterCrewPointCost(null);
+    setFilterSource("");
+  };
 
   // Create a multi-drop target that accepts both files and cards
   const [{ isOver, isCardOver }, drop] = useDrop({
@@ -213,173 +264,323 @@ export function CardCollection() {
   };
   // Reset functionality moved to DeckLayout menu
 
-  return (<div
-    ref={drop}
-    className="p-2 h-full relative"
-  >
-    <div className="mb-4">
-      <div className="flex flex-col space-y-3">          {/* Row 1: Card Type and Subtype */}
-        <div className="flex items-end space-x-2">
-          <div className="flex-1">
-            <label className="font-medium">Card Type</label>
-            <select
-              value={newCardType}
-              onChange={(e) => setNewCardType(e.target.value as CardType)}
-              className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-            >
-              <optgroup label="Build Point Cards">
-                {Object.entries(CardTypeCategories)
-                  .filter(([_, category]) => category === 'BuildPoints')
-                  .map(([type]) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))
-                }
-              </optgroup>
-              <optgroup label="Crew Point Cards">
-                {Object.entries(CardTypeCategories)
-                  .filter(([_, category]) => category === 'CrewPoints')
-                  .map(([type]) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))
-                }
-              </optgroup>
-            </select>
+  return (
+    <div
+      ref={drop}
+      className="p-2 h-full relative"
+    >
+      {/* Filter Controls */}
+      <div className="mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <button 
+            onClick={() => setFilterPanelOpen(!filterPanelOpen)}
+            className="flex items-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded"
+          >
+            <FontAwesomeIcon 
+              icon={filterPanelOpen ? faUndo : faFilter} 
+              className="mr-2 h-3 w-3" 
+            />
+            {filterPanelOpen ? "Hide Filters" : "Filter Cards"}
+            {(filterCardType || filterSubtype || filterBuildPointCost !== null || 
+              filterCrewPointCost !== null || filterSource) && 
+              <span className="ml-2 bg-blue-600 px-1.5 py-0.5 rounded-full text-xs">
+                Active
+              </span>
+            }
+          </button>
+          
+          {(filterCardType || filterSubtype || filterBuildPointCost !== null || 
+            filterCrewPointCost !== null || filterSource) && 
+            <div className="flex items-center">
+              <span className="text-xs text-gray-400 mr-2">
+                {filteredCards.length} of {cards.length} cards
+              </span>
+              <button 
+                onClick={resetFilters}
+                className="text-xs text-gray-400 hover:text-white"
+              >
+                Reset
+              </button>
+            </div>
+          }
+        </div>
+        
+        {/* Filter Panel */}
+        {filterPanelOpen && (
+          <div className="flex flex-col space-y-3 p-3 bg-gray-800 rounded border border-gray-700 mb-3">
+            <h3 className="text-sm font-medium border-b border-gray-700 pb-1 mb-2">Filter Collection</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {/* Card Type Filter */}
+              <div>
+                <label className="font-medium text-sm">Card Type</label>
+                <select
+                  value={filterCardType}
+                  onChange={(e) => setFilterCardType(e.target.value)}
+                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                >
+                  <option value="">Any Type</option>
+                  <optgroup label="Build Point Cards">
+                    {Object.entries(CardTypeCategories)
+                      .filter(([_, category]) => category === 'BuildPoints')
+                      .map(([type]) => (
+                        <option key={type} value={type}>{type}</option>
+                      ))
+                    }
+                  </optgroup>
+                  <optgroup label="Crew Point Cards">
+                    {Object.entries(CardTypeCategories)
+                      .filter(([_, category]) => category === 'CrewPoints')
+                      .map(([type]) => (
+                        <option key={type} value={type}>{type}</option>
+                      ))
+                    }
+                  </optgroup>
+                </select>
+              </div>
+              
+              {/* Subtype Filter */}
+              <div>
+                <label className="font-medium text-sm">Subtype</label>
+                <select
+                  value={filterSubtype}
+                  onChange={(e) => setFilterSubtype(e.target.value)}
+                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                >
+                  <option value="">Any Subtype</option>
+                  {uniqueSubtypes.map((subtype) => (
+                    <option key={subtype} value={subtype}>{subtype}</option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Build Point Cost Filter */}
+              <div>
+                <label className="font-medium text-sm">Build Point Cost</label>
+                <select
+                  value={filterBuildPointCost === null ? "" : filterBuildPointCost}
+                  onChange={(e) => setFilterBuildPointCost(e.target.value === "" ? null : Number(e.target.value))}
+                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                >
+                  <option value="">Any Cost</option>
+                  {[...Array(9).keys()].map((cost) => (
+                    <option key={cost} value={cost}>{cost}</option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Crew Point Cost Filter */}
+              <div>
+                <label className="font-medium text-sm">Crew Point Cost</label>
+                <select
+                  value={filterCrewPointCost === null ? "" : filterCrewPointCost}
+                  onChange={(e) => setFilterCrewPointCost(e.target.value === "" ? null : Number(e.target.value))}
+                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                >
+                  <option value="">Any Cost</option>
+                  {[...Array(9).keys()].map((cost) => (
+                    <option key={cost} value={cost}>{cost}</option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Source Filter */}
+              <div>
+                <label className="font-medium text-sm">Source</label>
+                <select
+                  value={filterSource}
+                  onChange={(e) => setFilterSource(e.target.value)}
+                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                >
+                  <option value="">Any Source</option>
+                  {uniqueSources.map((source) => (
+                    <option key={source} value={source}>{source}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
-          <div className="flex-1">
-            <label className="font-medium">Subtype</label>              <select
-              value={uniqueSubtypes.includes(newCardSubtype) ? newCardSubtype : newCardSubtype ? "custom" : ""}
-              onChange={(e) => {
-                if (e.target.value !== "custom") {
-                  setNewCardSubtype(e.target.value);
-                }
-              }}
-              className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-            >
-              <option value="">-- Select Subtype --</option>
-              {uniqueSubtypes.map((subtype) => (
-                <option key={subtype} value={subtype}>{subtype}</option>
-              ))}
-            </select>
-            {newCardSubtype && !uniqueSubtypes.includes(newCardSubtype) && (
-              <input
-                type="text"
-                value={newCardSubtype}
-                onChange={(e) => setNewCardSubtype(e.target.value)}
-                className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full mt-1"
-                placeholder="Enter custom subtype"
-                autoFocus
-              />
+        )}
+      </div>
+      
+      {/* Upload Settings Panel - hidden in the filter panel, always visible when filter panel is open */}
+      {filterPanelOpen && (
+        <div className="mb-4">
+          <div className="flex flex-col space-y-3 p-3 bg-gray-800 rounded border border-gray-700">
+            <h3 className="text-sm font-medium border-b border-gray-700 pb-1 mb-2">Upload Settings</h3>
+            <div className="flex flex-col space-y-3">
+              {/* Row 1: Card Type and Subtype */}
+              <div className="flex items-end space-x-2">
+                <div className="flex-1">
+                  <label className="font-medium">Card Type</label>
+                  <select
+                    value={newCardType}
+                    onChange={(e) => setNewCardType(e.target.value as CardType)}
+                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                  >
+                    <optgroup label="Build Point Cards">
+                      {Object.entries(CardTypeCategories)
+                        .filter(([_, category]) => category === 'BuildPoints')
+                        .map(([type]) => (
+                          <option key={type} value={type}>{type}</option>
+                        ))
+                      }
+                    </optgroup>
+                    <optgroup label="Crew Point Cards">
+                      {Object.entries(CardTypeCategories)
+                        .filter(([_, category]) => category === 'CrewPoints')
+                        .map(([type]) => (
+                          <option key={type} value={type}>{type}</option>
+                        ))
+                      }
+                    </optgroup>
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label className="font-medium">Subtype</label>
+                  <select
+                    value={uniqueSubtypes.includes(newCardSubtype) ? newCardSubtype : newCardSubtype ? "custom" : ""}
+                    onChange={(e) => {
+                      if (e.target.value !== "custom") {
+                        setNewCardSubtype(e.target.value);
+                      }
+                    }}
+                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                  >
+                    <option value="">-- Select Subtype --</option>
+                    {uniqueSubtypes.map((subtype) => (
+                      <option key={subtype} value={subtype}>{subtype}</option>
+                    ))}
+                  </select>
+                  {newCardSubtype && !uniqueSubtypes.includes(newCardSubtype) && (
+                    <input
+                      type="text"
+                      value={newCardSubtype}
+                      onChange={(e) => setNewCardSubtype(e.target.value)}
+                      className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full mt-1"
+                      placeholder="Enter custom subtype"
+                      autoFocus
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Row 2: Build and Crew Point Costs */}
+              <div className="flex items-end space-x-2">
+                <div className="flex-1">
+                  <label className="font-medium">Build Point Cost</label>
+                  <select
+                    value={newBuildPointCost}
+                    onChange={(e) => setNewBuildPointCost(Number(e.target.value))}
+                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                  >
+                    {[...Array(9).keys()].map((cost) => (
+                      <option key={cost} value={cost}>{cost}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label className="font-medium">Crew Point Cost</label>
+                  <select
+                    value={newCrewPointCost}
+                    onChange={(e) => setNewCrewPointCost(Number(e.target.value))}
+                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                  >
+                    {[...Array(9).keys()].map((cost) => (
+                      <option key={cost} value={cost}>{cost}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 3: Source only (Number Allowed removed) */}
+              <div className="flex items-end space-x-2">
+                <div className="flex-1">
+                  <label className="font-medium">Source</label>
+                  <select
+                    value={newSource}
+                    onChange={(e) => setNewSource(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                  >
+                    <option value="">-- Select Source --</option>
+                    {uniqueSources.map((source) => (
+                      <option key={source} value={source}>{source}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Hidden Number Allowed field - setting default to 1 */}
+                <input
+                  type="hidden"
+                  value="1"
+                  onChange={(e) => setNewNumberAllowed(1)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Drag overlay - shows when dragging */}
+      {isOver && (
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+          <div className={`absolute inset-0 ${isCardOver ? 'bg-red-500 bg-opacity-20 border-2 border-dashed border-red-400' : 'bg-blue-500 bg-opacity-20 border-2 border-dashed border-blue-400'} rounded-lg`}></div>
+          <div className="bg-gray-800 bg-opacity-90 p-6 rounded-lg text-center shadow-2xl">
+            {isCardOver ? (
+              <>
+                <FontAwesomeIcon icon={faTrash} className="w-16 h-16 text-red-400 mb-4" />
+                <div className="text-xl font-medium text-white mb-2">Drop to remove card from deck</div>
+                <div className="text-sm text-gray-300">Card will be removed from Builder only</div>
+              </>
+            ) : (
+              <>
+                <div className="flex gap-8">
+                  <div className="text-center">
+                    <FontAwesomeIcon icon={faCloudUploadAlt} className="w-16 h-16 text-blue-400 mb-4" />
+                    <div className="text-xl font-medium text-white mb-2">Drop images to add cards</div>
+                    <div className="text-sm text-gray-300">Cards will use the current settings</div>
+                  </div>
+                  <div className="text-center">
+                    <FontAwesomeIcon icon={faFileImport} className="w-16 h-16 text-green-400 mb-4" />
+                    <div className="text-xl font-medium text-white mb-2">Drop CSV files to import cards</div>
+                    <div className="text-sm text-gray-300">Cards will use Blank_ images as placeholders</div>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
-
-        {/* Row 2: Build and Crew Point Costs */}
-        <div className="flex items-end space-x-2">
-          <div className="flex-1">
-            <label className="font-medium">Build Point Cost</label>              <select
-              value={newBuildPointCost}
-              onChange={(e) => setNewBuildPointCost(Number(e.target.value))}
-              className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-            >
-              {[...Array(9).keys()].map((cost) => (
-                <option key={cost} value={cost}>{cost}</option>
-              ))}
-            </select>
+      )}
+      
+      {/* Cards grid with fallback message */}
+      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${isUploading ? 'opacity-50' : ''}`}>
+        {cards.length > 0 ? (
+          filteredCards.map((card) => (
+            <Card key={card.id} card={card} isInCollection={true} />
+          ))
+        ) : (
+          <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400 border-2 border-dashed border-gray-700 rounded-lg">
+            <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center">
+                <FontAwesomeIcon icon={faCloudUploadAlt} className="w-12 h-12 mb-4 text-gray-500" />
+                <p className="text-center text-lg mb-1">Drag and drop card images here</p>
+                <br />
+              </div>          
+              <div className="flex items-center w-full my-4 max-w-xs">
+                <div className="flex-grow h-px bg-gray-700"></div>
+                <span className="px-3 text-gray-500 text-sm uppercase tracking-wider">or</span>
+                <div className="flex-grow h-px bg-gray-700"></div>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <FontAwesomeIcon icon={faFileImport} className="w-12 h-12 mb-4 text-gray-500" />
+                <p className="text-center text-lg mb-2">Import cards from CSV</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-4">Imported cards will use Blank placeholder images</p>
           </div>
-          <div className="flex-1">
-            <label className="font-medium">Crew Point Cost</label>
-            <select
-              value={newCrewPointCost}
-              onChange={(e) => setNewCrewPointCost(Number(e.target.value))}
-              className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-            >
-              {[...Array(9).keys()].map((cost) => (
-                <option key={cost} value={cost}>{cost}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Row 3: Source only (Number Allowed removed) */}
-        <div className="flex items-end space-x-2">          <div className="flex-1">
-            <label className="font-medium">Source</label>              <select
-              value={newSource}
-              onChange={(e) => setNewSource(e.target.value)}
-              className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-            >
-              <option value="">-- Select Source --</option>
-              {uniqueSources.map((source) => (
-                <option key={source} value={source}>{source}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Hidden Number Allowed field - setting default to 1 */}
-          <input
-            type="hidden"
-            value="1"
-            onChange={(e) => setNewNumberAllowed(1)}
-          />
-        </div>
+        )}
       </div>
     </div>
-    {/* Drag overlay - shows when dragging */}      {isOver && (
-      <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
-        <div className={`absolute inset-0 ${isCardOver ? 'bg-red-500 bg-opacity-20 border-2 border-dashed border-red-400' : 'bg-blue-500 bg-opacity-20 border-2 border-dashed border-blue-400'} rounded-lg`}></div>
-        <div className="bg-gray-800 bg-opacity-90 p-6 rounded-lg text-center shadow-2xl">
-          {isCardOver ? (
-            <>
-              <FontAwesomeIcon icon={faTrash} className="w-16 h-16 text-red-400 mb-4" />
-              <div className="text-xl font-medium text-white mb-2">Drop to remove card from deck</div>
-              <div className="text-sm text-gray-300">Card will be removed from Builder only</div>
-            </>
-          ) : (
-            <>
-              <div className="flex gap-8">
-                <div className="text-center">
-                  <FontAwesomeIcon icon={faCloudUploadAlt} className="w-16 h-16 text-blue-400 mb-4" />
-                  <div className="text-xl font-medium text-white mb-2">Drop images to add cards</div>
-                  <div className="text-sm text-gray-300">Cards will use the current settings</div>
-                </div>
-                <div className="text-center">
-                  <FontAwesomeIcon icon={faFileImport} className="w-16 h-16 text-green-400 mb-4" />
-                  <div className="text-xl font-medium text-white mb-2">Drop CSV files to import cards</div>
-                  <div className="text-sm text-gray-300">Cards will use Blank_ images as placeholders</div>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    )}
-
-    {/* Cards grid with fallback message */}
-    <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${isUploading ? 'opacity-50' : ''}`}>
-      {cards.length > 0 ? (
-        cards.map((card) => (
-          <Card key={card.id} card={card} isInCollection={true} />
-        ))      ) : (<div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400 border-2 border-dashed border-gray-700 rounded-lg">
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center">
-            <FontAwesomeIcon icon={faCloudUploadAlt} className="w-12 h-12 mb-4 text-gray-500" />
-            <p className="text-center text-lg mb-1">Drag and drop card images here</p>
-            <br />
-          </div>          
-          <div className="flex items-center w-full my-4 max-w-xs">
-            <div className="flex-grow h-px bg-gray-700"></div>
-            <span className="px-3 text-gray-500 text-sm uppercase tracking-wider">or</span>
-            <div className="flex-grow h-px bg-gray-700"></div>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <FontAwesomeIcon icon={faFileImport} className="w-12 h-12 mb-4 text-gray-500" />
-            <p className="text-center text-lg mb-2">Import cards from CSV</p>
-          </div>
-        </div>
-        <p className="text-sm text-gray-500 mt-4">Imported cards will use Blank placeholder images</p>
-      </div>
-      )}
-    </div>    </div>
   );
 }
 
