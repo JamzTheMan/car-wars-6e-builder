@@ -94,6 +94,12 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         case 'duplicate_sidearm':
           alert(`You cannot equip multiple copies of the same sidearm: "${card.name}"`);
           break;
+        case 'duplicate_accessory':
+          alert(`You cannot equip multiple copies of the same accessory: "${card.name}"`);
+          break;
+        case 'duplicate_upgrade':
+          alert(`You cannot equip multiple copies of the same upgrade: "${card.name}"`);
+          break;
         case 'crew_limit_reached':
           alert(
             `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`

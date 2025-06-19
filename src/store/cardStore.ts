@@ -4,7 +4,7 @@ import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/t
 
 interface CardValidationResult {
   allowed: boolean;
-  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached';
+  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'duplicate_accessory' | 'duplicate_upgrade' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
   area?: CardArea;
@@ -74,8 +74,7 @@ export const useCardStore = create<CardStore>()(
 
         if (card.crewPointCost > 0) {
           canAdd = canAdd && availablePoints.crewPoints >= card.crewPointCost;
-        }
-          // Not enough points
+        }          // Not enough points
         if (!canAdd) {
           return { allowed: false, reason: 'not_enough_points' };
         }
@@ -117,6 +116,41 @@ export const useCardStore = create<CardStore>()(
           // Rule 2: Cannot equip a card with the same subtype as an existing card of the same type
           if (card.subtype && card.subtype.trim() !== '') {
             const conflictingCard = sameTypeCardsInDeck.find(c => 
+              c.subtype && c.subtype.trim() !== '' && c.subtype.toLowerCase() === card.subtype.toLowerCase()
+            );
+            
+            if (conflictingCard) {
+              return { allowed: false, reason: 'same_subtype', conflictingCard };
+            }
+          }
+        }
+        
+        // Special rules for Accessories: Cannot equip multiple accessories that share the same name
+        if (card.type === 'Accessory' && state.currentDeck.cards.length > 0) {
+          const accessoriesInDeck = state.currentDeck.cards.filter(c => c.type === 'Accessory');
+          
+          // Check for accessories with the same name
+          const hasSameName = accessoriesInDeck.some(c => c.name === card.name);
+          
+          if (hasSameName) {
+            return { allowed: false, reason: 'duplicate_accessory' };
+          }
+        }
+        
+        // Special rules for Upgrades: Cannot equip multiple upgrades that share the same name or subtype
+        if (card.type === 'Upgrade' && state.currentDeck.cards.length > 0) {
+          const upgradesInDeck = state.currentDeck.cards.filter(c => c.type === 'Upgrade');
+          
+          // Check for upgrades with the same name
+          const hasSameName = upgradesInDeck.some(c => c.name === card.name);
+          
+          if (hasSameName) {
+            return { allowed: false, reason: 'duplicate_upgrade' };
+          }
+          
+          // Check for upgrades with the same subtype
+          if (card.subtype && card.subtype.trim() !== '') {
+            const conflictingCard = upgradesInDeck.find(c => 
               c.subtype && c.subtype.trim() !== '' && c.subtype.toLowerCase() === card.subtype.toLowerCase()
             );
             

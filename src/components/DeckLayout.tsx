@@ -72,6 +72,7 @@ export function DeckLayoutMenu() {
       <button
         className="p-2 hover:bg-gray-700 rounded-full"
         onClick={() => setIsEditingPoints(!isEditingPoints)}
+        aria-label="Edit build and crew points"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -93,6 +94,7 @@ export function DeckLayoutMenu() {
         accept="image/*"
         onChange={handleBackgroundUpload}
         className="hidden"
+        title="Upload background image"
       />
 
       {isEditingPoints && (
@@ -103,6 +105,8 @@ export function DeckLayoutMenu() {
               <button
                 onClick={() => setIsEditingPoints(false)}
                 className="text-gray-400 hover:text-gray-200"
+                aria-label="Close build and crew points editor"
+                title="Close"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -131,6 +135,8 @@ export function DeckLayoutMenu() {
                     setCrewPoints(value);
                   }}
                   className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
+                  aria-label="AADA Division"
+                  title="AADA Division"
                 >
                   {[...Array(12).keys()].map(i => (
                     <option key={i + 1} value={i + 1}>
@@ -159,6 +165,8 @@ export function DeckLayoutMenu() {
                     }
                   }}
                   className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
+                  title="Build Points Limit"
+                  placeholder="Enter build points"
                 />
               </div>
               {/* Crew Points Limit */}
@@ -291,6 +299,12 @@ export function DeckLayout() {
                   break;
                 case 'duplicate_sidearm':
                   alert(`You cannot equip multiple copies of the same sidearm: "${item.name}"`);
+                  break;
+                case 'duplicate_accessory':
+                  alert(`You cannot equip multiple copies of the same accessory: "${item.name}"`);
+                  break;
+                case 'duplicate_upgrade':
+                  alert(`You cannot equip multiple copies of the same upgrade: "${item.name}"`);
                   break;
                 case 'crew_limit_reached':
                   alert(
