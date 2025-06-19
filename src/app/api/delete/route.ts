@@ -5,24 +5,18 @@ import path from 'path';
 export async function POST(request: Request) {
   try {
     const { filePath } = await request.json();
-    
+
     if (!filePath) {
-      return NextResponse.json(
-        { error: 'No file path provided' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'No file path provided' }, { status: 400 });
     }
 
     // Security check: ensure the path is within the uploads directory
     if (!filePath.startsWith('/uploads/')) {
-      return NextResponse.json(
-        { error: 'Invalid file path' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid file path' }, { status: 400 });
     }
 
     const fullPath = path.join(process.cwd(), 'public', filePath);
-    
+
     try {
       await fs.access(fullPath);
       await fs.unlink(fullPath);
@@ -34,9 +28,6 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error('Delete file error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete file' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete file' }, { status: 500 });
   }
 }

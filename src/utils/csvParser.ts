@@ -7,26 +7,26 @@ export function parseCSV(csvContent: string): Record<string, string>[] {
   // Split the CSV content into lines
   const lines = csvContent.split(/\r\n|\n/);
   if (lines.length === 0) return [];
-  
+
   // Extract the headers (first line)
   const headers = lines[0].split(',').map(header => header.trim());
-  
+
   // Map each line to an object
   const result = [];
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue; // Skip empty lines
-    
+
     const values = parseCSVLine(lines[i]);
-    
+
     // Create an object with the headers as keys
     const obj: Record<string, string> = {};
     headers.forEach((header, index) => {
       obj[header] = index < values.length ? values[index].trim() : '';
     });
-    
+
     result.push(obj);
   }
-  
+
   return result;
 }
 
@@ -39,10 +39,10 @@ function parseCSVLine(line: string): string[] {
   const result: string[] = [];
   let current = '';
   let inQuotes = false;
-  
+
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
-    
+
     if (char === '"') {
       // Toggle quote state
       inQuotes = !inQuotes;
@@ -55,9 +55,9 @@ function parseCSVLine(line: string): string[] {
       current += char;
     }
   }
-  
+
   // Add the last field
   result.push(current);
-  
+
   return result;
 }

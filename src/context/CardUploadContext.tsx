@@ -76,14 +76,17 @@ export function CardUploadProvider({ children }: CardUploadProviderProps) {
   const savePreferences = () => {
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({
-          cardType: newCardType,
-          cardSubtype: newCardSubtype,
-          buildPointCost: newBuildPointCost,
-          crewPointCost: newCrewPointCost,
-          numberAllowed: newNumberAllowed,
-          source: newSource
-        }));
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            cardType: newCardType,
+            cardSubtype: newCardSubtype,
+            buildPointCost: newBuildPointCost,
+            crewPointCost: newCrewPointCost,
+            numberAllowed: newNumberAllowed,
+            source: newSource,
+          })
+        );
       } catch (e) {
         console.error('Failed to save card preferences:', e);
       }
@@ -95,7 +98,7 @@ export function CardUploadProvider({ children }: CardUploadProviderProps) {
     setNewCardTypeState(type);
     savePreferences();
   };
-  
+
   const setNewCardSubtype = (subtype: string) => {
     setNewCardSubtypeState(subtype);
     savePreferences();
@@ -105,17 +108,17 @@ export function CardUploadProvider({ children }: CardUploadProviderProps) {
     setNewBuildPointCostState(cost);
     savePreferences();
   };
-  
+
   const setNewCrewPointCost = (cost: number) => {
     setNewCrewPointCostState(cost);
     savePreferences();
   };
-  
+
   const setNewNumberAllowed = (number: number) => {
     setNewNumberAllowedState(number);
     savePreferences();
   };
-  
+
   const setNewSource = (source: string) => {
     setNewSourceState(source);
     savePreferences();

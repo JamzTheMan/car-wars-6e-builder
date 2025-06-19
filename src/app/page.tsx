@@ -19,10 +19,16 @@ function PointsSummary() {
   return (
     <div className="flex items-center space-x-2 text-xs text-gray-300">
       <span className="bg-blue-900 border border-blue-700 rounded px-2 py-0.5">
-        BP: <span className="font-bold text-blue-200">{pointsUsed.buildPoints} / {pointLimits.buildPoints}</span>
+        BP:{' '}
+        <span className="font-bold text-blue-200">
+          {pointsUsed.buildPoints} / {pointLimits.buildPoints}
+        </span>
       </span>
       <span className="bg-green-900 border border-green-700 rounded px-2 py-0.5">
-        CP: <span className="font-bold text-green-200">{pointsUsed.crewPoints} / {pointLimits.crewPoints}</span>
+        CP:{' '}
+        <span className="font-bold text-green-200">
+          {pointsUsed.crewPoints} / {pointLimits.crewPoints}
+        </span>
       </span>
     </div>
   );
@@ -33,17 +39,23 @@ function CardCollectionTitleUpload() {
   const [menuOpen, setMenuOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const { 
-    newCardType, 
+  const {
+    newCardType,
     newCardSubtype,
-    newBuildPointCost, 
+    newBuildPointCost,
     newCrewPointCost,
     newNumberAllowed,
-    newSource
+    newSource,
   } = useCardUpload();
-  const { addToCollection, removeFromCollection, addToCollectionWithId, collectionCards, clearCollection } = useCardStore();
+  const {
+    addToCollection,
+    removeFromCollection,
+    addToCollectionWithId,
+    collectionCards,
+    clearCollection,
+  } = useCardStore();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-  
+
   // Handle clicking outside to close the menu
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -51,9 +63,9 @@ function CardCollectionTitleUpload() {
         setMenuOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [menuRef]);
 
@@ -64,21 +76,21 @@ function CardCollectionTitleUpload() {
 
     try {
       setUploadingCard(true);
-      
+
       // Use shared upload utility
       const uploadResult = await uploadCardImage(
-        file, 
-        newCardType, 
+        file,
+        newCardType,
         newCardSubtype,
         newBuildPointCost,
         newCrewPointCost,
         newNumberAllowed,
         newSource
       );
-      
+
       // Extract the base filename without extension
       const baseName = file.name.split('.')[0];
-          
+
       // If this is a replacement for an existing file
       if (uploadResult.isExistingFile) {
         // Find any existing cards with the same base filename
@@ -86,7 +98,7 @@ function CardCollectionTitleUpload() {
           const cardBaseName = card.name.toLowerCase();
           return cardBaseName === baseName.toLowerCase();
         });
-        
+
         if (existingCard) {
           // Create updated card with same ID but new properties
           const updatedCard = {
@@ -98,19 +110,19 @@ function CardCollectionTitleUpload() {
             buildPointCost: uploadResult.buildPointCost,
             crewPointCost: uploadResult.crewPointCost,
             numberAllowed: uploadResult.numberAllowed,
-            source: uploadResult.source
+            source: uploadResult.source,
           };
-          
+
           // Update the existing card
           console.log('Updating existing card:', { existingCard, updatedCard });
-          
+
           // Remove and re-add to update the card
           removeFromCollection(existingCard.id);
           addToCollectionWithId(updatedCard);
           return;
         }
       }
-      
+
       // For new cards, add normally
       const newCard = {
         name: baseName,
@@ -120,7 +132,7 @@ function CardCollectionTitleUpload() {
         buildPointCost: uploadResult.buildPointCost,
         crewPointCost: uploadResult.crewPointCost,
         numberAllowed: uploadResult.numberAllowed,
-        source: uploadResult.source
+        source: uploadResult.source,
       };
 
       // Add to collection
@@ -140,12 +152,12 @@ function CardCollectionTitleUpload() {
     setShowClearConfirm(true);
     setMenuOpen(false);
   };
-  
+
   const handleConfirmClear = () => {
     clearCollection();
     setShowClearConfirm(false);
   };
-  
+
   const handleCancelClear = () => {
     setShowClearConfirm(false);
   };
@@ -160,7 +172,7 @@ function CardCollectionTitleUpload() {
         disabled={uploadingCard}
         className="hidden"
       />
-      
+
       {/* Hamburger menu button */}
       <button
         onClick={() => setMenuOpen(!menuOpen)}
@@ -173,7 +185,7 @@ function CardCollectionTitleUpload() {
           <div className="w-full h-0.5 bg-white"></div>
         </div>
       </button>
-      
+
       {/* Dropdown menu */}
       {menuOpen && (
         <div className="absolute right-0 mt-1 bg-gray-800 border border-gray-700 rounded shadow-lg z-10 w-48">
@@ -203,19 +215,19 @@ function CardCollectionTitleUpload() {
           </ul>
         </div>
       )}
-      
+
       {/* Clear All confirmation dialog */}
       {showClearConfirm && (
         <div className="absolute right-0 mt-1 bg-gray-800 border border-gray-700 rounded shadow-lg z-10 p-3">
           <p className="text-sm text-red-400 mb-2">Delete all cards. Are you sure?</p>
           <div className="flex justify-end space-x-2">
-            <button 
+            <button
               onClick={handleConfirmClear}
               className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
             >
               Yes
             </button>
-            <button 
+            <button
               onClick={handleCancelClear}
               className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
             >
@@ -238,7 +250,7 @@ export default function Home() {
       useCardStore.persist.rehydrate();
       setIsStoreHydrated(true);
     };
-    
+
     hydrateStore();
   }, []);
 
@@ -246,15 +258,15 @@ export default function Home() {
     // Only initialize a new deck if there isn't one already and the store is hydrated
     if (isStoreHydrated && !currentDeck) {
       const newId = Math.random().toString(36).substring(2);
-      
+
       // Import the generator function directly
       import('@/utils/vehicleNameGenerator').then(({ generateVehicleName }) => {
         const randomName = generateVehicleName();
-        
+
         setDeck({
           id: newId,
           name: randomName,
-          backgroundImage: '',  // We're still initializing with empty string, the DeckLayout will handle the default
+          backgroundImage: '', // We're still initializing with empty string, the DeckLayout will handle the default
           cards: [],
           pointLimits: {
             buildPoints: 16,
@@ -263,7 +275,7 @@ export default function Home() {
           pointsUsed: {
             buildPoints: 0,
             crewPoints: 0,
-          }
+          },
         });
       });
     }
@@ -279,7 +291,7 @@ export default function Home() {
   }
 
   return (
-    <DndWrapper>    
+    <DndWrapper>
       <CardUploadProvider>
         <main className="h-full flex flex-col bg-gray-900">
           <div className="flex-1 min-h-0">

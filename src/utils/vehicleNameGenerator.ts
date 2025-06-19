@@ -1,34 +1,124 @@
 export function generateVehicleName(): string {
   const prefixes = [
-    "Thunder", "Shadow", "Razor", "Iron", "Steel", "Death", "Doom", "Fury", "Night", 
-    "Rogue", "Chaos", "Phantom", "Ghost", "Venom", "Stealth", "Spike", "Savage", 
-    "Blaze", "Inferno", "Havoc", "Renegade", "Chrome", "Reaper", "Rampage", "Rogue",
-    "Searing", "Burning", "Vulcan", "Storm", "Crimson", "Onyx", "Obsidian", "Midnight",
-    "Solar", "Lunar", "Astral", "Atomic", "Neutron", "Quantum", "Cyber", "Hyper"
+    'Thunder',
+    'Shadow',
+    'Razor',
+    'Iron',
+    'Steel',
+    'Death',
+    'Doom',
+    'Fury',
+    'Night',
+    'Rogue',
+    'Chaos',
+    'Phantom',
+    'Ghost',
+    'Venom',
+    'Stealth',
+    'Spike',
+    'Savage',
+    'Blaze',
+    'Inferno',
+    'Havoc',
+    'Renegade',
+    'Chrome',
+    'Reaper',
+    'Rampage',
+    'Rogue',
+    'Searing',
+    'Burning',
+    'Vulcan',
+    'Storm',
+    'Crimson',
+    'Onyx',
+    'Obsidian',
+    'Midnight',
+    'Solar',
+    'Lunar',
+    'Astral',
+    'Atomic',
+    'Neutron',
+    'Quantum',
+    'Cyber',
+    'Hyper',
   ];
-  
+
   const suffixes = [
-    "Hawk", "Blade", "Storm", "Fang", "Claw", "Ripper", "Hunter", "Stalker", "Knight", 
-    "Striker", "Viper", "Wolf", "Panther", "Tiger", "Eagle", "Cobra", "Scorpion", "Shark",
-    "Wraith", "Demon", "Beast", "Slayer", "Crusher", "Brawler", "Raider", "Falcon",
-    "Raptor", "Phoenix", "Dragon", "Hydra", "Specter", "Phantom", "Vengeance", "Nemesis"
+    'Hawk',
+    'Blade',
+    'Storm',
+    'Fang',
+    'Claw',
+    'Ripper',
+    'Hunter',
+    'Stalker',
+    'Knight',
+    'Striker',
+    'Viper',
+    'Wolf',
+    'Panther',
+    'Tiger',
+    'Eagle',
+    'Cobra',
+    'Scorpion',
+    'Shark',
+    'Wraith',
+    'Demon',
+    'Beast',
+    'Slayer',
+    'Crusher',
+    'Brawler',
+    'Raider',
+    'Falcon',
+    'Raptor',
+    'Phoenix',
+    'Dragon',
+    'Hydra',
+    'Specter',
+    'Phantom',
+    'Vengeance',
+    'Nemesis',
   ];
 
   const vehicleTypes = [
-    "Roadster", "Buggy", "Interceptor", "Juggernaut", "Racer", "Cruiser", "Destroyer", 
-    "Hauler", "Runner", "Chopper", "Truck", "Tank", "Rider", "Chariot", "Warrior",
-    "Outrider", "Sentinel", "Avenger", "Marauder", "Enforcer", "Scout", "Pursuer", "Predator",
-    "Dreadnought", "Guardian", "Vanguard", "Assault Vehicle", "Dominator"
+    'Roadster',
+    'Buggy',
+    'Interceptor',
+    'Juggernaut',
+    'Racer',
+    'Cruiser',
+    'Destroyer',
+    'Hauler',
+    'Runner',
+    'Chopper',
+    'Truck',
+    'Tank',
+    'Rider',
+    'Chariot',
+    'Warrior',
+    'Outrider',
+    'Sentinel',
+    'Avenger',
+    'Marauder',
+    'Enforcer',
+    'Scout',
+    'Pursuer',
+    'Predator',
+    'Dreadnought',
+    'Guardian',
+    'Vanguard',
+    'Assault Vehicle',
+    'Dominator',
   ];
 
   // Choose a random pattern
   const pattern = Math.floor(Math.random() * 3);
-  
+
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
   const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
   const type = vehicleTypes[Math.floor(Math.random() * vehicleTypes.length)];
-  
-  switch(pattern) {
+
+  switch (pattern) {
     case 0: // PrefixSuffix (e.g., Razor Blade)
       return `${prefix} ${suffix}`;
     case 1: // Prefix Type (e.g., Shadow Interceptor)

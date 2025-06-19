@@ -1,0 +1,22 @@
+# Ignore built files
+.next/
+out/
+build/
+dist/
+
+# Ignore dependencies
+node_modules/
+
+# Ignore generated files
+next-env.d.ts
+*.d.ts
+
+# Ignore certain file types
+*.log
+*.lock
+*.svg
+*.md
+
+# Ignore uploads/assets
+public/uploads/
+public/assets/

@@ -4,7 +4,7 @@ import { useCardStore } from '@/store/cardStore';
 
 export function CardCollectionHeader() {
   const { collectionCards } = useCardStore();
-  
+
   return (
     <div className="flex items-center">
       <h2 className="text-xl font-semibold">

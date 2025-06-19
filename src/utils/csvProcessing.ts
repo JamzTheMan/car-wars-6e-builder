@@ -1,5 +1,5 @@
-import { Card, CardType } from "@/types/types";
-import { parseCSV } from "./csvParser";
+import { Card, CardType } from '@/types/types';
+import { parseCSV } from './csvParser';
 
 /**
  * Generate a placeholder image URL for a card
@@ -16,7 +16,7 @@ export function getPlaceholderImageUrl(cardType: CardType, subtype?: string): st
       return `/assets/placeholders/Blank_Crew_Gunner.png`;
     }
   }
-  
+
   // Default case using the Blank_ prefix placeholder images for each card type
   return `/assets/placeholders/Blank_${cardType}.png`;
 }
@@ -37,22 +37,25 @@ export function findBlankCard(cardType: CardType, collectionCards: Card[]): Card
  * @param collectionCards Array of existing cards in the collection (used to find blank cards)
  * @returns An array of card objects (without IDs)
  */
-export function processCSVToCards(csvContent: string, collectionCards: Card[] = []): Omit<Card, "id">[] {
+export function processCSVToCards(
+  csvContent: string,
+  collectionCards: Card[] = []
+): Omit<Card, 'id'>[] {
   const records = parseCSV(csvContent);
-  
+
   return records.map(record => {
     // Get the card type, defaulting to Weapon if invalid
     const typeString = record['Type'] || '';
-    const cardType = Object.values(CardType).includes(typeString as CardType) 
-      ? typeString as CardType 
+    const cardType = Object.values(CardType).includes(typeString as CardType)
+      ? (typeString as CardType)
       : CardType.Weapon;
-    
+
     // Try to find a matching blank card to use as a template
     const blankCard = findBlankCard(cardType, collectionCards);
-      // Use the blank card's image if available, otherwise use the placeholders
-    const subtype = record['Subtype'] || ''; 
+    // Use the blank card's image if available, otherwise use the placeholders
+    const subtype = record['Subtype'] || '';
     const imageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
-      // Create a new card object
+    // Create a new card object
     const card = {
       name: record['Name'] || 'Unnamed Card',
       imageUrl: imageUrl,
@@ -61,9 +64,9 @@ export function processCSVToCards(csvContent: string, collectionCards: Card[] = 
       buildPointCost: parseInt(record['Build Point Cost'] || '0') || 0,
       crewPointCost: parseInt(record['Crew Point Cost'] || '0') || 0,
       numberAllowed: parseInt(record['Number Allowed'] || '1') || 1,
-      source: record['Source'] || ''
+      source: record['Source'] || '',
     };
-    
+
     console.log(`Processed card: ${card.name}, Type: ${card.type}, Subtype: ${card.subtype}`);
     return card;
   });

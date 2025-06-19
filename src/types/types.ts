@@ -6,11 +6,11 @@ export enum CardType {
   Upgrade = 'Upgrade',
   Accessory = 'Accessory',
   Structure = 'Structure',
-  
+
   // Crew Point Cards
   Crew = 'Crew',
   Gear = 'Gear',
-  Sidearm = 'Sidearm'
+  Sidearm = 'Sidearm',
 }
 
 export const CardTypeCategories: Record<CardType, PointCategory> = {
@@ -20,7 +20,7 @@ export const CardTypeCategories: Record<CardType, PointCategory> = {
   [CardType.Structure]: 'BuildPoints',
   [CardType.Crew]: 'CrewPoints',
   [CardType.Gear]: 'CrewPoints',
-  [CardType.Sidearm]: 'CrewPoints'
+  [CardType.Sidearm]: 'CrewPoints',
 };
 
 // No hard-coded subtypes - we'll derive them from the card collection
@@ -31,7 +31,7 @@ export enum CardArea {
   Front = 'front',
   Back = 'back',
   Left = 'left',
-  Right = 'right'
+  Right = 'right',
 }
 
 export interface Card {
@@ -44,7 +44,7 @@ export interface Card {
   crewPointCost: number;
   numberAllowed: number;
   source: string;
-  description?: string;  // Making it optional since existing cards may not have it
+  description?: string; // Making it optional since existing cards may not have it
   area?: CardArea;
   position?: {
     x: number;

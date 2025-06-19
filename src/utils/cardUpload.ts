@@ -1,4 +1,4 @@
-import { CardType } from "@/types/types";
+import { CardType } from '@/types/types';
 
 export interface CardUploadResult {
   imageUrl: string;
@@ -30,17 +30,17 @@ export async function uploadCardImage(
   formData.append('crewPointCost', crewPointCost.toString());
   formData.append('numberAllowed', numberAllowed.toString());
   formData.append('source', source);
-  
+
   const response = await fetch('/api/upload', {
     method: 'POST',
     body: formData,
   });
-  
+
   if (!response.ok) {
     throw new Error('Upload failed');
   }
-    const { 
-    path: imageUrl, 
+  const {
+    path: imageUrl,
     cardType: responseCardType,
     cardSubtype: responseCardSubtype,
     buildPointCost: responseBuildPointCost,
@@ -48,18 +48,21 @@ export async function uploadCardImage(
     numberAllowed: responseNumberAllowed,
     source: responseSource,
     isExistingFile,
-    originalFileName
+    originalFileName,
   } = await response.json();
-  
+
   return {
     imageUrl,
     cardType: responseCardType || cardType,
     cardSubtype: responseCardSubtype || cardSubtype,
-    buildPointCost: typeof responseBuildPointCost === 'number' ? responseBuildPointCost : buildPointCost,
-    crewPointCost: typeof responseCrewPointCost === 'number' ? responseCrewPointCost : crewPointCost,
-    numberAllowed: typeof responseNumberAllowed === 'number' ? responseNumberAllowed : numberAllowed,
+    buildPointCost:
+      typeof responseBuildPointCost === 'number' ? responseBuildPointCost : buildPointCost,
+    crewPointCost:
+      typeof responseCrewPointCost === 'number' ? responseCrewPointCost : crewPointCost,
+    numberAllowed:
+      typeof responseNumberAllowed === 'number' ? responseNumberAllowed : numberAllowed,
     source: responseSource || source,
     isExistingFile: !!isExistingFile,
-    fileName: originalFileName || file.name
+    fileName: originalFileName || file.name,
   };
 }
