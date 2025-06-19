@@ -23,6 +23,8 @@ export const CardTypeCategories: Record<CardType, PointCategory> = {
   [CardType.Sidearm]: 'CrewPoints'
 };
 
+// No hard-coded subtypes - we'll derive them from the card collection
+
 export enum CardArea {
   Crew = 'crew',
   GearUpgrade = 'gearupgrade',

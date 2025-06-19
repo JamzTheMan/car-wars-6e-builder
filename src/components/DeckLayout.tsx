@@ -13,7 +13,7 @@ import { faSave, faTrashAlt, faUpload } from '@fortawesome/free-solid-svg-icons'
 export { VehicleName };
 
 export function DeckLayoutMenu() {
-  const { currentDeck, updateDeckBackground, updatePointLimits } = useCardStore();
+  const { currentDeck, updateDeckBackground, updatePointLimits, collectionCards, addToCollection } = useCardStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditingPoints, setIsEditingPoints] = useState(false);
   const [buildPoints, setBuildPoints] = useState(currentDeck?.pointLimits.buildPoints ?? 0);
@@ -192,7 +192,6 @@ export function DeckLayoutMenu() {
               >
                 <FontAwesomeIcon icon={faTrashAlt} className="mr-2" /> Reset Car
               </button>
-
             </div>
           </div>
         </div>

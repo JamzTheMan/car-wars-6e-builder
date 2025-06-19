@@ -52,9 +52,8 @@ export function processCSVToCards(csvContent: string, collectionCards: Card[] = 
       // Use the blank card's image if available, otherwise use the placeholders
     const subtype = record['Subtype'] || ''; 
     const imageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
-    
-    // Create a new card object
-    return {
+      // Create a new card object
+    const card = {
       name: record['Name'] || 'Unnamed Card',
       imageUrl: imageUrl,
       type: cardType,
@@ -64,5 +63,8 @@ export function processCSVToCards(csvContent: string, collectionCards: Card[] = 
       numberAllowed: parseInt(record['Number Allowed'] || '1') || 1,
       source: record['Source'] || ''
     };
+    
+    console.log(`Processed card: ${card.name}, Type: ${card.type}, Subtype: ${card.subtype}`);
+    return card;
   });
 }

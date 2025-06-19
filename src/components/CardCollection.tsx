@@ -38,17 +38,57 @@ export function CardCollection() {
     resetDeck,
     currentDeck,
     clearCollection
-  } = useCardStore();
-
-  // Get unique subtypes and sources from the collection
-  const uniqueSubtypes = useMemo(() => {
-    const subtypes = new Set<string>();
+  } = useCardStore();  // Get unique subtypes organized by their corresponding card type
+  const subtypesByCardType = useMemo(() => {
+    // Create an object to map subtypes to their card type
+    const subtypeToCardTypeMap: Record<string, CardType> = {};
+    
+    // Create an object to store unique subtypes for each card type
+    const result: Record<CardType, string[]> = {
+      [CardType.Weapon]: [],
+      [CardType.Upgrade]: [],
+      [CardType.Accessory]: [],
+      [CardType.Structure]: [],
+      [CardType.Crew]: [],
+      [CardType.Gear]: [],
+      [CardType.Sidearm]: []
+    };
+    
+    console.log('Total cards in collection:', cards.length);
+    
+    // Debug: print some card examples to see what's in the collection
+    if (cards.length > 0) {
+      console.log('Example card:', cards[0]);
+    }
+    
+    // First pass: map each subtype to its card type
     cards.forEach(card => {
-      if (card.subtype && card.subtype.trim() !== '') {
-        subtypes.add(card.subtype);
+      if (card.subtype && card.subtype.trim() !== '' && card.type) {
+        console.log(`Found subtype: ${card.subtype} for card type: ${card.type}`);
+        // Map this subtype to its card type if not already mapped
+        if (!subtypeToCardTypeMap[card.subtype]) {
+          subtypeToCardTypeMap[card.subtype] = card.type;
+        }
       }
     });
-    return Array.from(subtypes).sort();
+    
+    console.log('Mapped subtypes:', subtypeToCardTypeMap);
+    
+    // Second pass: collect all unique subtypes for each card type
+    Object.entries(subtypeToCardTypeMap).forEach(([subtype, cardType]) => {
+      if (!result[cardType].includes(subtype)) {
+        result[cardType].push(subtype);
+      }
+    });
+    
+    // Sort subtypes alphabetically within each card type
+    Object.keys(result).forEach(type => {
+      result[type as CardType].sort();
+    });
+    
+    console.log('Final grouped subtypes:', result);
+    
+    return result;
   }, [cards]);
 
   const uniqueSources = useMemo(() => {
@@ -278,7 +318,7 @@ export function CardCollection() {
             }
           </button>
           
-          {(filterCardType || filterSubtype || filterCost !== null || filterSource) && 
+          {(filterCardType || filterSubtype || filterCost !== null || filterSource) &&
             <div className="flex items-center">
               <span className="text-xs text-gray-400 mr-2">
                 {filteredCards.length} of {cards.length} cards
@@ -324,9 +364,7 @@ export function CardCollection() {
                     }
                   </optgroup>
                 </select>
-              </div>
-              
-              {/* Subtype Filter */}
+              </div>                {/* Subtype Filter */}
               <div>
                 <label className="font-medium text-sm">Subtype</label>
                 <select
@@ -334,10 +372,21 @@ export function CardCollection() {
                   onChange={(e) => setFilterSubtype(e.target.value)}
                   className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
                 >
-                  <option value="">Any Subtype</option>
-                  {uniqueSubtypes.map((subtype) => (
-                    <option key={subtype} value={subtype}>{subtype}</option>
-                  ))}
+                  <option value="">Any Subtype</option>                  {/* Display subtypes directly grouped by card type */}
+                  {Object.entries(subtypesByCardType).map(([type, subtypes]) => {
+                    // Only render card types that have subtypes
+                    if (subtypes.length === 0) {
+                      return null;
+                    }
+                    
+                    return (
+                      <optgroup key={type} label={`${type} Subtypes`}>
+                        {subtypes.map((subtype) => (
+                          <option key={subtype} value={subtype}>{subtype}</option>
+                        ))}
+                      </optgroup>
+                    );
+                  })}
                 </select>
               </div>
                 {/* Cost Filter (Build or Crew Point Cost) */}
