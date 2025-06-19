@@ -4,7 +4,7 @@ import { useDrag } from 'react-dnd';
 import { Card as CardType, CardArea } from '@/types/types';
 import { useCardStore } from '@/store/cardStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus, faClone } from '@fortawesome/free-solid-svg-icons';
 import { deleteCardImage } from '@/utils/cardDelete';
 
 // Extended type for dragging with source information
@@ -103,25 +103,6 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         alt={card.name}
         className="w-full h-full object-cover"
       />
-        {/* Delete button */}
-      <button 
-        onClick={handleDelete}
-        className="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white rounded-bl p-1 m-1 opacity-0 group-hover:opacity-100 transition-opacity"
-        title={isInCollection ? "Delete card from collection" : "Remove card from deck"}
-      >
-        <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
-      </button>
-      
-      {/* Add to Deck button - Only shown in collection view */}
-      {isInCollection && (
-        <button
-          onClick={handleAddToDeck}
-          className="absolute top-0 left-0 bg-green-600 hover:bg-green-700 text-white rounded-br p-1 m-1 opacity-0 group-hover:opacity-100 transition-opacity"
-          title="Add to deck"
-        >
-          <FontAwesomeIcon icon={faPlus} className="w-3 h-3" />
-        </button>
-      )}
         {/* Card name at the top, left-justified, bold, black text, transparent white background, wraps, avoids cost circle */}
       <div className="absolute z-10 left-0 right-7 top-0.75 text-left pointer-events-none select-none">
         <span className="text-xs font-bold text-black break-words leading-tight block px-1" style={{ background: 'rgba(230, 230, 230, 0.77)', borderRadius: '0.25rem' }}>{card.name}</span>
@@ -132,6 +113,25 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
           {card.type} {card.subtype ? `- ${card.subtype}` : ''}
         </div>
       </div>
+      {/* Delete button only visible on hover, always bottom right */}
+      <button
+        onClick={handleDelete}
+        className="absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded p-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        title={isInCollection ? "Delete card from collection" : "Remove card from deck"}
+      >
+        <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+      </button>
+      {/* Add to Deck button - Only shown in collection view, larger, rounded square, perfectly centered, only on hover */}
+      {isInCollection && (
+        <button
+          onClick={handleAddToDeck}
+          className="absolute top-1/2 left-1/2 bg-green-600 hover:bg-green-700 text-white rounded-xl flex items-center justify-center z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          style={{ width: '2.7rem', height: '2.7rem', maxWidth: '70%', maxHeight: '70%', transform: 'translate(-50%, -50%)' }}
+          title="Add to deck"
+        >
+          <FontAwesomeIcon icon={faClone} className="w-6 h-6" />
+        </button>
+      )}
     </div>
   );
 }
