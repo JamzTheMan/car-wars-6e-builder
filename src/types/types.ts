@@ -23,6 +23,15 @@ export const CardTypeCategories: Record<CardType, PointCategory> = {
   [CardType.Sidearm]: 'CrewPoints'
 };
 
+export enum CardArea {
+  Crew = 'crew',
+  GearUpgrade = 'gearupgrade',
+  Front = 'front',
+  Back = 'back',
+  Left = 'left',
+  Right = 'right'
+}
+
 export interface Card {
   id: string;
   name: string;
@@ -33,6 +42,7 @@ export interface Card {
   crewPointCost: number;
   numberAllowed: number;
   source: string;
+  area?: CardArea;
   position?: {
     x: number;
     y: number;
@@ -56,4 +66,21 @@ export interface DeckLayout {
   cards: Card[];
   pointLimits: PointLimits;
   pointsUsed: PointsUsed;
+}
+
+// Helper function to check if a card type can be placed in an area
+export function canCardTypeGoInArea(type: CardType, area: CardArea): boolean {
+  switch (area) {
+    case CardArea.Crew:
+      return type === CardType.Crew || type === CardType.Sidearm;
+    case CardArea.GearUpgrade:
+      return type === CardType.Gear || type === CardType.Upgrade;
+    case CardArea.Front:
+    case CardArea.Back:
+    case CardArea.Left:
+    case CardArea.Right:
+      return type === CardType.Weapon || type === CardType.Accessory || type === CardType.Structure;
+    default:
+      return false;
+  }
 }

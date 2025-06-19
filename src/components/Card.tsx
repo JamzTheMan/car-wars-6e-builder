@@ -1,7 +1,7 @@
 'use client';
 
 import { useDrag } from 'react-dnd';
-import { Card as CardType } from '@/types/types';
+import { Card as CardType, CardArea } from '@/types/types';
 import { useCardStore } from '@/store/cardStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';

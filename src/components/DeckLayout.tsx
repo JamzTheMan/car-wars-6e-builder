@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { Card } from '@/components/Card';
 import { useCardStore } from '@/store/cardStore';
-import { Card as CardType } from '@/types/types';
+import { Card as CardType, CardArea, canCardTypeGoInArea } from '@/types/types';
 import { VehicleName } from './VehicleName';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTrashAlt, faUpload } from '@fortawesome/free-solid-svg-icons';
@@ -202,35 +202,7 @@ export function DeckLayoutMenu() {
 }
 
 export function DeckLayout() {
-  const { currentDeck, updateCardPosition, addToDeck, canAddCardToDeck } = useCardStore();
-  const [{ isOver }, dropRef] = useDrop<CardType & { source: 'collection' | 'deck' }, unknown, { isOver: boolean }>(() => ({
-    accept: 'CARD',
-    drop: (item: CardType & { source: 'collection' | 'deck' }, monitor: any) => {
-      const offset = monitor.getClientOffset();
-      const containerRect = document.getElementById('deck-layout')?.getBoundingClientRect();
-
-      // Only handle cards from collection or already in deck
-      if (item.source === 'collection') {
-        // It's a new card from the collection - add it to the deck
-        if (canAddCardToDeck(item)) {
-          addToDeck(item.id);
-          // Note: We can't position it immediately because it hasn't been added to the deck yet
-        } else {
-          alert('Not enough points to add this card to your deck!');
-        }
-      } else if (item.source === 'deck') {
-        // If it's already in the deck, just update its position
-        if (offset && containerRect) {
-          const x = offset.x - containerRect.left;
-          const y = offset.y - containerRect.top;
-          updateCardPosition(item.id, x, y);
-        }
-      }
-    },
-    collect: (monitor: any) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }), [updateCardPosition]);
+  const { currentDeck, updateCardPosition, addToDeck, canAddCardToDeck, updateCardArea } = useCardStore();
 
   if (!currentDeck) {
     return (
@@ -239,28 +211,98 @@ export function DeckLayout() {
       </div>
     );
   }
+  // Helper function to create area drop targets
+  const AreaDropTarget = ({ area, label, className }: { area: CardArea; label: string; className: string }) => {
+    const { collectionCards } = useCardStore();
+    const [{ isOver }, dropRef] = useDrop<CardType & { source: 'collection' | 'deck'; id: string }, unknown, { isOver: boolean }>(() => ({
+      accept: 'CARD',
+      canDrop: (item: CardType & { source: 'collection' | 'deck'; id: string }) => {
+        // Check if the card type can go in this area
+        const cardToCheck = item.source === 'collection' 
+          ? collectionCards.find((c: CardType) => c.id === item.id)
+          : currentDeck.cards.find((c: CardType) => c.id === item.id);
+          
+        return cardToCheck ? canCardTypeGoInArea(cardToCheck.type, area) : false;
+      },
+      drop: (item: CardType & { source: 'collection' | 'deck' }) => {
+        if (item.source === 'collection') {
+          // Add from collection to specific area
+          if (canAddCardToDeck(item)) {
+            addToDeck(item.id, area);
+          } else {
+            alert('Not enough points to add this card to your deck!');
+          }
+        } else if (item.source === 'deck') {
+          // Move card between areas
+          updateCardArea(item.id, area);
+        }
+      },
+      collect: (monitor: any) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }), [area]);
+
+    // Get cards for this area
+    const areaCards = currentDeck.cards.filter(card => card.area === area);
+
+    return (      <div
+        ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
+        className={`${className} bg-black bg-opacity-30 rounded-md overflow-y-auto p-2 border-2 
+          ${isOver ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' : 'border-gray-600 hover:border-gray-400'} 
+          transition-all duration-200`}
+      >
+        <div className="text-white text-sm font-bold mb-2 text-center bg-black bg-opacity-70 py-1 rounded-sm">
+          {label} ({areaCards.length})
+        </div>
+        <div className="flex flex-col gap-2">
+          {areaCards.map((card) => (
+            <Card
+              key={card.id}
+              card={card}
+              isDraggable={true}
+              isInCollection={false}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className="p-4 h-full relative">      <div
-        ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
+    <div className="p-4 h-full relative">
+      <div
         id="deck-layout"
-        className="h-full relative bg-cover bg-center bg-gray-900 rounded border-2 border-dashed border-gray-700"
+        className="h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden"
         style={{ backgroundImage: currentDeck.backgroundImage 
           ? `url(${currentDeck.backgroundImage})` 
           : `url(/assets/placeholders/Dashboard.webp)` }}
-      >
-        {isOver && (
-          <div className="absolute inset-0 bg-blue-500 bg-opacity-20 pointer-events-none" />
-        )}
-
-        {currentDeck.cards.map((card) => (
-          <Card
-            key={card.id}
-            card={card}
-            isDraggable={false}
-            isInCollection={false}
-          />
-        ))}
+      >        <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-3 p-4">
+          {/* Top row */}
+          <div className="flex items-center justify-center">
+            <div className="text-xs text-gray-400 rotate-45">Left Front</div>
+          </div>
+          <AreaDropTarget area={CardArea.Front} label="Front Weapons & Accessories" className="h-full" />
+          <div className="flex items-center justify-center">
+            <div className="text-xs text-gray-400 rotate-[-45deg]">Right Front</div>
+          </div>
+          
+          {/* Middle row */}
+          <AreaDropTarget area={CardArea.Left} label="Left Side Weapons & Accessories" className="h-full" />
+          <div className="grid grid-rows-2 gap-3">
+            <AreaDropTarget area={CardArea.Crew} label="Crew & Sidearms" className="h-full" />
+            <AreaDropTarget area={CardArea.GearUpgrade} label="Gear & Upgrades" className="h-full" />
+          </div>
+          <AreaDropTarget area={CardArea.Right} label="Right Side Weapons & Accessories" className="h-full" />
+          
+          {/* Bottom row */}
+          <div className="flex items-center justify-center">
+            <div className="text-xs text-gray-400 rotate-[-45deg]">Left Rear</div>
+          </div>
+          <AreaDropTarget area={CardArea.Back} label="Rear Weapons & Accessories" className="h-full" />
+          <div className="flex items-center justify-center">
+            <div className="text-xs text-gray-400 rotate-45">Right Rear</div>
+          </div>
+        </div>
       </div>
     </div>
   );

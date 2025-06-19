@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { Card, DeckLayout, CardTypeCategories, PointLimits } from '@/types/types'
+import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/types/types'
 
 interface CardStore {
   collectionCards: Card[]
@@ -8,9 +8,10 @@ interface CardStore {
   addToCollection: (card: Omit<Card, 'id'>) => void
   addToCollectionWithId: (card: Card) => void
   removeFromCollection: (id: string) => void
-  addToDeck: (cardId: string) => void
+  addToDeck: (cardId: string, area?: CardArea) => void
   removeFromDeck: (id: string) => void
   updateCardPosition: (id: string, x: number, y: number) => void
+  updateCardArea: (id: string, area: CardArea) => void
   setDeck: (deck: DeckLayout) => void
   updateDeckName: (name: string) => void
   updateDeckBackground: (imageUrl: string) => void
@@ -114,20 +115,34 @@ export const useCardStore = create<CardStore>()(
           collectionCards: state.collectionCards.filter(card => card.id !== id)
         };
       }),
-      
-      addToDeck: (cardId: string) => set((state) => {
+        addToDeck: (cardId: string, area?: CardArea) => set((state) => {
         if (!state.currentDeck) return state;
         
         // Find the card in the collection
         const cardTemplate = state.collectionCards.find(card => card.id === cardId);
         if (!cardTemplate) return state;
         
+        // Determine default area based on card type
+        let defaultArea: CardArea | undefined = area;
+        if (!defaultArea) {
+          if (cardTemplate.type === 'Crew' || cardTemplate.type === 'Sidearm') {
+            defaultArea = CardArea.Crew;
+          } else if (cardTemplate.type === 'Gear' || cardTemplate.type === 'Upgrade') {
+            defaultArea = CardArea.GearUpgrade;
+          } else {
+            // Default location for weapons, accessories, and structure
+            defaultArea = CardArea.Front;
+          }
+        }
+        
         // Create a new instance with a different ID
         const newCard = { 
           ...cardTemplate, 
-          id: crypto.randomUUID()
+          id: crypto.randomUUID(),
+          area: defaultArea
         };
-          // Update points used
+        
+        // Update points used
         const pointsUsed = { ...state.currentDeck.pointsUsed };
         
         // Add both build points and crew points if applicable
@@ -146,6 +161,15 @@ export const useCardStore = create<CardStore>()(
           }
         };
       }),
+      
+      updateCardArea: (id: string, area: CardArea) => set((state) => ({
+        currentDeck: state.currentDeck ? {
+          ...state.currentDeck,
+          cards: state.currentDeck.cards.map(card =>
+            card.id === id ? { ...card, area } : card
+          )
+        } : null
+      })),
 
       removeFromDeck: (id: string) => set((state) => {
         if (!state.currentDeck) return state;
