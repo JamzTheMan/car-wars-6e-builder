@@ -8,6 +8,7 @@ import { Card as CardType, CardArea, canCardTypeGoInArea } from '@/types/types';
 import { VehicleName } from './VehicleName';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTrashAlt, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { useToast } from './Toast';
 
 // Re-export VehicleName for compatibility
 export { VehicleName };
@@ -271,6 +272,7 @@ export function DeckLayout() {
       }
     };
     const { collectionCards } = useCardStore();
+    const { showToast } = useToast();
     const [{ isOver }, dropRef] = useDrop<
       CardType & { source: 'collection' | 'deck'; id: string },
       unknown,
@@ -293,58 +295,74 @@ export function DeckLayout() {
             const validationResult = canAddCardToDeck(item);
             if (validationResult.allowed) {
               addToDeck(item.id, area);
+              showToast(`Added ${item.name} to your car`, 'success');
             } else {
               // Display appropriate error message
               switch (validationResult.reason) {
                 case 'duplicate_gear':
-                  alert(`You cannot equip multiple copies of the same gear card: "${item.name}"`);
+                  showToast(
+                    `You cannot equip multiple copies of the same gear card: "${item.name}"`,
+                    'error'
+                  );
                   break;
                 case 'duplicate_sidearm':
-                  alert(`You cannot equip multiple copies of the same sidearm: "${item.name}"`);
+                  showToast(
+                    `You cannot equip multiple copies of the same sidearm: "${item.name}"`,
+                    'error'
+                  );
                   break;
                 case 'duplicate_accessory':
-                  alert(`You cannot equip multiple copies of the same accessory: "${item.name}"`);
+                  showToast(
+                    `You cannot equip multiple copies of the same accessory: "${item.name}"`,
+                    'error'
+                  );
                   break;
                 case 'duplicate_upgrade':
-                  alert(`You cannot equip multiple copies of the same upgrade: "${item.name}"`);
+                  showToast(
+                    `You cannot equip multiple copies of the same upgrade: "${item.name}"`,
+                    'error'
+                  );
                   break;
                 case 'weapon_cost_limit':
-                  alert(
-                    `Weapons that cost 6 or more build points cannot be equipped in games with 24 or fewer build points.\n` +
-                      `This weapon costs ${validationResult.weaponCost} points, but your point limit is ${validationResult.pointLimit}.`
+                  showToast(
+                    `Weapons that cost 6+ BP cannot be used in games with ${validationResult.pointLimit} BP or less. This weapon costs ${validationResult.weaponCost} BP.`,
+                    'error'
                   );
                   break;
                 case 'crew_limit_reached':
-                  alert(
-                    `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`
+                  showToast(
+                    `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`,
+                    'error'
                   );
                   break;
                 case 'structure_limit_reached':
                   if (validationResult.area) {
-                    alert(
-                      `You cannot add another structure card to the ${validationResult.area} of your car.`
+                    showToast(
+                      `You cannot add another structure card to the ${validationResult.area} of your car.`,
+                      'error'
                     );
                   } else {
-                    alert(`You cannot add more than 4 structure cards to your car.`);
+                    showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
                   }
                   break;
                 case 'same_subtype':
                   if (validationResult.conflictingCard) {
                     const cardType = item.type.toLowerCase();
-                    alert(
-                      `You cannot equip multiple ${cardType} cards of the same subtype: "${item.subtype}"\n` +
-                        `You already have "${validationResult.conflictingCard.name}" equipped.`
+                    showToast(
+                      `Cannot equip multiple ${cardType}s with same subtype: "${item.subtype}" (already have "${validationResult.conflictingCard.name}")`,
+                      'error'
                     );
                   } else {
                     const cardType = item.type.toLowerCase();
-                    alert(
-                      `You cannot equip multiple ${cardType} cards of the same subtype: "${item.subtype}"`
+                    showToast(
+                      `Cannot equip multiple ${cardType} cards of the same subtype: "${item.subtype}"`,
+                      'error'
                     );
                   }
                   break;
                 case 'not_enough_points':
                 default:
-                  alert('Not enough points to add this card to your deck!');
+                  showToast('Not enough points to add this card to your deck!', 'error');
               }
             }
           } else if (item.source === 'deck') {
@@ -356,8 +374,9 @@ export function DeckLayout() {
               );
 
               if (hasStructureInArea) {
-                alert(
-                  `You cannot move this structure card to the ${area} of your car as another structure is already placed there.`
+                showToast(
+                  `You cannot move this structure card to the ${area} of your car as another structure is already placed there.`,
+                  'error'
                 );
                 return;
               }
@@ -365,6 +384,7 @@ export function DeckLayout() {
 
             // Move card between areas
             updateCardArea(item.id, area);
+            showToast(`Moved ${item.name} to the ${area} area`, 'info');
           }
         },
         collect: (monitor: any) => ({

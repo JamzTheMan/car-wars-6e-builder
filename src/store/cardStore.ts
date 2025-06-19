@@ -343,10 +343,8 @@ export const useCardStore = create<CardStore>()(
               const hasStructureInArea = state.currentDeck.cards.some(c => 
                 c.type === 'Structure' && c.area === defaultArea
               );
-              
-              if (hasStructureInArea) {
-                // Return state unchanged, the calling code should handle this rejection
-                alert(`You cannot add more than one structure card to the ${defaultArea} of your car.`);
+                if (hasStructureInArea) {
+                // Just return state unchanged - error handled by components through validation
                 return state;
               }
             }

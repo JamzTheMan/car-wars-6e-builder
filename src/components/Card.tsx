@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPlus, faClone, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { deleteCardImage } from '@/utils/cardDelete';
 import { useState } from 'react';
+import { useToast } from './Toast';
 
 // Extended type for dragging with source information
 interface DragItem extends CardType {
@@ -27,6 +28,7 @@ interface CardProps {
 export function Card({ card, isDraggable = true, isInCollection = true }: CardProps) {
   const { removeFromCollection, removeFromDeck, addToDeck, canAddCardToDeck } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const { showToast } = useToast();
 
   const [{ isDragging }, dragRef] = useDrag<DragItem, unknown, { isDragging: boolean }>(
     () => ({
@@ -85,58 +87,74 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
     if (validationResult.allowed) {
       addToDeck(card.id, area);
       setIsPreviewOpen(false); // Close the preview after adding
+      showToast(`Added ${card.name} to your car`, 'success');
     } else {
       // Display appropriate error message
       switch (validationResult.reason) {
         case 'duplicate_gear':
-          alert(`You cannot equip multiple copies of the same gear card: "${card.name}"`);
+          showToast(
+            `You cannot equip multiple copies of the same gear card: "${card.name}"`,
+            'error'
+          );
           break;
         case 'duplicate_sidearm':
-          alert(`You cannot equip multiple copies of the same sidearm: "${card.name}"`);
+          showToast(
+            `You cannot equip multiple copies of the same sidearm: "${card.name}"`,
+            'error'
+          );
           break;
         case 'duplicate_accessory':
-          alert(`You cannot equip multiple copies of the same accessory: "${card.name}"`);
+          showToast(
+            `You cannot equip multiple copies of the same accessory: "${card.name}"`,
+            'error'
+          );
           break;
         case 'duplicate_upgrade':
-          alert(`You cannot equip multiple copies of the same upgrade: "${card.name}"`);
+          showToast(
+            `You cannot equip multiple copies of the same upgrade: "${card.name}"`,
+            'error'
+          );
           break;
         case 'weapon_cost_limit':
-          alert(
-            `Weapons that cost 6 or more build points cannot be equipped in games with 24 or fewer build points.\n` +
-              `This weapon costs ${validationResult.weaponCost} points, but your point limit is ${validationResult.pointLimit}.`
+          showToast(
+            `Weapons that cost 6+ BP cannot be used in games with ${validationResult.pointLimit} BP or less. This weapon costs ${validationResult.weaponCost} BP.`,
+            'error'
           );
           break;
         case 'crew_limit_reached':
-          alert(
-            `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`
+          showToast(
+            `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`,
+            'error'
           );
           break;
         case 'structure_limit_reached':
           if (validationResult.area) {
-            alert(
-              `You cannot add another structure card to the ${validationResult.area} of your car.`
+            showToast(
+              `You cannot add another structure card to the ${validationResult.area} of your car.`,
+              'error'
             );
           } else {
-            alert(`You cannot add more than 4 structure cards to your car.`);
+            showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
           }
           break;
         case 'same_subtype':
           if (validationResult.conflictingCard) {
             const cardType = card.type.toLowerCase();
-            alert(
-              `You cannot equip multiple ${cardType} cards of the same subtype: "${card.subtype}"\n` +
-                `You already have "${validationResult.conflictingCard.name}" equipped.`
+            showToast(
+              `Cannot equip multiple ${cardType}s with same subtype: "${card.subtype}" (already have "${validationResult.conflictingCard.name}")`,
+              'error'
             );
           } else {
             const cardType = card.type.toLowerCase();
-            alert(
-              `You cannot equip multiple ${cardType} cards of the same subtype: "${card.subtype}"`
+            showToast(
+              `Cannot equip multiple ${cardType} cards of the same subtype: "${card.subtype}"`,
+              'error'
             );
           }
           break;
         case 'not_enough_points':
         default:
-          alert('Not enough points to add this card to your deck!');
+          showToast('Not enough points to add this card to your deck!', 'error');
       }
     }
   };
