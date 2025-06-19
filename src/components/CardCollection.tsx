@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/Card';
 import { useCardStore } from '@/store/cardStore';
 import { CardType, CardTypeCategories } from '@/types/types';
@@ -32,6 +32,27 @@ export function CardCollection() {
     clearCollection
   } = useCardStore();
   
+  // Get unique subtypes and sources from the collection
+  const uniqueSubtypes = useMemo(() => {
+    const subtypes = new Set<string>();
+    cards.forEach(card => {
+      if (card.subtype && card.subtype.trim() !== '') {
+        subtypes.add(card.subtype);
+      }
+    });
+    return Array.from(subtypes).sort();
+  }, [cards]);
+
+  const uniqueSources = useMemo(() => {
+    const sources = new Set<string>();
+    cards.forEach(card => {
+      if (card.source && card.source.trim() !== '') {
+        sources.add(card.source);
+      }
+    });
+    return Array.from(sources).sort();
+  }, [cards]);
+
   // Create a multi-drop target that accepts both files and cards
   const [{ isOver, isCardOver }, drop] = useDrop({
     accept: ['CARD', NativeTypes.FILE],
@@ -196,8 +217,7 @@ export function CardCollection() {
       className="p-2 h-full relative"
     >      
       <div className="mb-4">
-        <div className="flex flex-col space-y-3">
-          {/* Row 1: Card Type and Subtype */}
+        <div className="flex flex-col space-y-3">          {/* Row 1: Card Type and Subtype */}
           <div className="flex items-end space-x-2">
             <div className="flex-1">
               <label className="font-medium">Card Type</label>
@@ -225,14 +245,31 @@ export function CardCollection() {
               </select>
             </div>
             <div className="flex-1">
-              <label className="font-medium">Subtype</label>
-              <input
-                type="text"
-                value={newCardSubtype}
-                onChange={(e) => setNewCardSubtype(e.target.value)}
+              <label className="font-medium">Subtype</label>              <select
+                value={uniqueSubtypes.includes(newCardSubtype) ? newCardSubtype : newCardSubtype ? "custom" : ""}
+                onChange={(e) => {
+                  if (e.target.value !== "custom") {
+                    setNewCardSubtype(e.target.value);
+                  }
+                }}
                 className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                placeholder="e.g. Blast, Tier 1, etc."
-              />
+              >
+                <option value="">-- Select Subtype --</option>
+                {uniqueSubtypes.map((subtype) => (
+                  <option key={subtype} value={subtype}>{subtype}</option>
+                ))}
+                <option value="custom">-- Custom Subtype --</option>
+              </select>
+              {newCardSubtype && !uniqueSubtypes.includes(newCardSubtype) && (
+                <input
+                  type="text"
+                  value={newCardSubtype}
+                  onChange={(e) => setNewCardSubtype(e.target.value)}
+                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full mt-1"
+                  placeholder="Enter custom subtype"
+                  autoFocus
+                />
+              )}
             </div>
           </div>
           
@@ -263,30 +300,42 @@ export function CardCollection() {
             </div>
           </div>
           
-          {/* Row 3: Number Allowed and Source */}
+          {/* Row 3: Source only (Number Allowed removed) */}
           <div className="flex items-end space-x-2">
-            <div className="w-28">
-              <label className="font-medium">Number Allowed</label>
-              <select
-                value={newNumberAllowed}
-                onChange={(e) => setNewNumberAllowed(Number(e.target.value))}
+            <div className="flex-1">
+              <label className="font-medium">Source</label>              <select
+                value={uniqueSources.includes(newSource) ? newSource : newSource ? "custom" : ""}
+                onChange={(e) => {
+                  if (e.target.value !== "custom") {
+                    setNewSource(e.target.value);
+                  }
+                }}
                 className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
               >
-                {[...Array(9).keys()].map((num) => (
-                  <option key={num+1} value={num+1}>{num+1}</option>
+                <option value="">-- Select Source --</option>
+                {uniqueSources.map((source) => (
+                  <option key={source} value={source}>{source}</option>
                 ))}
+                <option value="custom">-- Custom Source --</option>
               </select>
+              {newSource && !uniqueSources.includes(newSource) && (
+                <input
+                  type="text"
+                  value={newSource}
+                  onChange={(e) => setNewSource(e.target.value)}
+                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full mt-1"
+                  placeholder="Enter custom source"
+                  autoFocus
+                />
+              )}
             </div>
-            <div className="flex-1">
-              <label className="font-medium">Source</label>
-              <input
-                type="text"
-                value={newSource}
-                onChange={(e) => setNewSource(e.target.value)}
-                className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                placeholder="e.g. Core Set, Uncle Al's Upgrade, etc."
-              />
-            </div>
+            
+            {/* Hidden Number Allowed field - setting default to 1 */}
+            <input
+              type="hidden"
+              value="1"
+              onChange={(e) => setNewNumberAllowed(1)}
+            />
           </div>
         </div>
       </div>
