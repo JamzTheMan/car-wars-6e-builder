@@ -186,6 +186,8 @@ export function DeckLayoutMenu() {
                     }
                   }}
                   className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
+                  title="Crew Points Limit"
+                  placeholder="Enter crew points"
                 />
               </div>
               {/* Save Changes Button */}
