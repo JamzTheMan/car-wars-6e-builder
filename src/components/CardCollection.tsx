@@ -28,7 +28,8 @@ export function CardCollection() {
     removeFromDeck,
     removeFromCollection,
     resetDeck,
-    currentDeck
+    currentDeck,
+    clearCollection
   } = useCardStore();
   
   // Create a multi-drop target that accepts both files and cards

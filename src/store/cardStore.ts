@@ -76,9 +76,7 @@ export const useCardStore = create<CardStore>()(
       addToCollectionWithId: (card: Card) => set((state) => {
         // Add card with specific ID to collection
         return { collectionCards: [...state.collectionCards, card] };
-      }),
-
-      removeFromCollection: (id: string) => set((state) => {
+      }),      removeFromCollection: (id: string) => set((state) => {
         // Also remove any instances from the deck
         if (state.currentDeck) {
           const deckCardInstances = state.currentDeck.cards.filter(card => 
@@ -115,6 +113,24 @@ export const useCardStore = create<CardStore>()(
         return { 
           collectionCards: state.collectionCards.filter(card => card.id !== id)
         };
+      }),
+      
+      clearCollection: () => set((state) => {
+        // First, reset the deck if it exists
+        if (state.currentDeck) {
+          // Start with an empty deck 
+          return {
+            collectionCards: [],
+            currentDeck: {
+              ...state.currentDeck,
+              cards: [],
+              pointsUsed: { buildPoints: 0, crewPoints: 0 }
+            }
+          };
+        }
+        
+        // If no deck, just clear the collection
+        return { collectionCards: [] };
       }),
         addToDeck: (cardId: string, area?: CardArea) => set((state) => {
         if (!state.currentDeck) return state;

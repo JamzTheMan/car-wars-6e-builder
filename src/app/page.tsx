@@ -9,7 +9,7 @@ import { DeckLayout, DeckLayoutMenu, VehicleName } from '@/components/DeckLayout
 import { useCardStore } from '@/store/cardStore';
 import { useCardUpload } from '@/context/CardUploadContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faUpload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { uploadCardImage } from '@/utils/cardUpload';
 
 function PointsSummary() {
@@ -30,7 +30,9 @@ function PointsSummary() {
 
 function CardCollectionTitleUpload() {
   const [uploadingCard, setUploadingCard] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const { 
     newCardType, 
     newCardSubtype,
@@ -39,11 +41,26 @@ function CardCollectionTitleUpload() {
     newNumberAllowed,
     newSource
   } = useCardUpload();
-  const { addToCollection, removeFromCollection, addToCollectionWithId, collectionCards } = useCardStore();
+  const { addToCollection, removeFromCollection, addToCollectionWithId, collectionCards, clearCollection } = useCardStore();
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  
+  // Handle clicking outside to close the menu
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setMenuOpen(false); // Close menu after selecting file
 
     try {
       setUploadingCard(true);
@@ -119,8 +136,22 @@ function CardCollectionTitleUpload() {
     }
   };
 
+  const handleClearAllClick = () => {
+    setShowClearConfirm(true);
+    setMenuOpen(false);
+  };
+  
+  const handleConfirmClear = () => {
+    clearCollection();
+    setShowClearConfirm(false);
+  };
+  
+  const handleCancelClear = () => {
+    setShowClearConfirm(false);
+  };
+
   return (
-    <div>
+    <div className="relative" ref={menuRef}>
       <input
         type="file"
         ref={fileInputRef}
@@ -129,14 +160,70 @@ function CardCollectionTitleUpload() {
         disabled={uploadingCard}
         className="hidden"
       />
+      
+      {/* Hamburger menu button */}
       <button
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploadingCard}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm flex items-center gap-2"
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
+        aria-label="Menu"
       >
-        <FontAwesomeIcon icon={faUpload} className="w-4 h-4" />
-        Upload Card
+        <div className="flex flex-col gap-1 items-center justify-center w-4">
+          <div className="w-full h-0.5 bg-white"></div>
+          <div className="w-full h-0.5 bg-white"></div>
+          <div className="w-full h-0.5 bg-white"></div>
+        </div>
       </button>
+      
+      {/* Dropdown menu */}
+      {menuOpen && (
+        <div className="absolute right-0 mt-1 bg-gray-800 border border-gray-700 rounded shadow-lg z-10 w-48">
+          <ul className="py-1">
+            <li>
+              <button
+                onClick={() => {
+                  fileInputRef.current?.click();
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
+              >
+                <FontAwesomeIcon icon={faUpload} className="w-4 h-4" />
+                Upload Card
+              </button>
+            </li>
+            {collectionCards.length > 0 && (
+              <li>
+                <button
+                  onClick={handleClearAllClick}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+                  Clear All Cards
+                </button>
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
+      
+      {/* Clear All confirmation dialog */}
+      {showClearConfirm && (
+        <div className="absolute right-0 mt-1 bg-gray-800 border border-gray-700 rounded shadow-lg z-10 p-3">
+          <p className="text-sm text-red-400 mb-2">Delete all cards. Are you sure?</p>
+          <div className="flex justify-end space-x-2">
+            <button 
+              onClick={handleConfirmClear}
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+            >
+              Yes
+            </button>
+            <button 
+              onClick={handleCancelClear}
+              className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
+            >
+              No
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
