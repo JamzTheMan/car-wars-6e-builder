@@ -292,6 +292,11 @@ export function DeckLayout() {
                 case 'duplicate_sidearm':
                   alert(`You cannot equip multiple copies of the same sidearm: "${item.name}"`);
                   break;
+                case 'crew_limit_reached':
+                  alert(
+                    `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`
+                  );
+                  break;
                 case 'same_subtype':
                   if (validationResult.conflictingCard) {
                     const cardType = item.type.toLowerCase();

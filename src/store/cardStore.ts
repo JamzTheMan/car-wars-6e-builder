@@ -4,8 +4,9 @@ import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/t
 
 interface CardValidationResult {
   allowed: boolean;
-  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'same_subtype' | 'not_enough_points';
+  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached';
   conflictingCard?: Card;
+  crewType?: 'Driver' | 'Gunner';
 }
 
 interface CardStore {
@@ -120,6 +121,46 @@ export const useCardStore = create<CardStore>()(
             
             if (conflictingCard) {
               return { allowed: false, reason: 'same_subtype', conflictingCard };
+            }
+          }
+        }
+        // Special rules for Crew cards - limit to 1 Driver and 1 Gunner
+        if (card.type === 'Crew' && state.currentDeck.cards.length > 0) {
+          // Get all crew cards in the deck
+          const crewCardsInDeck = state.currentDeck.cards.filter(c => c.type === 'Crew');
+          
+          // Check if the card is a driver or gunner
+          if (card.subtype && card.subtype.trim() !== '') {
+            const subtypeNormalized = card.subtype.trim().toLowerCase();
+            
+            // Check for Driver limit
+            if (subtypeNormalized === 'driver') {
+              const hasDriver = crewCardsInDeck.some(c => 
+                c.subtype && c.subtype.trim().toLowerCase() === 'driver'
+              );
+              
+              if (hasDriver) {
+                return { 
+                  allowed: false, 
+                  reason: 'crew_limit_reached', 
+                  crewType: 'Driver'
+                };
+              }
+            }
+            
+            // Check for Gunner limit
+            if (subtypeNormalized === 'gunner') {
+              const hasGunner = crewCardsInDeck.some(c => 
+                c.subtype && c.subtype.trim().toLowerCase() === 'gunner'
+              );
+              
+              if (hasGunner) {
+                return { 
+                  allowed: false, 
+                  reason: 'crew_limit_reached', 
+                  crewType: 'Gunner'  
+                };
+              }
             }
           }
         }
