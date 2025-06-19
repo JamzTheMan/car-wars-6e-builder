@@ -456,7 +456,7 @@ export function CardCollection() {
       )}
       
       {/* Cards grid with fallback message */}
-      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${isUploading ? 'opacity-50' : ''}`}>
+      <div className={`grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(120px,1fr))] ${isUploading ? 'opacity-50' : ''}`}>
         {cards.length > 0 ? (
           filteredCards.map((card) => (
             <Card key={card.id} card={card} isInCollection={true} />
