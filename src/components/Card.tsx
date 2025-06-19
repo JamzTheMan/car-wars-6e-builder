@@ -81,7 +81,6 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
   };
   const handleAddToDeck = (e: React.MouseEvent, area?: CardArea) => {
     e.stopPropagation();
-
     const validationResult = canAddCardToDeck(card);
 
     if (validationResult.allowed) {
@@ -93,14 +92,21 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         case 'duplicate_gear':
           alert(`You cannot equip multiple copies of the same gear card: "${card.name}"`);
           break;
+        case 'duplicate_sidearm':
+          alert(`You cannot equip multiple copies of the same sidearm: "${card.name}"`);
+          break;
         case 'same_subtype':
           if (validationResult.conflictingCard) {
+            const cardType = card.type.toLowerCase();
             alert(
-              `You cannot equip multiple gear cards of the same subtype: "${card.subtype}"\n` +
+              `You cannot equip multiple ${cardType} cards of the same subtype: "${card.subtype}"\n` +
                 `You already have "${validationResult.conflictingCard.name}" equipped.`
             );
           } else {
-            alert(`You cannot equip multiple gear cards of the same subtype: "${card.subtype}"`);
+            const cardType = card.type.toLowerCase();
+            alert(
+              `You cannot equip multiple ${cardType} cards of the same subtype: "${card.subtype}"`
+            );
           }
           break;
         case 'not_enough_points':

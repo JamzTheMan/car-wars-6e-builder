@@ -4,7 +4,7 @@ import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/t
 
 interface CardValidationResult {
   allowed: boolean;
-  reason?: 'duplicate_gear' | 'same_subtype' | 'not_enough_points';
+  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'same_subtype' | 'not_enough_points';
   conflictingCard?: Card;
 }
 
@@ -77,28 +77,27 @@ export const useCardStore = create<CardStore>()(
         if (!canAdd) {
           return { allowed: false, reason: 'not_enough_points' };
         }
-        
-        // Special rules for Gear cards only:
-        if (card.type === 'Gear' && state.currentDeck.cards.length > 0) {
-            // Get all gear cards currently in the deck
-          const gearCardsInDeck = state.currentDeck.cards.filter(c => c.type === 'Gear');
+          // Special rules for Gear and Sidearm cards:
+        if ((card.type === 'Gear' || card.type === 'Sidearm') && state.currentDeck.cards.length > 0) {
+          // Get all cards of the same type currently in the deck
+          const sameTypeCardsInDeck = state.currentDeck.cards.filter(c => c.type === card.type);
           
-          // Rule 1: Cannot equip multiple copies of the same gear card by name
+          // Rule 1: Cannot equip multiple copies of the same card by name
           // This is the primary check - if names match, it's a duplicate
-          const hasSameGearCard = gearCardsInDeck.some(c => c.name === card.name);
+          const hasSameNameCard = sameTypeCardsInDeck.some(c => c.name === card.name);
           
           // Rule 1b: For real images (not placeholders), check if they're the same
           // This handles custom uploaded cards that might have same image but different names
           const isCardPlaceholder = !card.imageUrl || 
             card.imageUrl.includes('Blank_') || 
             card.imageUrl.includes('placeholders/');
-            // Check for placeholder images
+          // Check for placeholder images
           
           let hasSameImage = false;
           
           // Only do the image check if the new card has a real (non-placeholder) image
           if (!isCardPlaceholder) {
-            hasSameImage = gearCardsInDeck.some(c => {
+            hasSameImage = sameTypeCardsInDeck.some(c => {
               const isDeckCardPlaceholder = !c.imageUrl || 
                 c.imageUrl.includes('Blank_') || 
                 c.imageUrl.includes('placeholders/');
@@ -107,15 +106,19 @@ export const useCardStore = create<CardStore>()(
               return !isDeckCardPlaceholder && c.imageUrl === card.imageUrl;
             });
           }
-            if (hasSameGearCard || hasSameImage) {
-            return { allowed: false, reason: 'duplicate_gear' };
+          
+          if (hasSameNameCard || hasSameImage) {
+            const reasonType = card.type === 'Gear' ? 'duplicate_gear' : 'duplicate_sidearm';
+            return { allowed: false, reason: reasonType };
           }
-            // Rule 2: Cannot equip a gear card with the same subtype as an existing gear card
+          
+          // Rule 2: Cannot equip a card with the same subtype as an existing card of the same type
           if (card.subtype && card.subtype.trim() !== '') {
-            const conflictingCard = gearCardsInDeck.find(c => 
+            const conflictingCard = sameTypeCardsInDeck.find(c => 
               c.subtype && c.subtype.trim() !== '' && c.subtype.toLowerCase() === card.subtype.toLowerCase()
             );
-              if (conflictingCard) {
+            
+            if (conflictingCard) {
               return { allowed: false, reason: 'same_subtype', conflictingCard };
             }
           }

@@ -289,15 +289,20 @@ export function DeckLayout() {
                 case 'duplicate_gear':
                   alert(`You cannot equip multiple copies of the same gear card: "${item.name}"`);
                   break;
+                case 'duplicate_sidearm':
+                  alert(`You cannot equip multiple copies of the same sidearm: "${item.name}"`);
+                  break;
                 case 'same_subtype':
                   if (validationResult.conflictingCard) {
+                    const cardType = item.type.toLowerCase();
                     alert(
-                      `You cannot equip multiple gear cards of the same subtype: "${item.subtype}"\n` +
+                      `You cannot equip multiple ${cardType} cards of the same subtype: "${item.subtype}"\n` +
                         `You already have "${validationResult.conflictingCard.name}" equipped.`
                     );
                   } else {
+                    const cardType = item.type.toLowerCase();
                     alert(
-                      `You cannot equip multiple gear cards of the same subtype: "${item.subtype}"`
+                      `You cannot equip multiple ${cardType} cards of the same subtype: "${item.subtype}"`
                     );
                   }
                   break;
