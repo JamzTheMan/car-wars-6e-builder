@@ -15,3 +15,8 @@ Key Features:
 - Drag and drop interface
 - Card metadata (type, cost, etc.)
 - Responsive design
+
+## Development Preferences
+- Prettier is configured to run on save, no need to explicitly run formatting commands
+- ESLint is used for code quality checks
+- Follow existing code style conventions

@@ -280,10 +280,31 @@ export function DeckLayout() {
         drop: (item: CardType & { source: 'collection' | 'deck' }) => {
           if (item.source === 'collection') {
             // Add from collection to specific area
-            if (canAddCardToDeck(item)) {
+            const validationResult = canAddCardToDeck(item);
+            if (validationResult.allowed) {
               addToDeck(item.id, area);
             } else {
-              alert('Not enough points to add this card to your deck!');
+              // Display appropriate error message
+              switch (validationResult.reason) {
+                case 'duplicate_gear':
+                  alert(`You cannot equip multiple copies of the same gear card: "${item.name}"`);
+                  break;
+                case 'same_subtype':
+                  if (validationResult.conflictingCard) {
+                    alert(
+                      `You cannot equip multiple gear cards of the same subtype: "${item.subtype}"\n` +
+                        `You already have "${validationResult.conflictingCard.name}" equipped.`
+                    );
+                  } else {
+                    alert(
+                      `You cannot equip multiple gear cards of the same subtype: "${item.subtype}"`
+                    );
+                  }
+                  break;
+                case 'not_enough_points':
+                default:
+                  alert('Not enough points to add this card to your deck!');
+              }
             }
           } else if (item.source === 'deck') {
             // Move card between areas

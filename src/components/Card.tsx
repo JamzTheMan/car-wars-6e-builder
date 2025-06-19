@@ -79,14 +79,34 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
       removeFromDeck(card.id);
     }
   };
-
   const handleAddToDeck = (e: React.MouseEvent, area?: CardArea) => {
     e.stopPropagation();
-    if (canAddCardToDeck(card)) {
+
+    const validationResult = canAddCardToDeck(card);
+
+    if (validationResult.allowed) {
       addToDeck(card.id, area);
       setIsPreviewOpen(false); // Close the preview after adding
     } else {
-      alert('Not enough points to add this card to your deck!');
+      // Display appropriate error message
+      switch (validationResult.reason) {
+        case 'duplicate_gear':
+          alert(`You cannot equip multiple copies of the same gear card: "${card.name}"`);
+          break;
+        case 'same_subtype':
+          if (validationResult.conflictingCard) {
+            alert(
+              `You cannot equip multiple gear cards of the same subtype: "${card.subtype}"\n` +
+                `You already have "${validationResult.conflictingCard.name}" equipped.`
+            );
+          } else {
+            alert(`You cannot equip multiple gear cards of the same subtype: "${card.subtype}"`);
+          }
+          break;
+        case 'not_enough_points':
+        default:
+          alert('Not enough points to add this card to your deck!');
+      }
     }
   };
 

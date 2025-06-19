@@ -2,6 +2,12 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/types/types';
 
+interface CardValidationResult {
+  allowed: boolean;
+  reason?: 'duplicate_gear' | 'same_subtype' | 'not_enough_points';
+  conflictingCard?: Card;
+}
+
 interface CardStore {
   collectionCards: Card[];
   currentDeck: DeckLayout | null;
@@ -17,7 +23,7 @@ interface CardStore {
   updateDeckName: (name: string) => void;
   updateDeckBackground: (imageUrl: string) => void;
   updatePointLimits: (limits: PointLimits) => void;
-  canAddCardToDeck: (card: Card) => boolean;
+  canAddCardToDeck: (card: Card) => CardValidationResult;
   getAvailablePoints: () => { buildPoints: number; crewPoints: number };
   resetDeck: () => void;
 }
@@ -48,10 +54,12 @@ export const useCardStore = create<CardStore>()(
           crewPoints:
             state.currentDeck.pointLimits.crewPoints - state.currentDeck.pointsUsed.crewPoints,
         };
-      },
-      canAddCardToDeck: (card: Card) => {
+      },      canAddCardToDeck: (card: Card) => {
+        // Check if we can add the card to the current deck
         const state = get();
-        if (!state.currentDeck) return false;
+        if (!state.currentDeck) {
+          return { allowed: false, reason: 'not_enough_points' };
+        }
 
         const availablePoints = get().getAvailablePoints();
 
@@ -65,8 +73,54 @@ export const useCardStore = create<CardStore>()(
         if (card.crewPointCost > 0) {
           canAdd = canAdd && availablePoints.crewPoints >= card.crewPointCost;
         }
-
-        return canAdd;
+          // Not enough points
+        if (!canAdd) {
+          return { allowed: false, reason: 'not_enough_points' };
+        }
+        
+        // Special rules for Gear cards only:
+        if (card.type === 'Gear' && state.currentDeck.cards.length > 0) {
+            // Get all gear cards currently in the deck
+          const gearCardsInDeck = state.currentDeck.cards.filter(c => c.type === 'Gear');
+          
+          // Rule 1: Cannot equip multiple copies of the same gear card by name
+          // This is the primary check - if names match, it's a duplicate
+          const hasSameGearCard = gearCardsInDeck.some(c => c.name === card.name);
+          
+          // Rule 1b: For real images (not placeholders), check if they're the same
+          // This handles custom uploaded cards that might have same image but different names
+          const isCardPlaceholder = !card.imageUrl || 
+            card.imageUrl.includes('Blank_') || 
+            card.imageUrl.includes('placeholders/');
+            // Check for placeholder images
+          
+          let hasSameImage = false;
+          
+          // Only do the image check if the new card has a real (non-placeholder) image
+          if (!isCardPlaceholder) {
+            hasSameImage = gearCardsInDeck.some(c => {
+              const isDeckCardPlaceholder = !c.imageUrl || 
+                c.imageUrl.includes('Blank_') || 
+                c.imageUrl.includes('placeholders/');
+              
+              // Only compare when both are real images, not placeholders
+              return !isDeckCardPlaceholder && c.imageUrl === card.imageUrl;
+            });
+          }
+            if (hasSameGearCard || hasSameImage) {
+            return { allowed: false, reason: 'duplicate_gear' };
+          }
+            // Rule 2: Cannot equip a gear card with the same subtype as an existing gear card
+          if (card.subtype && card.subtype.trim() !== '') {
+            const conflictingCard = gearCardsInDeck.find(c => 
+              c.subtype && c.subtype.trim() !== '' && c.subtype.toLowerCase() === card.subtype.toLowerCase()
+            );
+              if (conflictingCard) {
+              return { allowed: false, reason: 'same_subtype', conflictingCard };
+            }
+          }
+        }
+        return { allowed: true };
       },
 
       addToCollection: (card: Omit<Card, 'id'>) =>
