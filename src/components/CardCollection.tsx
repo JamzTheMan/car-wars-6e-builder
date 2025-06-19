@@ -330,9 +330,11 @@ export function CardCollection() {
               <div>
                 <label className="font-medium text-sm">Card Type</label>
                 <select
+                  id="filter-card-type"
                   value={filterCardType}
                   onChange={e => setFilterCardType(e.target.value)}
                   className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                  aria-label="Card Type"
                 >
                   <option value="">Any Type</option>
                   <optgroup label="Build Point Cards">
@@ -357,8 +359,9 @@ export function CardCollection() {
               </div>{' '}
               {/* Subtype Filter */}
               <div>
-                <label className="font-medium text-sm">Subtype</label>
+                <label htmlFor="filter-subtype" className="font-medium text-sm">Subtype</label>
                 <select
+                  id="filter-subtype"
                   value={filterSubtype}
                   onChange={e => setFilterSubtype(e.target.value)}
                   className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
@@ -386,7 +389,10 @@ export function CardCollection() {
               {/* Cost Filter (Build or Crew Point Cost) */}
               <div>
                 <label className="font-medium text-sm">Cost (BP or CP)</label>
+                <label htmlFor="filter-cost" className="font-medium text-sm sr-only">Cost (BP or CP)</label>
                 <select
+                  id="filter-cost"
+                  title="Cost (BP or CP)"
                   value={filterCost === null ? '' : filterCost}
                   onChange={e =>
                     setFilterCost(e.target.value === '' ? null : Number(e.target.value))
@@ -404,7 +410,10 @@ export function CardCollection() {
               {/* Source Filter */}
               <div>
                 <label className="font-medium text-sm">Source</label>
+                <label htmlFor="filter-source" className="font-medium text-sm sr-only">Source</label>
                 <select
+                  id="filter-source"
+                  title="Source"
                   value={filterSource}
                   onChange={e => setFilterSource(e.target.value)}
                   className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
