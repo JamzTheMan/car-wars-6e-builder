@@ -7,7 +7,7 @@ import { generateVehicleNames } from '@/utils/vehicleNameGenerator';
 export function VehicleName() {
   const { currentDeck, updateDeckName } = useCardStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [vehicleName, setVehicleName] = useState(currentDeck?.name || 'Car Wars 6e Builder');
+  const [vehicleName, setVehicleName] = useState(currentDeck?.name || 'Car Wars 6e Car Builder');
   const [nameOptions, setNameOptions] = useState<string[]>([]);
   const randomButtonRef = useRef<HTMLButtonElement>(null);
   
@@ -60,10 +60,9 @@ export function VehicleName() {
             autoFocus
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleSaveName();
-              } else if (e.key === 'Escape') {
+                handleSaveName();              } else if (e.key === 'Escape') {
                 setIsEditing(false);
-                setVehicleName(currentDeck?.name || 'Car Wars 6e Builder');
+                setVehicleName(currentDeck?.name || 'Car Wars 6e Car Builder');
                 setNameOptions([]);
               }
             }}
@@ -122,11 +121,10 @@ export function VehicleName() {
                   </div>
                 </div>
               )}
-            </div>
-            <button
+            </div>            <button
               onClick={() => {
                 setIsEditing(false);
-                setVehicleName(currentDeck?.name || 'Car Wars 6e Builder');
+                setVehicleName(currentDeck?.name || 'Car Wars 6e Car Builder');
                 setNameOptions([]);
               }}
               className="text-xs bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded"

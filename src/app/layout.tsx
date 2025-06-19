@@ -9,8 +9,8 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Car Wars 6e Deck Builder",
-  description: "Build and organize your Car Wars 6th Edition card decks",
+  title: "Car Wars 6e Car Builder",
+  description: "Build and organize your Car Wars 6th Edition vehicle cards and decks",
 };
 
 export default function RootLayout({

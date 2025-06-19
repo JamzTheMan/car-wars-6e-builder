@@ -1,4 +1,16 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Car Wars 6e Car Builder
+
+A digital deck builder application for Car Wars 6th Edition, allowing players to create and organize their vehicle cards.
+
+## Features
+
+- Intuitive drag-and-drop interface for card placement
+- Card collection management
+- Image upload for cards
+- CSV import support for bulk card creation
+- Build point and crew point tracking
+- AADA division support
+- Responsive design
 
 ## Getting Started
 
