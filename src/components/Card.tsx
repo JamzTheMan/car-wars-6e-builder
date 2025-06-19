@@ -122,8 +122,12 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
           <FontAwesomeIcon icon={faPlus} className="w-3 h-3" />
         </button>
       )}
-        <div className="absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-90 text-gray-100 p-2">
-        <div className="text-sm font-bold">{card.name}</div>
+        {/* Card name at the top, left-justified, bold, black text, transparent white background, wraps, avoids cost circle */}
+      <div className="absolute z-10 left-0 right-7 top-0.75 text-left pointer-events-none select-none">
+        <span className="text-xs font-bold text-black break-words leading-tight block px-1" style={{ background: 'rgba(230, 230, 230, 0.77)', borderRadius: '0.25rem' }}>{card.name}</span>
+      </div>
+      {/* Card type and subtype at the bottom */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-90 text-gray-100 p-2">
         <div className="text-xs text-gray-300">
           {card.type} {card.subtype ? `- ${card.subtype}` : ''}
         </div>
