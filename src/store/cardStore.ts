@@ -8,6 +8,7 @@ interface CardStore {
   addToCollection: (card: Omit<Card, 'id'>) => void
   addToCollectionWithId: (card: Card) => void
   removeFromCollection: (id: string) => void
+  clearCollection: () => void
   addToDeck: (cardId: string, area?: CardArea) => void
   removeFromDeck: (id: string) => void
   updateCardPosition: (id: string, x: number, y: number) => void

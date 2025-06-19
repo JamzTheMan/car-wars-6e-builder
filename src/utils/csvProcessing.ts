@@ -4,10 +4,20 @@ import { parseCSV } from "./csvParser";
 /**
  * Generate a placeholder image URL for a card
  * @param cardType The type of the card
+ * @param subtype Optional subtype for specialized placeholders (like Driver or Gunner for Crew)
  * @returns A URL for a placeholder image
  */
-export function getPlaceholderImageUrl(cardType: CardType): string {
-  // Using the Blank_ prefix placeholder images for each card type
+export function getPlaceholderImageUrl(cardType: CardType, subtype?: string): string {
+  // Special case for Crew cards with Driver or Gunner subtypes
+  if (cardType === CardType.Crew && subtype) {
+    if (subtype.toLowerCase() === 'driver') {
+      return `/assets/placeholders/Blank_Crew_Driver.png`;
+    } else if (subtype.toLowerCase() === 'gunner') {
+      return `/assets/placeholders/Blank_Crew_Gunner.png`;
+    }
+  }
+  
+  // Default case using the Blank_ prefix placeholder images for each card type
   return `/assets/placeholders/Blank_${cardType}.png`;
 }
 
@@ -39,9 +49,9 @@ export function processCSVToCards(csvContent: string, collectionCards: Card[] = 
     
     // Try to find a matching blank card to use as a template
     const blankCard = findBlankCard(cardType, collectionCards);
-    
-    // Use the blank card's image if available, otherwise use the placeholders
-    const imageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType);
+      // Use the blank card's image if available, otherwise use the placeholders
+    const subtype = record['Subtype'] || ''; 
+    const imageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
     
     // Create a new card object
     return {
