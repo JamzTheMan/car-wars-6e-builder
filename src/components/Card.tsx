@@ -141,28 +141,30 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         data-y={card.position?.y ?? undefined}
         onClick={openPreview}
       >
-        {/* Cost badge: magenta for Sidearm, Crew, Gear; green for others, now flush to edge */}
-        {['Sidearm', 'Crew', 'Gear'].includes(card.type) ? (
-          <div
-            className="absolute top-0 left-0 text-white text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shadow border-2"
-            style={{ backgroundColor: '#d21873', borderColor: '#d21873' }}
-          >
-            {(() => {
-              const cost = (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
-              return cost;
-            })()}
-          </div>
-        ) : (
-          <div
-            className="absolute top-0 right-0 text-green-900 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shadow border-2"
-            style={{ backgroundColor: '#a2e4d9', borderColor: '#a2e4d9' }}
-          >
-            {(() => {
-              const cost = (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
-              return cost;
-            })()}
-          </div>
-        )}
+        {' '}
+        {/* Cost badge: only show when using placeholder image */}
+        {(!card.imageUrl || card.imageUrl.includes('Blank_')) &&
+          (['Sidearm', 'Crew', 'Gear'].includes(card.type) ? (
+            <div
+              className="absolute top-0 left-0 text-white text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shadow border-2"
+              style={{ backgroundColor: '#d21873', borderColor: '#d21873' }}
+            >
+              {(() => {
+                const cost = (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
+                return cost;
+              })()}
+            </div>
+          ) : (
+            <div
+              className="absolute top-0 right-0 text-green-900 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shadow border-2"
+              style={{ backgroundColor: '#a2e4d9', borderColor: '#a2e4d9' }}
+            >
+              {(() => {
+                const cost = (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
+                return cost;
+              })()}
+            </div>
+          ))}
         <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
         {/* Card name at the top, only if using a placeholder or no image */}
         {(!card.imageUrl || card.imageUrl.includes('Blank_')) &&
