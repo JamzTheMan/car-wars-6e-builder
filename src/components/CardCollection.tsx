@@ -22,13 +22,11 @@ export function CardCollection() {
     newSource, setNewSource
   } = useCardUpload();
   const [isUploading, setIsUploading] = useState(false);
-  
   // Filter states
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const [filterCardType, setFilterCardType] = useState<string>("");
   const [filterSubtype, setFilterSubtype] = useState<string>("");
-  const [filterBuildPointCost, setFilterBuildPointCost] = useState<number | null>(null);
-  const [filterCrewPointCost, setFilterCrewPointCost] = useState<number | null>(null);
+  const [filterCost, setFilterCost] = useState<number | null>(null);
   const [filterSource, setFilterSource] = useState<string>("");
   
   const {
@@ -62,8 +60,7 @@ export function CardCollection() {
     });
     return Array.from(sources).sort();
   }, [cards]);
-  
-  // Filter cards based on filter criteria
+    // Filter cards based on filter criteria
   const filteredCards = useMemo(() => {
     return cards.filter(card => {
       // Filter by card type
@@ -76,13 +73,8 @@ export function CardCollection() {
         return false;
       }
       
-      // Filter by build point cost
-      if (filterBuildPointCost !== null && card.buildPointCost !== filterBuildPointCost) {
-        return false;
-      }
-      
-      // Filter by crew point cost
-      if (filterCrewPointCost !== null && card.crewPointCost !== filterCrewPointCost) {
+      // Filter by cost (either build point cost OR crew point cost)
+      if (filterCost !== null && card.buildPointCost !== filterCost && card.crewPointCost !== filterCost) {
         return false;
       }
       
@@ -93,14 +85,12 @@ export function CardCollection() {
       
       return true;
     });
-  }, [cards, filterCardType, filterSubtype, filterBuildPointCost, filterCrewPointCost, filterSource]);
-  
-  // Reset all filters
+  }, [cards, filterCardType, filterSubtype, filterCost, filterSource]);
+    // Reset all filters
   const resetFilters = () => {
     setFilterCardType("");
     setFilterSubtype("");
-    setFilterBuildPointCost(null);
-    setFilterCrewPointCost(null);
+    setFilterCost(null);
     setFilterSource("");
   };
 
@@ -281,16 +271,14 @@ export function CardCollection() {
               className="mr-2 h-3 w-3" 
             />
             {filterPanelOpen ? "Hide Filters" : "Filter Cards"}
-            {(filterCardType || filterSubtype || filterBuildPointCost !== null || 
-              filterCrewPointCost !== null || filterSource) && 
+            {(filterCardType || filterSubtype || filterCost !== null || filterSource) && 
               <span className="ml-2 bg-blue-600 px-1.5 py-0.5 rounded-full text-xs">
                 Active
               </span>
             }
           </button>
           
-          {(filterCardType || filterSubtype || filterBuildPointCost !== null || 
-            filterCrewPointCost !== null || filterSource) && 
+          {(filterCardType || filterSubtype || filterCost !== null || filterSource) && 
             <div className="flex items-center">
               <span className="text-xs text-gray-400 mr-2">
                 {filteredCards.length} of {cards.length} cards
@@ -352,28 +340,12 @@ export function CardCollection() {
                   ))}
                 </select>
               </div>
-              
-              {/* Build Point Cost Filter */}
+                {/* Cost Filter (Build or Crew Point Cost) */}
               <div>
-                <label className="font-medium text-sm">Build Point Cost</label>
+                <label className="font-medium text-sm">Cost (BP or CP)</label>
                 <select
-                  value={filterBuildPointCost === null ? "" : filterBuildPointCost}
-                  onChange={(e) => setFilterBuildPointCost(e.target.value === "" ? null : Number(e.target.value))}
-                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                >
-                  <option value="">Any Cost</option>
-                  {[...Array(9).keys()].map((cost) => (
-                    <option key={cost} value={cost}>{cost}</option>
-                  ))}
-                </select>
-              </div>
-              
-              {/* Crew Point Cost Filter */}
-              <div>
-                <label className="font-medium text-sm">Crew Point Cost</label>
-                <select
-                  value={filterCrewPointCost === null ? "" : filterCrewPointCost}
-                  onChange={(e) => setFilterCrewPointCost(e.target.value === "" ? null : Number(e.target.value))}
+                  value={filterCost === null ? "" : filterCost}
+                  onChange={(e) => setFilterCost(e.target.value === "" ? null : Number(e.target.value))}
                   className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
                 >
                   <option value="">Any Cost</option>
@@ -401,124 +373,7 @@ export function CardCollection() {
           </div>
         )}
       </div>
-      
-      {/* Upload Settings Panel - hidden in the filter panel, always visible when filter panel is open */}
-      {filterPanelOpen && (
-        <div className="mb-4">
-          <div className="flex flex-col space-y-3 p-3 bg-gray-800 rounded border border-gray-700">
-            <h3 className="text-sm font-medium border-b border-gray-700 pb-1 mb-2">Upload Settings</h3>
-            <div className="flex flex-col space-y-3">
-              {/* Row 1: Card Type and Subtype */}
-              <div className="flex items-end space-x-2">
-                <div className="flex-1">
-                  <label className="font-medium">Card Type</label>
-                  <select
-                    value={newCardType}
-                    onChange={(e) => setNewCardType(e.target.value as CardType)}
-                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                  >
-                    <optgroup label="Build Point Cards">
-                      {Object.entries(CardTypeCategories)
-                        .filter(([_, category]) => category === 'BuildPoints')
-                        .map(([type]) => (
-                          <option key={type} value={type}>{type}</option>
-                        ))
-                      }
-                    </optgroup>
-                    <optgroup label="Crew Point Cards">
-                      {Object.entries(CardTypeCategories)
-                        .filter(([_, category]) => category === 'CrewPoints')
-                        .map(([type]) => (
-                          <option key={type} value={type}>{type}</option>
-                        ))
-                      }
-                    </optgroup>
-                  </select>
-                </div>
-                <div className="flex-1">
-                  <label className="font-medium">Subtype</label>
-                  <select
-                    value={uniqueSubtypes.includes(newCardSubtype) ? newCardSubtype : newCardSubtype ? "custom" : ""}
-                    onChange={(e) => {
-                      if (e.target.value !== "custom") {
-                        setNewCardSubtype(e.target.value);
-                      }
-                    }}
-                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                  >
-                    <option value="">-- Select Subtype --</option>
-                    {uniqueSubtypes.map((subtype) => (
-                      <option key={subtype} value={subtype}>{subtype}</option>
-                    ))}
-                  </select>
-                  {newCardSubtype && !uniqueSubtypes.includes(newCardSubtype) && (
-                    <input
-                      type="text"
-                      value={newCardSubtype}
-                      onChange={(e) => setNewCardSubtype(e.target.value)}
-                      className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full mt-1"
-                      placeholder="Enter custom subtype"
-                      autoFocus
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* Row 2: Build and Crew Point Costs */}
-              <div className="flex items-end space-x-2">
-                <div className="flex-1">
-                  <label className="font-medium">Build Point Cost</label>
-                  <select
-                    value={newBuildPointCost}
-                    onChange={(e) => setNewBuildPointCost(Number(e.target.value))}
-                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                  >
-                    {[...Array(9).keys()].map((cost) => (
-                      <option key={cost} value={cost}>{cost}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex-1">
-                  <label className="font-medium">Crew Point Cost</label>
-                  <select
-                    value={newCrewPointCost}
-                    onChange={(e) => setNewCrewPointCost(Number(e.target.value))}
-                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                  >
-                    {[...Array(9).keys()].map((cost) => (
-                      <option key={cost} value={cost}>{cost}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Row 3: Source only (Number Allowed removed) */}
-              <div className="flex items-end space-x-2">
-                <div className="flex-1">
-                  <label className="font-medium">Source</label>
-                  <select
-                    value={newSource}
-                    onChange={(e) => setNewSource(e.target.value)}
-                    className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                  >
-                    <option value="">-- Select Source --</option>
-                    {uniqueSources.map((source) => (
-                      <option key={source} value={source}>{source}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Hidden Number Allowed field - setting default to 1 */}
-                <input
-                  type="hidden"
-                  value="1"
-                  onChange={(e) => setNewNumberAllowed(1)}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+        {/* Upload Settings Panel removed - will be added back later */}
       
       {/* Drag overlay - shows when dragging */}
       {isOver && (
