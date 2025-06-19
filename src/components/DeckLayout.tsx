@@ -167,13 +167,20 @@ export function DeckLayoutMenu() {
                 <FontAwesomeIcon icon={faSave} className="mr-2" /> Save Build Points
               </button>
 
-              {/* Action Buttons - Moved to the bottom */}
-              <button
+              {/* Action Buttons - Moved to the bottom */}              <button
                 onClick={() => fileInputRef.current?.click()}
                 className="w-full bg-blue-700 hover:bg-blue-900 text-white px-4 py-2 rounded text-sm"
               >
                 <FontAwesomeIcon icon={faUpload} className="mr-2" /> Upload Background
               </button>
+                {currentDeck?.backgroundImage && (
+                <button
+                  onClick={() => updateDeckBackground('')}
+                  className="w-full bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded text-sm"
+                >
+                  Reset to Default Background
+                </button>
+              )}
 
               <button
                 onClick={() => {
@@ -234,12 +241,13 @@ export function DeckLayout() {
   }
 
   return (
-    <div className="p-4 h-full relative">
-      <div
+    <div className="p-4 h-full relative">      <div
         ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
         id="deck-layout"
         className="h-full relative bg-cover bg-center bg-gray-900 rounded border-2 border-dashed border-gray-700"
-        style={{ backgroundImage: currentDeck.backgroundImage ? `url(${currentDeck.backgroundImage})` : undefined }}
+        style={{ backgroundImage: currentDeck.backgroundImage 
+          ? `url(${currentDeck.backgroundImage})` 
+          : `url(/assets/placeholders/Dashboard.webp)` }}
       >
         {isOver && (
           <div className="absolute inset-0 bg-blue-500 bg-opacity-20 pointer-events-none" />

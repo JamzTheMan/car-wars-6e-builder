@@ -167,7 +167,7 @@ export default function Home() {
         setDeck({
           id: newId,
           name: randomName,
-          backgroundImage: '',
+          backgroundImage: '',  // We're still initializing with empty string, the DeckLayout will handle the default
           cards: [],
           pointLimits: {
             buildPoints: 16,
