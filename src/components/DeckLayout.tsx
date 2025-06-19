@@ -275,7 +275,7 @@ export function DeckLayout() {
     >        <div className="text-gray-300 text-sm font-medium mb-2 text-center opacity-70">
           {label}
         </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+      <div className="grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(120px,1fr))]">
         {areaCards.map((card) => (
           <Card
             key={card.id}
