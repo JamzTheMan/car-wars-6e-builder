@@ -8,9 +8,8 @@ export function CardCollectionHeader() {
   return (
     <>
       <h2 className="text-xl font-semibold">
-        Card Collection
-        <span className="ml-2 px-2 py-0.5 bg-gray-700 text-gray-200 rounded-full text-sm">
-          {collectionCards.length} card{collectionCards.length !== 1 ? 's' : ''}
+        Card Collection        <span className="ml-2 px-2 py-0.5 bg-gray-700 text-gray-200 rounded-full text-sm">
+          {collectionCards.length}
         </span>
       </h2>
     </>

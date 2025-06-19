@@ -173,7 +173,7 @@ export function DeckLayoutMenu() {
               >
                 <FontAwesomeIcon icon={faUpload} className="mr-2" /> Upload Background
               </button>
-                {currentDeck?.backgroundImage && (
+              {currentDeck?.backgroundImage && (
                 <button
                   onClick={() => updateDeckBackground('')}
                   className="w-full bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded text-sm"
@@ -211,16 +211,14 @@ export function DeckLayout() {
       </div>
     );
   }  // Helper function to create area drop targets
-  const AreaDropTarget = ({ 
-    area, 
-    label, 
-    className, 
-    position
-  }: { 
-    area: CardArea; 
-    label: string; 
-    className: string; 
-    position?: 'front' | 'back' | undefined
+  const AreaDropTarget = ({
+    area,
+    label,
+    className
+  }: {
+    area: CardArea;
+    label: string;
+    className: string;
   }) => {
     // Determine background color based on area type
     const getAreaColor = () => {
@@ -243,10 +241,10 @@ export function DeckLayout() {
       accept: 'CARD',
       canDrop: (item: CardType & { source: 'collection' | 'deck'; id: string }) => {
         // Check if the card type can go in this area
-        const cardToCheck = item.source === 'collection' 
+        const cardToCheck = item.source === 'collection'
           ? collectionCards.find((c: CardType) => c.id === item.id)
           : currentDeck.cards.find((c: CardType) => c.id === item.id);
-          
+
         return cardToCheck ? canCardTypeGoInArea(cardToCheck.type, area) : false;
       },
       drop: (item: CardType & { source: 'collection' | 'deck' }) => {
@@ -267,38 +265,28 @@ export function DeckLayout() {
       }),
     }), [area]);
 
-    // Get cards for this area, filtering by position if needed for Left/Right areas
-    let areaCards = currentDeck.cards.filter(card => card.area === area);
-    
-    // We're splitting Left/Right areas into front/back halves for visual organization
-    if ((area === CardArea.Left || area === CardArea.Right) && position) {
-      // For Left/Right areas, filter based on card position to allocate to front vs back section
-      // This is just for display purposes; the cards still belong to the same logical area
-      if (position === 'front') {
-        areaCards = areaCards.slice(0, Math.ceil(areaCards.length / 2));
-      } else if (position === 'back') {
-        areaCards = areaCards.slice(Math.ceil(areaCards.length / 2));
-      }
-    }    return (      <div
-        ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
-        className={`${className} ${getAreaColor()} rounded-md overflow-y-auto p-2 border-2 
-          ${isOver ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' : 'border-gray-600 hover:border-gray-400'} 
+    // Get all cards for this area
+    const areaCards = currentDeck.cards.filter(card => card.area === area);
+
+    return (<div
+      ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
+      className={`${className} ${getAreaColor()} rounded-md overflow-y-auto p-3 border-2 
+          ${isOver ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' : 'border-gray-600 hover:border-gray-500'} 
           transition-all duration-200 backdrop-blur-sm`}
-      >
-        <div className="text-white text-sm font-bold mb-2 text-center bg-black bg-opacity-70 py-1 rounded-sm">
-          {label} ({areaCards.length})
+    >        <div className="text-gray-300 text-sm font-medium mb-2 text-center opacity-70">
+          {label}
         </div>
-        <div className="flex flex-col gap-2">
-          {areaCards.map((card) => (
-            <Card
-              key={card.id}
-              card={card}
-              isDraggable={true}
-              isInCollection={false}
-            />
-          ))}
-        </div>
+      <div className="flex flex-col gap-2">
+        {areaCards.map((card) => (
+          <Card
+            key={card.id}
+            card={card}
+            isDraggable={true}
+            isInCollection={false}
+          />
+        ))}
       </div>
+    </div>
     );
   };
 
@@ -306,43 +294,27 @@ export function DeckLayout() {
     <div className="p-4 h-full relative">
       <div
         id="deck-layout"
-        className="h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden"        style={{ backgroundImage: currentDeck.backgroundImage 
-          ? `url(${currentDeck.backgroundImage})` 
-          : `url(/assets/placeholders/Dashboard.webp)` }}
-      >        {/* Car direction indicators */}
-        <div className="absolute top-1 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-70 rounded-full px-3 py-1 text-white text-xs z-10">
-          <span className="mr-2">⬆</span> Front
-        </div>
-        <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-70 rounded-full px-3 py-1 text-white text-xs z-10">
-          <span className="mr-2">⬇</span> Back
-        </div>
-        <div className="absolute top-1/2 left-1 transform -translate-y-1/2 bg-black bg-opacity-70 rounded-full px-3 py-1 text-white text-xs z-10">
-          <span className="mr-2">⬅</span> Left
-        </div>
-        <div className="absolute top-1/2 right-1 transform -translate-y-1/2 bg-black bg-opacity-70 rounded-full px-3 py-1 text-white text-xs z-10">
-          <span className="mr-2">➡</span> Right
-        </div>
-        
-        <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-3 p-4">{/* Top row */}
+        className="h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden" style={{
+          backgroundImage: currentDeck.backgroundImage
+            ? `url(${currentDeck.backgroundImage})`
+            : `url(/assets/placeholders/Dashboard.webp)`
+        }}
+      >        {/* No direction indicators - using area labels instead */}
+        <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-3 p-4">          {/* Top row */}
           <AreaDropTarget area={CardArea.Crew} label="Crew & Sidearms" className="h-full" />
-          <AreaDropTarget area={CardArea.Front} label="Front Weapons & Accessories" className="h-full" />
+          <AreaDropTarget area={CardArea.Front} label="Front Area" className="h-full" />
           <AreaDropTarget area={CardArea.GearUpgrade} label="Gear & Upgrades" className="h-full" />
-          
-          {/* Middle row */}
-          <AreaDropTarget area={CardArea.Left} label="Left Side (Front)" className="h-full" position="front" />          {/* Center area - car body visualization */}
-          <div className="flex flex-col items-center justify-center relative">
-            <div className="w-3/4 h-3/4 bg-black bg-opacity-30 border-2 border-gray-600 rounded-lg relative flex items-center justify-center">
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5 h-5 bg-gray-600 rounded-full"></div>
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-5 h-5 bg-gray-600 rounded-full"></div>
-              <div className="text-xs text-gray-300">Car Body</div>
-            </div>
+
+          {/* Middle and bottom rows - full height columns for Left and Right */}
+          <AreaDropTarget area={CardArea.Left} label="Left Side" className="row-span-2 h-full" />
+          {/* Center row is for the dashboard image */}
+          <div className="row-span-1">
+            {/* Empty space for dashboard graphic */}
           </div>
-          <AreaDropTarget area={CardArea.Right} label="Right Side (Front)" className="h-full" position="front" />
-          
-          {/* Bottom row */}
-          <AreaDropTarget area={CardArea.Left} label="Left Side (Rear)" className="h-full" position="back" />
-          <AreaDropTarget area={CardArea.Back} label="Rear Weapons & Accessories" className="h-full" />
-          <AreaDropTarget area={CardArea.Right} label="Right Side (Rear)" className="h-full" position="back" />        </div>
+          <AreaDropTarget area={CardArea.Right} label="Right Side" className="row-span-2 h-full" />
+
+          {/* Bottom center has the Back area */}
+          <AreaDropTarget area={CardArea.Back} label="Rear Area" className="h-full" /></div>
       </div>
     </div>
   );
