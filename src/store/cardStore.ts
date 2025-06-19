@@ -2,6 +2,31 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/types/types';
 
+// Helper function to sort cards by type, subtype, cost, then name
+const sortCards = (cards: Card[]): Card[] => {
+  return [...cards].sort((a, b) => {
+    // First, sort by card type
+    if (a.type !== b.type) {
+      return a.type.localeCompare(b.type);
+    }
+
+    // Then, sort by subtype
+    if (a.subtype !== b.subtype) {
+      return a.subtype.localeCompare(b.subtype);
+    }
+
+    // Then, sort by cost (considering both build and crew cost)
+    const aCost = a.buildPointCost || a.crewPointCost || 0;
+    const bCost = b.buildPointCost || b.crewPointCost || 0;
+    if (aCost !== bCost) {
+      return aCost - bCost;
+    }
+
+    // Finally, sort by name
+    return a.name.localeCompare(b.name);
+  });
+};
+
 interface CardValidationResult {
   allowed: boolean;
   reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'duplicate_accessory' | 'duplicate_upgrade' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached' | 'weapon_cost_limit';
@@ -232,21 +257,19 @@ export const useCardStore = create<CardStore>()(
           // DeckLayout's drop handler.
         }
         return { allowed: true };
-      },
-
-      addToCollection: (card: Omit<Card, 'id'>) =>
+      },      addToCollection: (card: Omit<Card, 'id'>) =>
         set(state => {
           // Create a new card with a unique ID
           const newCard = { ...card, id: crypto.randomUUID() };
 
-          // Add to collection only
-          return { collectionCards: [...state.collectionCards, newCard] };
+          // Add to collection and sort
+          return { collectionCards: sortCards([...state.collectionCards, newCard]) };
         }),
 
       addToCollectionWithId: (card: Card) =>
         set(state => {
-          // Add card with specific ID to collection
-          return { collectionCards: [...state.collectionCards, card] };
+          // Add card with specific ID to collection and sort
+          return { collectionCards: sortCards([...state.collectionCards, card]) };
         }),
       removeFromCollection: (id: string) =>
         set(state => {
@@ -267,10 +290,8 @@ export const useCardStore = create<CardStore>()(
                 if (card.crewPointCost > 0) {
                   updatedPointsUsed.crewPoints -= card.crewPointCost;
                 }
-              });
-
-              return {
-                collectionCards: state.collectionCards.filter(card => card.id !== id),
+              });              return {
+                collectionCards: sortCards(state.collectionCards.filter(card => card.id !== id)),
                 currentDeck: {
                   ...state.currentDeck,
                   cards: state.currentDeck.cards.filter(
@@ -280,15 +301,11 @@ export const useCardStore = create<CardStore>()(
                 },
               };
             }
-          }
-
-          // Just remove from collection if no deck instances
+          }          // Just remove from collection if no deck instances and ensure the result is sorted
           return {
-            collectionCards: state.collectionCards.filter(card => card.id !== id),
+            collectionCards: sortCards(state.collectionCards.filter(card => card.id !== id)),
           };
-        }),
-
-      clearCollection: () =>
+        }),      clearCollection: () =>
         set(state => {
           // First, reset the deck if it exists
           if (state.currentDeck) {
@@ -305,7 +322,7 @@ export const useCardStore = create<CardStore>()(
 
           // If no deck, just clear the collection
           return { collectionCards: [] };
-        }),      addToDeck: (cardId: string, area?: CardArea) =>
+        }),addToDeck: (cardId: string, area?: CardArea) =>
         set(state => {
           if (!state.currentDeck) return state;
 

@@ -111,9 +111,9 @@ export function CardCollection() {
       }
     });
     return Array.from(sources).sort();
-  }, [cards]);
-  // Filter cards based on filter criteria
+  }, [cards]); // Filter cards based on filter criteria
   const filteredCards = useMemo(() => {
+    // Cards are already sorted at the store level, so we just need to filter
     return cards.filter(card => {
       // Filter by card type
       if (filterCardType && card.type !== filterCardType) {
@@ -141,6 +141,7 @@ export function CardCollection() {
 
       return true;
     });
+    // Note: No need to sort here as the cards collection is already sorted
   }, [cards, filterCardType, filterSubtype, filterCost, filterSource]);
   // Reset all filters
   const resetFilters = () => {
