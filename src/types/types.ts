@@ -44,6 +44,7 @@ export interface Card {
   crewPointCost: number;
   numberAllowed: number;
   source: string;
+  description?: string;  // Making it optional since existing cards may not have it
   area?: CardArea;
   position?: {
     x: number;
