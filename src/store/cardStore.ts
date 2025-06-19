@@ -2,26 +2,61 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/types/types';
 
-// Helper function to sort cards by type, subtype, cost, then name
+// Helper function to sort cards by custom type order, then cost/subtype, then name
 const sortCards = (cards: Card[]): Card[] => {
+  // Define custom order for card types
+  const typeOrder = {
+    'Crew': 1,
+    'Sidearm': 3,
+    'Gear': 4,
+    'Accessory': 5,
+    'Upgrade': 6,
+    'Structure': 7,
+    'Weapon': 8
+  };
+
   return [...cards].sort((a, b) => {
-    // First, sort by card type
+    // Special handling for Crew cards to sort Driver before Gunner
+    if (a.type === 'Crew' && b.type === 'Crew') {
+      const aIsDriver = a.subtype?.toLowerCase() === 'driver';
+      const bIsDriver = b.subtype?.toLowerCase() === 'driver';
+      
+      if (aIsDriver && !bIsDriver) return -1;
+      if (!aIsDriver && bIsDriver) return 1;
+    }
+    
+    // Sort by card type using custom order
     if (a.type !== b.type) {
-      return a.type.localeCompare(b.type);
+      return (typeOrder[a.type] || 99) - (typeOrder[b.type] || 99);
     }
-
-    // Then, sort by subtype
-    if (a.subtype !== b.subtype) {
-      return a.subtype.localeCompare(b.subtype);
+    
+    // For Upgrades: sort by subtype first, then cost
+    if (a.type === 'Upgrade') {
+      // First by subtype
+      if (a.subtype !== b.subtype) {
+        return (a.subtype || '').localeCompare(b.subtype || '');
+      }
+      
+      // Then by cost
+      const aCost = a.buildPointCost || a.crewPointCost || 0;
+      const bCost = b.buildPointCost || b.crewPointCost || 0;
+      if (aCost !== bCost) {
+        return aCost - bCost;
+      }
+    } else {
+      // For all other types: sort by cost first, then subtype
+      const aCost = a.buildPointCost || a.crewPointCost || 0;
+      const bCost = b.buildPointCost || b.crewPointCost || 0;
+      if (aCost !== bCost) {
+        return aCost - bCost;
+      }
+      
+      // Then by subtype
+      if (a.subtype !== b.subtype) {
+        return (a.subtype || '').localeCompare(b.subtype || '');
+      }
     }
-
-    // Then, sort by cost (considering both build and crew cost)
-    const aCost = a.buildPointCost || a.crewPointCost || 0;
-    const bCost = b.buildPointCost || b.crewPointCost || 0;
-    if (aCost !== bCost) {
-      return aCost - bCost;
-    }
-
+    
     // Finally, sort by name
     return a.name.localeCompare(b.name);
   });
