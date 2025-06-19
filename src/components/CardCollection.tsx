@@ -180,6 +180,12 @@ export function CardCollection() {
       // Process each image file
       for (const file of imageFiles) {
         try {
+          // Extract the base filename without extension
+          const baseName = file.name.replace(/\.[^/.]+$/, "");
+
+          // Try to find a card with a matching name (case-insensitive, trimmed)
+          const existingCard = cards.find(card => card.name.trim().toLowerCase() === baseName.trim().toLowerCase());
+
           const uploadResult = await uploadCardImage(
             file,
             newCardType,
@@ -190,42 +196,15 @@ export function CardCollection() {
             newSource
           );
 
-          // Extract the base filename without extension
-          const baseName = file.name.split('.')[0];
-
-          // If this is a replacement for an existing file
-          if (uploadResult.isExistingFile) {
-            // Find any existing cards with the same base filename
-            const existingCard = cards.find(card => {
-              const cardBaseName = card.name.toLowerCase();
-              return cardBaseName === baseName.toLowerCase();
-            });
-
-            if (existingCard) {
-              // Create updated card with same ID but new properties
-              const updatedCard = {
-                id: existingCard.id, // Keep the same ID
-                name: baseName,
-                imageUrl: uploadResult.imageUrl,
-                type: uploadResult.cardType,
-                subtype: uploadResult.cardSubtype,
-                buildPointCost: uploadResult.buildPointCost,
-                crewPointCost: uploadResult.crewPointCost,
-                numberAllowed: uploadResult.numberAllowed,
-                source: uploadResult.source
-              };
-
-              // Update the existing card
-              console.log('Updating existing card:', { existingCard, updatedCard });
-
-              // Remove and re-add to update the card
-              // First remove the existing card
-              removeFromCollection(existingCard.id);
-              // Then add the updated card with the same ID
-              addToCollectionWithId(updatedCard);
-
-              continue; // Skip to next file
-            }
+          if (existingCard) {
+            // Update only the image for the existing card
+            const updatedCard = {
+              ...existingCard,
+              imageUrl: uploadResult.imageUrl
+            };
+            removeFromCollection(existingCard.id);
+            addToCollectionWithId(updatedCard);
+            continue; // Skip to next file
           }
 
           // For new cards, add normally
