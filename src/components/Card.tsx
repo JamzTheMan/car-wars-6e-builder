@@ -424,7 +424,11 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
               })()}
             </div>
           ))}
-        <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
+        <img
+          src={card.imageUrl}
+          alt={card.name}
+          className="w-full h-full object-cover image-rendering-crisp min-h-[170px]"
+        />
         {/* Card name at the top, only if using a placeholder or no image */}
         {(!card.imageUrl || card.imageUrl.includes('Blank_')) &&
           (['Sidearm', 'Crew', 'Gear'].includes(card.type) ? (
@@ -485,7 +489,7 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
                   <img
                     src={card.imageUrl}
                     alt={card.name}
-                    className="w-full h-auto object-contain max-h-[70vh] rounded-md shadow-md"
+                    className="w-full h-auto object-contain max-h-[77vh] rounded-md shadow-md"
                   />
                 </div>
                 <div className="w-full md:w-1/2 flex-shrink-0">

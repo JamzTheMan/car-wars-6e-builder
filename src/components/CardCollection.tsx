@@ -488,7 +488,7 @@ export function CardCollection() {
 
       {/* Cards grid with fallback message */}
       <div
-        className={`grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(125px,1fr))] ${isUploading ? 'opacity-50' : ''}`}
+        className={`grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(138px,1fr))] ${isUploading ? 'opacity-50' : ''}`}
       >
         {cards.length > 0 ? (
           filteredCards.map(card => <Card key={card.id} card={card} isInCollection={true} />)

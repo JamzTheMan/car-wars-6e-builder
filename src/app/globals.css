@@ -97,12 +97,17 @@ body {
   transition: opacity 0.2s;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 20;
+  opacity: 0;
+}
+
+.group:hover .quick-add-overlay {
+  opacity: 1;
 }
 
 .quick-add-container {
   position: relative;
-  width: 6.5rem;
-  height: 6.5rem;
+  width: 7.15rem;  /* Increased by 10% from 6.5rem */
+  height: 7.15rem; /* Increased by 10% from 6.5rem */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,11 +119,12 @@ body {
   border-radius: 0.5rem;
   border: 2px solid rgba(255, 255, 255, 0.8);
   transition: all 0.2s;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.2rem;  /* Already updated */
+  height: 2.2rem; /* Already updated */
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 1;     /* Make buttons always visible within the overlay */
 }
 
 .quick-add-button:hover {
@@ -126,16 +132,17 @@ body {
   border-color: white;
 }
 
-/* Front button (Blue) */
+/* Front button (Red) */
 .quick-add-button.front {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgb(37, 99, 235);
+  background-color: rgb(220, 38, 38);
 }
 
 .quick-add-button.front:hover {
-  background-color: rgb(29, 78, 216);
+  background-color: rgb(185, 28, 28);
+  transform: translateX(-50%) scale(1.1);
 }
 
 /* Left button (Red) */
@@ -148,30 +155,33 @@ body {
 
 .quick-add-button.left:hover {
   background-color: rgb(185, 28, 28);
+  transform: translateY(-50%) scale(1.1);
 }
 
-/* Right button (Green) */
+/* Right button (Red) */
 .quick-add-button.right {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgb(22, 163, 74);
+  background-color: rgb(220, 38, 38);
 }
 
 .quick-add-button.right:hover {
-  background-color: rgb(21, 128, 61);
+  background-color: rgb(185, 28, 28);
+  transform: translateY(-50%) scale(1.1);
 }
 
-/* Rear button (Blue) */
+/* Rear button (Red) */
 .quick-add-button.rear {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgb(37, 99, 235);
+  background-color: rgb(220, 38, 38);
 }
 
 .quick-add-button.rear:hover {
-  background-color: rgb(29, 78, 216);
+  background-color: rgb(185, 28, 28);
+  transform: translateX(-50%) scale(1.1);
 }
 
 .quick-add-icon {
@@ -183,12 +193,12 @@ body {
 /* Card styles */
 .card-cost-badge {
   position: absolute;
-  width: 1.75rem;
-  height: 1.75rem;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 0.875rem;
+  align-items: center;
+  width: 2rem;  
+  height: 2rem;
+  font-size: 1rem;  
   font-weight: bold;
   border-radius: 9999px;
   border-width: 2px;
@@ -250,8 +260,8 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: rgb(22, 163, 74);
-  width: 2.7rem;
-  height: 2.7rem;
+  width: 3rem;  /* Increased from 2.7rem */
+  height: 3rem; /* Increased from 2.7rem */
   max-width: 70%;
   max-height: 70%;
   display: flex;
@@ -269,4 +279,22 @@ body {
 
 .card-add-button:hover {
   background-color: rgb(21, 128, 61);
+}
+
+/* Image optimizations */
+.image-rendering-crisp {
+  image-rendering: -webkit-optimize-contrast;  /* Edge/Chrome */
+  image-rendering: crisp-edges;               /* Firefox */
+  image-rendering: pixelated;                 /* Safari and others */
+}
+
+/* Optional: Add a hover zoom effect for cards */
+.card-zoom-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-zoom-container:hover .image-rendering-crisp {
+  transform: scale(1.2) translateZ(0);
+  transition: transform 0.3s ease-in-out;
 }
