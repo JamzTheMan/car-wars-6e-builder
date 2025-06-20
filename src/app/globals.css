@@ -111,7 +111,6 @@ body {
 .quick-add-button {
   position: absolute;
   padding: 0.5rem;
-  background-color: rgb(37, 99, 235);
   border-radius: 0.5rem;
   border: 2px solid rgba(255, 255, 255, 0.8);
   transition: all 0.2s;
@@ -123,33 +122,56 @@ body {
 }
 
 .quick-add-button:hover {
-  background-color: rgb(29, 78, 216);
   transform: scale(1.1);
   border-color: white;
 }
 
+/* Front button (Blue) */
 .quick-add-button.front {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
+  background-color: rgb(37, 99, 235);
 }
 
+.quick-add-button.front:hover {
+  background-color: rgb(29, 78, 216);
+}
+
+/* Left button (Red) */
 .quick-add-button.left {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
+  background-color: rgb(220, 38, 38);
 }
 
+.quick-add-button.left:hover {
+  background-color: rgb(185, 28, 28);
+}
+
+/* Right button (Green) */
 .quick-add-button.right {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+  background-color: rgb(22, 163, 74);
 }
 
+.quick-add-button.right:hover {
+  background-color: rgb(21, 128, 61);
+}
+
+/* Rear button (Blue) */
 .quick-add-button.rear {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+  background-color: rgb(37, 99, 235);
+}
+
+.quick-add-button.rear:hover {
+  background-color: rgb(29, 78, 216);
 }
 
 .quick-add-icon {
