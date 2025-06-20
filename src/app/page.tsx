@@ -171,6 +171,7 @@ function CardCollectionTitleUpload() {
         onChange={handleFileChange}
         disabled={uploadingCard}
         className="hidden"
+        aria-label="Upload card image"
       />
 
       {/* Hamburger menu button */}
