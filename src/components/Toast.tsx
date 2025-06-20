@@ -18,12 +18,12 @@ interface Toast {
   type: ToastType;
 }
 
-interface ToastContextType {
+export interface ToastContextType {
   showToast: (message: string, type: ToastType) => void;
 }
 
 // Create context
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 // Toast provider component
 export function ToastProvider({ children }: { children: ReactNode }) {

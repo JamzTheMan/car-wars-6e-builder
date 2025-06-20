@@ -1,4 +1,5 @@
 import { CardType } from '@/types/types';
+import { ToastContextType } from '@/components/Toast';
 
 export interface CardUploadResult {
   imageUrl: string;
@@ -19,7 +20,8 @@ export async function uploadCardImage(
   buildPointCost: number,
   crewPointCost: number,
   numberAllowed: number,
-  source: string
+  source: string,
+  showToast?: (message: string, type: 'success' | 'error' | 'info') => void
 ): Promise<CardUploadResult> {
   const formData = new FormData();
   formData.append('file', file);
@@ -39,6 +41,7 @@ export async function uploadCardImage(
   if (!response.ok) {
     throw new Error('Upload failed');
   }
+
   const {
     path: imageUrl,
     cardType: responseCardType,
@@ -51,7 +54,7 @@ export async function uploadCardImage(
     originalFileName,
   } = await response.json();
 
-  return {
+  const result: CardUploadResult = {
     imageUrl,
     cardType: responseCardType || cardType,
     cardSubtype: responseCardSubtype || cardSubtype,
@@ -65,4 +68,10 @@ export async function uploadCardImage(
     isExistingFile: !!isExistingFile,
     fileName: originalFileName || file.name,
   };
+
+  if (!isExistingFile && showToast) {
+    showToast(`New card "${result.fileName}" added to collection`, 'info');
+  }
+
+  return result;
 }

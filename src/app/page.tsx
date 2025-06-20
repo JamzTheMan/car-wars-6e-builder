@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { DndWrapper } from '@/components/DndWrapper';
 import { CardUploadProvider } from '@/context/CardUploadContext';
 import { CardCollection } from '@/components/CardCollection';
@@ -11,6 +11,7 @@ import { useCardUpload } from '@/context/CardUploadContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { uploadCardImage } from '@/utils/cardUpload';
+import { ToastContext } from '@/components/Toast';
 
 function PointsSummary() {
   const { currentDeck } = useCardStore();
@@ -39,6 +40,7 @@ function CardCollectionTitleUpload() {
   const [menuOpen, setMenuOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const { showToast } = useContext(ToastContext) || {};
   const {
     newCardType,
     newCardSubtype,
@@ -69,15 +71,15 @@ function CardCollectionTitleUpload() {
     };
   }, [menuRef]);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) return;
+    const file = event.target.files[0];
     setMenuOpen(false); // Close menu after selecting file
 
     try {
       setUploadingCard(true);
+      console.log('Starting file upload'); // Debug log
 
-      // Use shared upload utility
       const uploadResult = await uploadCardImage(
         file,
         newCardType,
@@ -85,24 +87,21 @@ function CardCollectionTitleUpload() {
         newBuildPointCost,
         newCrewPointCost,
         newNumberAllowed,
-        newSource
+        newSource,
+        showToast
       );
 
-      // Extract the base filename without extension
       const baseName = file.name.split('.')[0];
 
-      // If this is a replacement for an existing file
       if (uploadResult.isExistingFile) {
-        // Find any existing cards with the same base filename
         const existingCard = collectionCards.find(card => {
           const cardBaseName = card.name.toLowerCase();
           return cardBaseName === baseName.toLowerCase();
         });
 
         if (existingCard) {
-          // Create updated card with same ID but new properties
           const updatedCard = {
-            id: existingCard.id, // Keep the same ID
+            id: existingCard.id,
             name: baseName,
             imageUrl: uploadResult.imageUrl,
             type: uploadResult.cardType,
@@ -113,17 +112,13 @@ function CardCollectionTitleUpload() {
             source: uploadResult.source,
           };
 
-          // Update the existing card
-          console.log('Updating existing card:', { existingCard, updatedCard });
-
-          // Remove and re-add to update the card
           removeFromCollection(existingCard.id);
           addToCollectionWithId(updatedCard);
+          showToast?.('Card updated successfully', 'success');
           return;
         }
       }
 
-      // For new cards, add normally
       const newCard = {
         name: baseName,
         imageUrl: uploadResult.imageUrl,
@@ -135,11 +130,11 @@ function CardCollectionTitleUpload() {
         source: uploadResult.source,
       };
 
-      // Add to collection
       addToCollection(newCard);
+      showToast?.(`Card "${baseName}" added to collection`, 'success');
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Failed to upload image. Please try again.');
+      showToast?.('Failed to upload image. Please try again.', 'error');
     } finally {
       setUploadingCard(false);
       if (fileInputRef.current) {
@@ -156,6 +151,7 @@ function CardCollectionTitleUpload() {
   const handleConfirmClear = () => {
     clearCollection();
     setShowClearConfirm(false);
+    showToast?.('All cards cleared successfully.', 'success');
   };
 
   const handleCancelClear = () => {
@@ -193,9 +189,7 @@ function CardCollectionTitleUpload() {
           <ul className="py-1">
             <li>
               <button
-                onClick={() => {
-                  fileInputRef.current?.click();
-                }}
+                onClick={() => fileInputRef.current?.click()}
                 className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
               >
                 <FontAwesomeIcon icon={faUpload} className="w-4 h-4" />

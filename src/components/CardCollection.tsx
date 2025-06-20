@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useContext } from 'react';
 import { Card } from '@/components/Card';
 import { useCardStore } from '@/store/cardStore';
 import { CardType, CardTypeCategories } from '@/types/types';
 import { useCardUpload } from '@/context/CardUploadContext';
 import { uploadCardImage } from '@/utils/cardUpload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ToastContext } from '@/components/Toast';
 import {
   faCloudUploadAlt,
   faFileImport,
@@ -19,6 +20,7 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { processCSVToCards } from '@/utils/csvProcessing';
 
 export function CardCollection() {
+  const { showToast } = useContext(ToastContext) || {};
   const {
     newCardType,
     setNewCardType,
@@ -203,7 +205,6 @@ export function CardCollection() {
           const existingCard = cards.find(
             card => card.name.trim().toLowerCase() === baseName.trim().toLowerCase()
           );
-
           const uploadResult = await uploadCardImage(
             file,
             newCardType,
@@ -211,7 +212,8 @@ export function CardCollection() {
             newBuildPointCost,
             newCrewPointCost,
             newNumberAllowed,
-            newSource
+            newSource,
+            showToast
           );
 
           if (existingCard) {
