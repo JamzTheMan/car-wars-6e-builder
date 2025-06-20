@@ -86,3 +86,165 @@ body {
   opacity: 1;
   background-image: radial-gradient(circle, #ffffff 1.5px, transparent 1.5px);
 }
+
+/* Quick Add Buttons */
+.quick-add-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+
+.quick-add-container {
+  position: relative;
+  width: 6.5rem;
+  height: 6.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-add-button {
+  position: absolute;
+  padding: 0.5rem;
+  background-color: rgb(37, 99, 235);
+  border-radius: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.2s;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-add-button:hover {
+  background-color: rgb(29, 78, 216);
+  transform: scale(1.1);
+  border-color: white;
+}
+
+.quick-add-button.front {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.quick-add-button.left {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.quick-add-button.right {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.quick-add-button.rear {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.quick-add-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
+}
+
+/* Card styles */
+.card-cost-badge {
+  position: absolute;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: bold;
+  border-radius: 9999px;
+  border-width: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.card-cost-badge-crew {
+  background-color: #d21873;
+  border-color: #d21873;
+  color: white;
+  top: 0;
+  left: 0;
+}
+
+.card-cost-badge-other {
+  background-color: #a2e4d9;
+  border-color: #a2e4d9;
+  color: #0f4740;
+  top: 0;
+  right: 0;
+}
+
+.card-title {
+  position: absolute;
+  z-index: 10;
+  top: 0.25rem;
+  text-align: left;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.card-title-crew {
+  left: 2.5rem;
+  right: 0.5rem;
+}
+
+.card-title-other {
+  left: 0.5rem;
+  right: 2.5rem;
+}
+
+.card-title span {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: black;
+  background-color: rgba(230, 230, 230, 0.77);
+  border-radius: 0.25rem;
+  padding: 0 0.25rem;
+  display: block;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+/* Card Actions */
+.card-add-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(22, 163, 74);
+  width: 2.7rem;
+  height: 2.7rem;
+  max-width: 70%;
+  max-height: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  z-index: 30;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.group:hover .card-add-button {
+  opacity: 1;
+}
+
+.card-add-button:hover {
+  background-color: rgb(21, 128, 61);
+}

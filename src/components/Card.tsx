@@ -9,7 +9,16 @@ import {
 } from '@/types/types';
 import { useCardStore } from '@/store/cardStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faPlus, faClone, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {
+  faTrash,
+  faPlus,
+  faClone,
+  faXmark,
+  faCaretUp,
+  faCaretDown,
+  faCaretLeft,
+  faCaretRight,
+} from '@fortawesome/free-solid-svg-icons';
 import { deleteCardImage } from '@/utils/cardDelete';
 import { useState } from 'react';
 import { useToast } from './Toast';
@@ -25,9 +34,15 @@ interface CardProps {
   isInCollection?: boolean;
 }
 
+// Function to check if a card can be placed on car sides
+function canBePlacedOnSides(cardType: CardTypeEnum): boolean {
+  return cardType === 'Weapon' || cardType === 'Accessory';
+}
+
 export function Card({ card, isDraggable = true, isInCollection = true }: CardProps) {
   const { removeFromCollection, removeFromDeck, addToDeck, canAddCardToDeck } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
   const { showToast } = useToast();
 
   const [{ isDragging }, dragRef] = useDrag<DragItem, unknown, { isDragging: boolean }>(
@@ -159,6 +174,81 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
     }
   };
 
+  const handleQuickAdd = (area: CardArea) => {
+    const validationResult = canAddCardToDeck(card);
+    if (validationResult.allowed) {
+      addToDeck(card.id, area);
+      showToast(`Added ${card.name} to ${area} of your car`, 'success');
+    } else {
+      // Re-use existing validation error handling
+      handleValidationError(validationResult);
+    }
+  };
+
+  const handleValidationError = (validationResult: ReturnType<typeof canAddCardToDeck>) => {
+    // Re-use existing validation error logic
+    switch (validationResult.reason) {
+      case 'duplicate_gear':
+        showToast(
+          `You cannot equip multiple copies of the same gear card: "${card.name}"`,
+          'error'
+        );
+        break;
+      case 'duplicate_sidearm':
+        showToast(`You cannot equip multiple copies of the same sidearm: "${card.name}"`, 'error');
+        break;
+      case 'duplicate_accessory':
+        showToast(
+          `You cannot equip multiple copies of the same accessory: "${card.name}"`,
+          'error'
+        );
+        break;
+      case 'duplicate_upgrade':
+        showToast(`You cannot equip multiple copies of the same upgrade: "${card.name}"`, 'error');
+        break;
+      case 'weapon_cost_limit':
+        showToast(
+          `Weapons that cost 6+ BP cannot be used in games with ${validationResult.pointLimit} BP or less. This weapon costs ${validationResult.weaponCost} BP.`,
+          'error'
+        );
+        break;
+      case 'crew_limit_reached':
+        showToast(
+          `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`,
+          'error'
+        );
+        break;
+      case 'structure_limit_reached':
+        if (validationResult.area) {
+          showToast(
+            `You cannot add another structure card to the ${validationResult.area} of your car.`,
+            'error'
+          );
+        } else {
+          showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
+        }
+        break;
+      case 'same_subtype':
+        if (validationResult.conflictingCard) {
+          const cardType = card.type.toLowerCase();
+          showToast(
+            `Cannot equip multiple ${cardType}s with same subtype: "${card.subtype}" (already have "${validationResult.conflictingCard.name}")`,
+            'error'
+          );
+        } else {
+          const cardType = card.type.toLowerCase();
+          showToast(
+            `Cannot equip multiple ${cardType} cards of the same subtype: "${card.subtype}"`,
+            'error'
+          );
+        }
+        break;
+      case 'not_enough_points':
+      default:
+        showToast('Not enough points to add this card to your deck!', 'error');
+    }
+  };
+
   const openPreview = () => {
     if (!isDragging && !isPreviewOpen) {
       setIsPreviewOpen(true);
@@ -193,6 +283,57 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
     return baseClasses;
   };
 
+  const renderQuickAddButtons = () => {
+    if (!isInCollection || !canBePlacedOnSides(card.type)) return null;
+
+    return (
+      <div
+        className={`quick-add-overlay ${showQuickAdd ? 'opacity-100' : 'opacity-0'}`}
+        onMouseEnter={() => setShowQuickAdd(true)}
+        onMouseLeave={() => setShowQuickAdd(false)}
+      >
+        <div className="quick-add-container">
+          {/* Front */}
+          <button
+            onClick={() => handleQuickAdd(CardArea.Front)}
+            className="quick-add-button front"
+            title="Add to Front"
+          >
+            {' '}
+            <FontAwesomeIcon icon={faCaretUp} className="quick-add-icon" />
+          </button>
+
+          {/* Left */}
+          <button
+            onClick={() => handleQuickAdd(CardArea.Left)}
+            className="quick-add-button left"
+            title="Add to Left"
+          >
+            <FontAwesomeIcon icon={faCaretLeft} className="quick-add-icon" />
+          </button>
+
+          {/* Right */}
+          <button
+            onClick={() => handleQuickAdd(CardArea.Right)}
+            className="quick-add-button right"
+            title="Add to Right"
+          >
+            <FontAwesomeIcon icon={faCaretRight} className="quick-add-icon" />
+          </button>
+
+          {/* Back */}
+          <button
+            onClick={() => handleQuickAdd(CardArea.Back)}
+            className="quick-add-button rear"
+            title="Add to Rear"
+          >
+            <FontAwesomeIcon icon={faCaretDown} className="quick-add-icon" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <div
@@ -209,25 +350,74 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         data-x={card.position?.x ?? undefined}
         data-y={card.position?.y ?? undefined}
         onClick={openPreview}
+        onMouseEnter={() => setShowQuickAdd(true)}
+        onMouseLeave={() => setShowQuickAdd(false)}
       >
-        {' '}
+        {isInCollection && canBePlacedOnSides(card.type) && (
+          <div className={`quick-add-overlay z-20 ${showQuickAdd ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="quick-add-container">
+              {/* Front */}
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  handleQuickAdd(CardArea.Front);
+                }}
+                className="quick-add-button front"
+                title="Add to Front"
+              >
+                {' '}
+                <FontAwesomeIcon icon={faCaretUp} className="quick-add-icon" />
+              </button>
+
+              {/* Left */}
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  handleQuickAdd(CardArea.Left);
+                }}
+                className="quick-add-button left"
+                title="Add to Left"
+              >
+                <FontAwesomeIcon icon={faCaretLeft} className="quick-add-icon" />
+              </button>
+
+              {/* Right */}
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  handleQuickAdd(CardArea.Right);
+                }}
+                className="quick-add-button right"
+                title="Add to Right"
+              >
+                <FontAwesomeIcon icon={faCaretRight} className="quick-add-icon" />
+              </button>
+
+              {/* Back */}
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  handleQuickAdd(CardArea.Back);
+                }}
+                className="quick-add-button rear"
+                title="Add to Rear"
+              >
+                <FontAwesomeIcon icon={faCaretDown} className="quick-add-icon" />
+              </button>
+            </div>
+          </div>
+        )}
         {/* Cost badge: only show when using placeholder image */}
         {(!card.imageUrl || card.imageUrl.includes('Blank_')) &&
           (['Sidearm', 'Crew', 'Gear'].includes(card.type) ? (
-            <div
-              className="absolute top-0 left-0 text-white text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shadow border-2"
-              style={{ backgroundColor: '#d21873', borderColor: '#d21873' }}
-            >
+            <div className="card-cost-badge card-cost-badge-crew">
               {(() => {
                 const cost = (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
                 return cost;
               })()}
             </div>
           ) : (
-            <div
-              className="absolute top-0 right-0 text-green-900 text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full shadow border-2"
-              style={{ backgroundColor: '#a2e4d9', borderColor: '#a2e4d9' }}
-            >
+            <div className="card-cost-badge card-cost-badge-other">
               {(() => {
                 const cost = (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
                 return cost;
@@ -238,22 +428,12 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         {/* Card name at the top, only if using a placeholder or no image */}
         {(!card.imageUrl || card.imageUrl.includes('Blank_')) &&
           (['Sidearm', 'Crew', 'Gear'].includes(card.type) ? (
-            <div className="absolute z-10 left-10 right-2 top-1 text-left pointer-events-none select-none">
-              <span
-                className="text-xs font-bold text-black break-words leading-tight block px-1"
-                style={{ background: 'rgba(230, 230, 230, 0.77)', borderRadius: '0.25rem' }}
-              >
-                {card.name}
-              </span>
+            <div className="card-title card-title-crew">
+              <span>{card.name}</span>
             </div>
           ) : (
-            <div className="absolute z-10 left-2 right-10 top-1 text-left pointer-events-none select-none">
-              <span
-                className="text-xs font-bold text-black break-words leading-tight block px-1"
-                style={{ background: 'rgba(230, 230, 230, 0.77)', borderRadius: '0.25rem' }}
-              >
-                {card.name}
-              </span>
+            <div className="card-title card-title-other">
+              <span>{card.name}</span>
             </div>
           ))}
         {/* Card type and subtype at the bottom, only if using a placeholder or no image */}
@@ -271,21 +451,10 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
           title={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
         >
           <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
-        </button>
-        {/* Add to Deck button - Only shown in collection view, larger, rounded square, perfectly centered, only on hover */}
-        {isInCollection && (
-          <button
-            onClick={handleAddToDeck}
-            className="absolute top-1/2 left-1/2 bg-green-600 hover:bg-green-700 text-white rounded-xl flex items-center justify-center z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            style={{
-              width: '2.7rem',
-              height: '2.7rem',
-              maxWidth: '70%',
-              maxHeight: '70%',
-              transform: 'translate(-50%, -50%)',
-            }}
-            title="Add to deck"
-          >
+        </button>{' '}
+        {/* Add to Deck button - Only shown in collection view for cards that don't have quick-add buttons */}
+        {isInCollection && !canBePlacedOnSides(card.type) && (
+          <button onClick={handleAddToDeck} className="card-add-button" title="Add to deck">
             <FontAwesomeIcon icon={faClone} className="w-6 h-6" />
           </button>
         )}
