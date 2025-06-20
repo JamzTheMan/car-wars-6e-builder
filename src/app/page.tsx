@@ -244,6 +244,45 @@ function CardCollectionTitleUpload() {
 export default function Home() {
   const { setDeck, currentDeck } = useCardStore();
   const [isStoreHydrated, setIsStoreHydrated] = useState(false);
+  const [leftPanelWidth, setLeftPanelWidth] = useState(30); // percentage
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMouseDown = () => {
+    setIsDragging(true);
+    document.body.style.cursor = 'col-resize';
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    document.body.style.cursor = 'default';
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+
+    const container = document.getElementById('split-container');
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+
+    // Limit the resize between 20% and 80% of the container width
+    const width = Math.min(Math.max(newWidth, 20), 80);
+    setLeftPanelWidth(width);
+    document.documentElement.style.setProperty('--panel-width', `${width}%`);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
 
   useEffect(() => {
     // Handle store hydration
@@ -296,8 +335,8 @@ export default function Home() {
       <CardUploadProvider>
         <main className="h-full flex flex-col bg-gray-900">
           <div className="flex-1 min-h-0">
-            <div className="h-full grid grid-cols-1 lg:grid-cols-[30%_70%] gap-2">
-              <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
+            <div id="split-container" className="h-full flex gap-2">
+              <div className="panel-left bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
                 <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0">
                   <CardCollectionHeader />
                   <CardCollectionTitleUpload />
@@ -306,7 +345,10 @@ export default function Home() {
                   <CardCollection />
                 </div>
               </div>
-              <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
+
+              <div className="resize-handle" onMouseDown={handleMouseDown} />
+
+              <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
                 <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0">
                   <VehicleName />
                   <div className="flex items-center space-x-3">

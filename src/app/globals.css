@@ -40,3 +40,49 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Resizable panels */
+.panel-left {
+  width: var(--panel-width, 30%);
+}
+
+.panel-right {
+  width: calc(100% - var(--panel-width, 30%));
+}
+
+.resize-handle {
+  width: 6px;
+  height: 100px;
+  background-color: #4b5563;
+  cursor: col-resize;
+  transition: all 0.2s;
+  position: relative;
+  margin: 0 -1px;
+  align-self: center;
+  border-radius: 3px;
+}
+
+.resize-handle:hover {
+  background-color: #3b82f6;
+  height: 140px;
+}
+
+.resize-handle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 40px;
+  background-image: radial-gradient(circle, #d1d5db 1.5px, transparent 1.5px);
+  background-size: 4px 4px;
+  background-repeat: repeat-y;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.resize-handle:hover::after {
+  opacity: 1;
+  background-image: radial-gradient(circle, #ffffff 1.5px, transparent 1.5px);
+}
