@@ -20,9 +20,10 @@ export function DeckLayoutMenu() {
   const [isEditingPoints, setIsEditingPoints] = useState(false);
   const [buildPoints, setBuildPoints] = useState(currentDeck?.pointLimits.buildPoints ?? 0);
   const [crewPoints, setCrewPoints] = useState(currentDeck?.pointLimits.crewPoints ?? 0);
-  const [division, setDivision] = useState(
+  const [division, setDivision] = useState<number | 'custom'>(
     Math.ceil((currentDeck?.pointLimits.crewPoints ?? 0) / 4)
   );
+  const [isCustom, setIsCustom] = useState(false);
 
   useEffect(() => {
     if (currentDeck) {
@@ -30,7 +31,13 @@ export function DeckLayoutMenu() {
       setCrewPoints(currentDeck.pointLimits.crewPoints);
       // Set division based on crew points (since division = crew points in AADA rules)
       const crewValue = currentDeck.pointLimits.crewPoints;
-      setDivision(crewValue > 0 && crewValue <= 12 ? crewValue : 1);
+      if (crewValue > 12) {
+        setDivision('custom');
+        setIsCustom(true);
+      } else {
+        setDivision(crewValue > 0 ? crewValue : 1);
+        setIsCustom(false);
+      }
     }
   }, [currentDeck]);
 
@@ -66,6 +73,20 @@ export function DeckLayoutMenu() {
     // Update division to match the current point values if manually changed
     setDivision(crewPoints > 0 ? crewPoints : 1);
     setIsEditingPoints(false);
+  };
+
+  const handleDivisionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === 'custom') {
+      setDivision('custom');
+      setIsCustom(true);
+    } else {
+      const numValue = parseInt(value);
+      setDivision(numValue);
+      setIsCustom(false);
+      setBuildPoints(numValue * 4);
+      setCrewPoints(numValue);
+    }
   };
 
   return (
@@ -122,112 +143,97 @@ export function DeckLayoutMenu() {
                   />
                 </svg>
               </button>
-            </div>{' '}
-            <div className="space-y-3">
-              {/* AADA Division - Moved to the top */}
-              <div>
-                <label className="block text-sm font-medium mb-1">AADA Division</label>
-                <select
-                  value={division}
-                  onChange={e => {
-                    const value = parseInt(e.target.value);
-                    setDivision(value);
-                    setBuildPoints(value * 4);
-                    setCrewPoints(value);
-                  }}
-                  className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
-                  aria-label="AADA Division"
-                  title="AADA Division"
-                >
-                  {[...Array(12).keys()].map(i => (
-                    <option key={i + 1} value={i + 1}>
-                      {i + 1}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-gray-400 text-xs mt-1 italic">
-                  Sets Crew Points & Armor to Division, and Build Points to 4 x Division.
-                </p>
-              </div>
-              {/* Build Points Limit */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Build Points Limit</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={buildPoints}
-                  onChange={e => {
-                    const value = Math.max(0, parseInt(e.target.value) || 0);
-                    setBuildPoints(value);
-                    // Only update division if it matches the previous rule (build = 4*division)
-                    if (crewPoints * 4 === buildPoints) {
-                      setDivision(Math.ceil(value / 4));
-                      setCrewPoints(Math.ceil(value / 4));
-                    }
-                  }}
-                  className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
-                  title="Build Points Limit"
-                  placeholder="Enter build points"
-                />
-              </div>
-              {/* Crew Points Limit */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Crew Points Limit</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={crewPoints}
-                  onChange={e => {
-                    const value = Math.max(0, parseInt(e.target.value) || 0);
-                    setCrewPoints(value);
-                    // Only update division if it matches the previous rule (crew = division)
-                    if (crewPoints === division) {
-                      setDivision(value);
-                      setBuildPoints(value * 4);
-                    }
-                  }}
-                  className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
-                  title="Crew Points Limit"
-                  placeholder="Enter crew points"
-                />
-              </div>
-              {/* Save Changes Button */}
-              <button
-                onClick={handlePointsUpdate}
-                className="w-full bg-green-700 hover:bg-green-900 text-white px-4 py-2 rounded text-sm"
-              >
-                <FontAwesomeIcon icon={faSave} className="mr-2" /> Save Build Points
-              </button>
-              {/* Action Buttons - Moved to the bottom */}{' '}
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full bg-blue-700 hover:bg-blue-900 text-white px-4 py-2 rounded text-sm"
-              >
-                <FontAwesomeIcon icon={faUpload} className="mr-2" /> Upload Background
-              </button>
-              {currentDeck?.backgroundImage && (
-                <button
-                  onClick={() => updateDeckBackground('')}
-                  className="w-full bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded text-sm"
-                >
-                  Reset to Default Background
-                </button>
-              )}
-              <button
-                onClick={() => {
-                  if (
-                    confirm(
-                      'Are you sure you want to reset the car? This will remove all cards and reset point costs to zero.'
-                    )
-                  ) {
-                    useCardStore.getState().resetDeck();
-                  }
-                }}
-                className="w-full bg-red-700 hover:bg-red-900 text-white px-4 py-2 rounded text-sm"
-              >
-                <FontAwesomeIcon icon={faTrashAlt} className="mr-2" /> Reset Car
-              </button>
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">AADA Division</label>
+              <select
+                value={division}
+                onChange={handleDivisionChange}
+                className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
+                aria-label="AADA Division"
+                title="AADA Division"
+              >
+                {[...Array(12).keys()].map(i => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
+                <option value="custom">Custom</option>
+              </select>
+              <p className="text-gray-400 text-xs mt-1 italic">
+                Sets Crew Points & Armor to Division, and Build Points to 4 x Division.
+              </p>
+            </div>
+            {/* Build Points */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Custom Build Points</label>
+              <input
+                type="number"
+                min="0"
+                value={buildPoints}
+                onChange={e => {
+                  const value = Math.max(0, parseInt(e.target.value) || 0);
+                  setBuildPoints(value);
+                }}
+                className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
+                disabled={!isCustom}
+                title="Custom Build Points"
+                placeholder="Enter build points"
+              />
+            </div>
+            {/* Crew Points */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Custom Crew Points</label>
+              <input
+                type="number"
+                min="0"
+                value={crewPoints}
+                onChange={e => {
+                  const value = Math.max(0, parseInt(e.target.value) || 0);
+                  setCrewPoints(value);
+                }}
+                className="w-full bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-1.5 text-sm"
+                disabled={!isCustom}
+                title="Custom Crew Points"
+                placeholder="Enter crew points"
+              />
+            </div>
+            {/* Save Changes Button */}
+            <button
+              onClick={handlePointsUpdate}
+              className="w-full bg-green-700 hover:bg-green-900 text-white px-4 py-2 rounded text-sm"
+            >
+              <FontAwesomeIcon icon={faSave} className="mr-2" /> Save Build Points
+            </button>
+            {/* Action Buttons - Moved to the bottom */}{' '}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full bg-blue-700 hover:bg-blue-900 text-white px-4 py-2 rounded text-sm"
+            >
+              <FontAwesomeIcon icon={faUpload} className="mr-2" /> Upload Background
+            </button>
+            {currentDeck?.backgroundImage && (
+              <button
+                onClick={() => updateDeckBackground('')}
+                className="w-full bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded text-sm"
+              >
+                Reset to Default Background
+              </button>
+            )}
+            <button
+              onClick={() => {
+                if (
+                  confirm(
+                    'Are you sure you want to reset the car? This will remove all cards and reset point costs to zero.'
+                  )
+                ) {
+                  useCardStore.getState().resetDeck();
+                }
+              }}
+              className="w-full bg-red-700 hover:bg-red-900 text-white px-4 py-2 rounded text-sm"
+            >
+              <FontAwesomeIcon icon={faTrashAlt} className="mr-2" /> Reset Car
+            </button>
           </div>
         </div>
       )}
