@@ -36,7 +36,7 @@ interface CardProps {
 
 // Function to check if a card can be placed on car sides
 function canBePlacedOnSides(cardType: CardTypeEnum): boolean {
-  return cardType === 'Weapon' || cardType === 'Accessory';
+  return cardType === 'Weapon' || cardType === 'Accessory' || cardType === 'Structure';
 }
 
 export function Card({ card, isDraggable = true, isInCollection = true }: CardProps) {
@@ -347,6 +347,7 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
         } ${isDraggable && !isPreviewOpen ? 'cursor-move' : 'cursor-default'} group ${
           card.position ? 'card-positioned' : ''
         }`}
+        data-card-type={card.type}
         data-x={card.position?.x ?? undefined}
         data-y={card.position?.y ?? undefined}
         onClick={openPreview}

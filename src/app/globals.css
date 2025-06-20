@@ -259,7 +259,6 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgb(22, 163, 74);
   width: 3rem;  /* Increased from 2.7rem */
   height: 3rem; /* Increased from 2.7rem */
   max-width: 70%;
@@ -271,14 +270,43 @@ body {
   z-index: 30;
   opacity: 0;
   transition: opacity 0.2s;
+  /* Default color (gear/upgrades) */
+  background-color: rgb(22, 163, 74);
 }
 
 .group:hover .card-add-button {
   opacity: 1;
 }
 
-.card-add-button:hover {
-  background-color: rgb(21, 128, 61);
+/* Blue color for crew and sidearms */
+[data-card-type="Crew"] .card-add-button,
+[data-card-type="Sidearm"] .card-add-button {
+  background-color: rgb(37, 99, 235);  /* Same blue as deck layout */
+}
+
+[data-card-type="Crew"] .card-add-button:hover,
+[data-card-type="Sidearm"] .card-add-button:hover {
+  background-color: rgb(29, 78, 216);  /* Darker blue on hover */
+}
+
+/* Orange color for structure cards */
+[data-card-type="Structure"] .card-add-button {
+  background-color: rgb(234, 88, 12);  /* Orange */
+}
+
+[data-card-type="Structure"] .card-add-button:hover {
+  background-color: rgb(194, 65, 12);  /* Darker orange on hover */
+}
+
+/* Green color for gear and upgrades */
+[data-card-type="Gear"] .card-add-button,
+[data-card-type="Upgrade"] .card-add-button {
+  background-color: rgb(22, 163, 74);  /* Same green as deck layout */
+}
+
+[data-card-type="Gear"] .card-add-button:hover,
+[data-card-type="Upgrade"] .card-add-button:hover {
+  background-color: rgb(21, 128, 61);  /* Darker green on hover */
 }
 
 /* Image optimizations */
