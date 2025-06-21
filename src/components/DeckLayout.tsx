@@ -176,7 +176,7 @@ export function DeckLayoutMenu() {
         const content = e.target?.result as string;
         const importedDeck = JSON.parse(content);
 
-        console.log('Attempting to import deck:', importedDeck);
+        console.log('Attempting to import car:', importedDeck);
 
         // Validate the imported deck structure
         if (!validateImportedDeck(importedDeck)) {
@@ -222,12 +222,12 @@ export function DeckLayoutMenu() {
           }
 
           throw new Error(
-            'Invalid deck format: The imported file is missing required properties or has invalid data.'
+            'Invalid car: The imported file is missing required properties or has invalid data.'
           );
         }
 
         // Ask for confirmation before overwriting
-        if (!confirm('This will overwrite your current deck. Are you sure you want to continue?')) {
+        if (!confirm('This will overwrite your current car. Are you sure you want to continue?')) {
           return;
         }
 
@@ -288,8 +288,8 @@ export function DeckLayoutMenu() {
         <button
           onClick={handleExportDeck}
           className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
-          title="Export deck"
-          aria-label="Export deck"
+          title="Export Car"
+          aria-label="Export Car"
         >
           <FontAwesomeIcon icon={faSave} className="h-5 w-5" />
         </button>
@@ -298,8 +298,8 @@ export function DeckLayoutMenu() {
         <button
           onClick={() => importInputRef.current?.click()}
           className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
-          title="Import deck"
-          aria-label="Import deck"
+          title="Import Car"
+          aria-label="Import Car"
         >
           <FontAwesomeIcon icon={faUpload} className="h-5 w-5" />
         </button>
@@ -312,8 +312,8 @@ export function DeckLayoutMenu() {
         accept=".json"
         onChange={handleImportDeck}
         className="hidden"
-        aria-label="Import deck from JSON file"
-        title="Import deck from JSON file"
+        aria-label="Import car from JSON file"
+        title="Import car from JSON file"
       />
       {/* Background image input */}
       <input

@@ -98,6 +98,7 @@ export function VehicleName() {
                         setNameOptions([]);
                       }}
                       className="text-gray-400 hover:text-gray-200"
+                      title="Close name options"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
