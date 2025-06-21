@@ -354,7 +354,7 @@ export function Card({
             dragRef(node);
           }
         }}
-        className={`relative w-32 h-48 rounded-lg shadow-lg overflow-hidden transition-transform ${
+        className={`relative w-36 rounded-lg shadow-lg overflow-hidden transition-transform ${
           isDragging ? 'opacity-50' : ''
         } ${isDraggable && !isPreviewOpen ? 'cursor-move' : 'cursor-default'} group ${
           card.position ? 'card-positioned' : ''
@@ -448,7 +448,7 @@ export function Card({
         <img
           src={card.imageUrl}
           alt={card.name}
-          className="w-full h-full object-cover image-rendering-crisp min-h-[170px]"
+          className="w-full h-full object-cover"
         />
         {/* Card name at the top, only if using a placeholder or no image */}
         {(!card.imageUrl || card.imageUrl.includes('Blank_')) &&

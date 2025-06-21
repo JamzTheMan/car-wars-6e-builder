@@ -438,12 +438,16 @@ export function DeckLayout() {
     return (
       <div
         ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
-        className={`${className} ${getAreaColor()} rounded-md overflow-y-auto p-3 border-2 
+        className={`${className} ${getAreaColor()} rounded-md overflow-y-auto p-3 border-2 relative
           ${isOver ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' : 'border-gray-600 hover:border-gray-500'} 
           transition-all duration-200 backdrop-blur-sm`}
       >
-        {' '}
-        <div className="text-gray-300 text-sm font-medium mb-2 text-center opacity-70">{label}</div>
+        {/* Area label as an overlay that doesn't take up space */}
+        <div className="absolute top-2 left-0 right-0 text-gray-300 text-sm font-medium text-center opacity-70 pointer-events-none">
+          {label}
+        </div>
+
+        {/* Card grid starts at the top of container, can overlap with the label */}
         <div className="grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(132px,1fr))]">
           {areaCards.map(card => (
             <Card
@@ -507,7 +511,7 @@ export function DeckLayout() {
         style={{
           backgroundImage: currentDeck.backgroundImage
             ? `url(${currentDeck.backgroundImage})`
-            : `url(public/assets/placeholders/default_background.webp)`,
+            : `url(public/assets/default_background.webp)`,
         }}
       >
         {' '}

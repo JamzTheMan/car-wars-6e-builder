@@ -40,11 +40,11 @@ body {
 
 /* Resizable panels */
 .panel-left {
-  width: var(--panel-width, 30%);
+  width: var(--panel-width, 33%);
 }
 
 .panel-right {
-  width: calc(100% - var(--panel-width, 30%));
+  width: calc(100% - var(--panel-width, 33%));
 }
 
 .resize-handle {
@@ -306,20 +306,13 @@ body {
   background-color: rgb(21, 128, 61);  /* Darker green on hover */
 }
 
-/* Image optimizations */
-.image-rendering-crisp {
-  image-rendering: -webkit-optimize-contrast;  /* Edge/Chrome */
-  image-rendering: crisp-edges;               /* Firefox */
-  image-rendering: pixelated;                 /* Safari and others */
-}
-
 /* Optional: Add a hover zoom effect for cards */
 .card-zoom-container {
   position: relative;
   overflow: hidden;
 }
 
-.card-zoom-container:hover .image-rendering-crisp {
+.card-zoom-container:hover {
   transform: scale(1.2) translateZ(0);
   transition: transform 0.3s ease-in-out;
 }
