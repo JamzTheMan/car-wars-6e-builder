@@ -32,6 +32,22 @@ export function findBlankCard(cardType: CardType, collectionCards: Card[]): Card
 }
 
 /**
+ * Parse a name in the format Name_Subtype and extract the components
+ * @param name The name that potentially has Name_Subtype format
+ * @returns Object with parsed name and subtype, or just the original name if not in the format
+ */
+export function parseNameWithSubtype(name: string): { name: string; subtype?: string } {
+  const underscoreMatch = name.match(/^(.+)_(.+)$/);
+  if (underscoreMatch) {
+    return {
+      name: underscoreMatch[1],
+      subtype: underscoreMatch[2]
+    };
+  }
+  return { name };
+}
+
+/**
  * Process a CSV file and convert it to card data
  * @param csvContent The content of the CSV file as a string
  * @param collectionCards Array of existing cards in the collection (used to find blank cards)
@@ -44,6 +60,10 @@ export function processCSVToCards(
   const records = parseCSV(csvContent);
 
   return records.map(record => {
+    // Get the card name and check for Name_Subtype format
+    const rawName = record['Name'] || 'Unnamed Card';
+    const parsedNameResult = parseNameWithSubtype(rawName);
+    
     // Get the card type, defaulting to Weapon if invalid
     const typeString = record['Type'] || '';
     const cardType = Object.values(CardType).includes(typeString as CardType)
@@ -52,15 +72,22 @@ export function processCSVToCards(
 
     // Try to find a matching blank card to use as a template
     const blankCard = findBlankCard(cardType, collectionCards);
+    
+    // Determine subtype, with precedence:
+    // 1. From Name_Subtype format if available
+    // 2. From CSV Subtype field if available
+    // 3. Empty string as fallback
+    const subtype = parsedNameResult.subtype || record['Subtype'] || '';
+    
     // Use the blank card's image if available, otherwise use the placeholders
-    const subtype = record['Subtype'] || '';
     const imageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
+    
     // Create a new card object
     const card = {
-      name: record['Name'] || 'Unnamed Card',
+      name: parsedNameResult.name,
       imageUrl: imageUrl,
       type: cardType,
-      subtype: record['Subtype'] || '',
+      subtype: subtype,
       buildPointCost: parseInt(record['Build Point Cost'] || '0') || 0,
       crewPointCost: parseInt(record['Crew Point Cost'] || '0') || 0,
       numberAllowed: parseInt(record['Number Allowed'] || '1') || 1,

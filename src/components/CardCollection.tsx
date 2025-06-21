@@ -200,15 +200,35 @@ export function CardCollection() {
         try {
           // Extract the base filename without extension
           const baseName = file.name.replace(/\.[^/.]+$/, '');
+          // Check if filename follows Name_Subtype format
+          const underscoreMatch = baseName.match(/^(.+)_(.+)$/);
+          let cardName = baseName;
+          let cardSubtypeFromName: string | undefined;
+
+          if (underscoreMatch) {
+            // If we have a Name_Subtype format, extract them
+            [, cardName, cardSubtypeFromName] = underscoreMatch;
+          }
 
           // Try to find a card with a matching name (case-insensitive, trimmed)
-          const existingCard = cards.find(
-            card => card.name.trim().toLowerCase() === baseName.trim().toLowerCase()
-          );
+          // If we have a subtype from the filename, also match on that
+          const existingCard = cards.find(card => {
+            const nameMatch = card.name.trim().toLowerCase() === cardName.trim().toLowerCase();
+
+            // If we have a subtype from the filename, also check if that matches
+            if (cardSubtypeFromName) {
+              return (
+                nameMatch &&
+                card.subtype.trim().toLowerCase() === cardSubtypeFromName.trim().toLowerCase()
+              );
+            }
+
+            return nameMatch;
+          });
           const uploadResult = await uploadCardImage(
             file,
             newCardType,
-            newCardSubtype,
+            cardSubtypeFromName || newCardSubtype,
             newBuildPointCost,
             newCrewPointCost,
             newNumberAllowed,
@@ -225,11 +245,10 @@ export function CardCollection() {
             removeFromCollection(existingCard.id);
             addToCollectionWithId(updatedCard);
             continue; // Skip to next file
-          }
-
-          // For new cards, add normally
+          } // For new cards, add normally
+          // If the file had a Name_Subtype format, use the parsedName as the card name
           const newCard = {
-            name: baseName,
+            name: uploadResult.parsedName || baseName,
             imageUrl: uploadResult.imageUrl,
             type: uploadResult.cardType,
             subtype: uploadResult.cardSubtype,

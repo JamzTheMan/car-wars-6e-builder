@@ -11,6 +11,7 @@ export interface CardUploadResult {
   source: string;
   isExistingFile: boolean;
   fileName: string;
+  parsedName?: string; // For Name_Subtype format files
 }
 
 export async function uploadCardImage(
@@ -41,7 +42,6 @@ export async function uploadCardImage(
   if (!response.ok) {
     throw new Error('Upload failed');
   }
-
   const {
     path: imageUrl,
     cardType: responseCardType,
@@ -52,8 +52,8 @@ export async function uploadCardImage(
     source: responseSource,
     isExistingFile,
     originalFileName,
+    parsedName,
   } = await response.json();
-
   const result: CardUploadResult = {
     imageUrl,
     cardType: responseCardType || cardType,
@@ -67,6 +67,7 @@ export async function uploadCardImage(
     source: responseSource || source,
     isExistingFile: !!isExistingFile,
     fileName: originalFileName || file.name,
+    parsedName: parsedName,
   };
 
   if (!isExistingFile && showToast) {

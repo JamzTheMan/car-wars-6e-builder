@@ -7,7 +7,11 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File;
     const type = formData.get('type') as UploadType;
     const cardType = formData.get('cardType') as string;
-    const cardCost = formData.get('cardCost') as string;
+    const cardSubtype = formData.get('cardSubtype') as string;
+    const buildPointCost = formData.get('buildPointCost') as string;
+    const crewPointCost = formData.get('crewPointCost') as string;
+    const numberAllowed = formData.get('numberAllowed') as string;
+    const source = formData.get('source') as string;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -18,12 +22,23 @@ export async function POST(request: Request) {
     }
     const fileInfo = await saveUploadedFile(file, type);
 
+    // If the filename follows Name_Subtype format, use the parsed subtype
+    let responseSubtype = cardSubtype;
+    if (fileInfo.parsedSubtype) {
+      responseSubtype = fileInfo.parsedSubtype;
+    }
+
     return NextResponse.json({
       path: fileInfo.path,
       cardType,
-      cardCost: cardCost ? parseInt(cardCost, 10) : 0,
+      cardSubtype: responseSubtype,
+      buildPointCost: buildPointCost ? parseInt(buildPointCost, 10) : 0,
+      crewPointCost: crewPointCost ? parseInt(crewPointCost, 10) : 0,
+      numberAllowed: numberAllowed ? parseInt(numberAllowed, 10) : 1,
+      source,
       isExistingFile: fileInfo.isExistingFile,
       originalFileName: file.name,
+      parsedName: fileInfo.parsedName,
     });
   } catch (error) {
     console.error('Upload error:', error);
