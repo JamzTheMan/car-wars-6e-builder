@@ -354,11 +354,11 @@ export function Card({
             dragRef(node);
           }
         }}
-        className={`relative w-36 rounded-lg shadow-lg overflow-hidden transition-transform ${
+        className={`relative w-39 rounded-lg shadow-lg overflow-hidden transition-transform ${
           isDragging ? 'opacity-50' : ''
         } ${isDraggable && !isPreviewOpen ? 'cursor-move' : 'cursor-default'} group ${
           card.position ? 'card-positioned' : ''
-        } ${zoomed ? 'z-[100] w-[340px] h-[500px] md:w-[420px] md:h-[600px] scale-110 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
+        } ${zoomed ? 'z-[100] scale-400 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
         data-card-type={card.type}
         data-x={card.position?.x ?? undefined}
         data-y={card.position?.y ?? undefined}
@@ -445,11 +445,7 @@ export function Card({
               })()}
             </div>
           ))}
-        <img
-          src={card.imageUrl}
-          alt={card.name}
-          className="w-full h-full object-cover"
-        />
+        <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
         {/* Card name at the top, only if using a placeholder or no image */}
         {(!card.imageUrl || card.imageUrl.includes('Blank_')) &&
           (['Sidearm', 'Crew', 'Gear'].includes(card.type) ? (
