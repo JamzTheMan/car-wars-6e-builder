@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useDrop } from 'react-dnd';
 import { Card } from '@/components/Card';
 import { useCardStore } from '@/store/cardStore';
@@ -244,6 +245,37 @@ export function DeckLayoutMenu() {
 export function DeckLayout() {
   const { currentDeck, updateCardPosition, addToDeck, canAddCardToDeck, updateCardArea } =
     useCardStore();
+  const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
+  const [showZoom, setShowZoom] = useState(false);
+  const zoomTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle Escape key to close zoom
+  useEffect(() => {
+    if (!showZoom) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowZoom(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [showZoom]);
+
+  // Helper to open zoom
+  const handleCardClick = useCallback((card: CardType) => {
+    setZoomedCard(card);
+    setShowZoom(true);
+  }, []);
+
+  // Helper to close zoom
+  const closeZoom = useCallback(() => {
+    setShowZoom(false);
+    setTimeout(() => setZoomedCard(null), 200); // match animation duration
+  }, []);
+
+  // Add the handler in DeckLayout
+  const handleCardHover = useCallback((card: CardType) => {
+    setZoomedCard(card);
+    setShowZoom(true);
+  }, []);
 
   if (!currentDeck) {
     return (
@@ -414,7 +446,13 @@ export function DeckLayout() {
         <div className="text-gray-300 text-sm font-medium mb-2 text-center opacity-70">{label}</div>
         <div className="grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(132px,1fr))]">
           {areaCards.map(card => (
-            <Card key={card.id} card={card} isDraggable={true} isInCollection={false} />
+            <Card
+              key={card.id}
+              card={card}
+              isDraggable={true}
+              isInCollection={false}
+              onClick={() => handleCardClick(card)}
+            />
           ))}
         </div>
       </div>
@@ -423,6 +461,46 @@ export function DeckLayout() {
 
   return (
     <div className="p-4 h-full relative">
+      {/* Card Zoom Modal Overlay */}
+      {zoomedCard &&
+        createPortal(
+          <div
+            className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 transition-opacity duration-200 ${
+              showZoom ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            onClick={closeZoom}
+          >
+            <div
+              className={`relative max-w-[90vw] max-h-[90vh] p-4 bg-transparent flex items-center justify-center transition-transform duration-200 ${
+                showZoom ? 'scale-75' : 'scale-90'
+              }`}
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                className="absolute top-2 right-2 text-white bg-black/60 rounded-full p-2 hover:bg-black/80 z-10"
+                onClick={closeZoom}
+                aria-label="Close zoomed card"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <Card card={zoomedCard} isDraggable={false} isInCollection={false} zoomed />
+            </div>
+          </div>,
+          typeof window !== 'undefined' ? document.body : (null as any)
+        )}
       <div
         id="deck-layout"
         className="h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden"
@@ -443,7 +521,14 @@ export function DeckLayout() {
           {/* Middle and bottom rows - full height columns for Left and Right */}
           <AreaDropTarget area={CardArea.Left} label="Left Side" className="row-span-2 h-full" />
           {/* Center row is for the dashboard image */}
-          <div className="row-span-1">{/* Empty space for dashboard graphic */}</div>
+          <div className="row-span-1 flex items-center justify-center">
+            <img
+              src="/assets/Dashboard-yellow.webp"
+              alt="Dashboard"
+              className="max-w-full max-h-full object-contain drop-shadow-lg"
+              style={{ width: '100%', height: '100%', maxWidth: '260px', maxHeight: '340px' }}
+            />
+          </div>
           <AreaDropTarget area={CardArea.Right} label="Right Side" className="row-span-2 h-full" />
           {/* Bottom center has the Back area */}
           <AreaDropTarget area={CardArea.Back} label="Rear Area" className="h-full" />

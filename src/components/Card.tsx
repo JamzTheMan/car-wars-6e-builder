@@ -32,6 +32,10 @@ interface CardProps {
   card: CardType;
   isDraggable?: boolean;
   isInCollection?: boolean;
+  onClick?: (card: CardType) => void;
+  zoomed?: boolean;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 // Function to check if a card can be placed on car sides
@@ -39,7 +43,15 @@ function canBePlacedOnSides(cardType: CardTypeEnum): boolean {
   return cardType === 'Weapon' || cardType === 'Accessory' || cardType === 'Structure';
 }
 
-export function Card({ card, isDraggable = true, isInCollection = true }: CardProps) {
+export function Card({
+  card,
+  isDraggable = true,
+  isInCollection = true,
+  onClick,
+  zoomed = false,
+  onMouseEnter,
+  onMouseLeave,
+}: CardProps) {
   const { removeFromCollection, removeFromDeck, addToDeck, canAddCardToDeck } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
@@ -346,13 +358,21 @@ export function Card({ card, isDraggable = true, isInCollection = true }: CardPr
           isDragging ? 'opacity-50' : ''
         } ${isDraggable && !isPreviewOpen ? 'cursor-move' : 'cursor-default'} group ${
           card.position ? 'card-positioned' : ''
-        }`}
+        } ${zoomed ? 'z-[100] w-[340px] h-[500px] md:w-[420px] md:h-[600px] scale-110 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
         data-card-type={card.type}
         data-x={card.position?.x ?? undefined}
         data-y={card.position?.y ?? undefined}
-        onClick={openPreview}
-        onMouseEnter={() => setShowQuickAdd(true)}
-        onMouseLeave={() => setShowQuickAdd(false)}
+        onClick={
+          onClick
+            ? e => {
+                e.stopPropagation();
+                onClick(card);
+              }
+            : openPreview
+        }
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        style={zoomed ? { pointerEvents: 'auto' } : {}}
       >
         {isInCollection && canBePlacedOnSides(card.type) && (
           <div className={`quick-add-overlay z-20 ${showQuickAdd ? 'opacity-100' : 'opacity-0'}`}>
