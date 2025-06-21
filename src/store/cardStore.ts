@@ -476,14 +476,13 @@ export const useCardStore = create<CardStore>()(
                 ),
               }
             : null,
-        })),
-
-      setDeck: deck => {
+        })),      setDeck: deck => {
         set(state => ({
           ...state,
           currentDeck: {
             ...deck,
-            cards: [],
+            // Use the imported deck's cards, point limits, and points used
+            cards: deck.cards || [],
             pointLimits: deck.pointLimits || { buildPoints: 200, crewPoints: 50 },
             pointsUsed: deck.pointsUsed || { buildPoints: 0, crewPoints: 0 },
           },
