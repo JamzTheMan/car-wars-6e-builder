@@ -507,7 +507,7 @@ export function DeckLayout() {
         style={{
           backgroundImage: currentDeck.backgroundImage
             ? `url(${currentDeck.backgroundImage})`
-            : `url(/assets/placeholders/Dashboard.webp)`,
+            : `url(public/assets/placeholders/default_background.webp)`,
         }}
       >
         {' '}
