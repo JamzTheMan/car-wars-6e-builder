@@ -52,12 +52,16 @@ export function VehicleName() {
     return (
       <div className="flex flex-col">
         <div className="flex items-center space-x-2">
+          <label htmlFor="vehicle-name" className="sr-only">Vehicle Name</label>
           <input
+            id="vehicle-name"
             type="text"
             value={vehicleName}
             onChange={e => setVehicleName(e.target.value)}
             className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-2 py-1 text-sm"
             autoFocus
+            placeholder="Enter vehicle name"
+            title="Enter vehicle name"
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleSaveName();
