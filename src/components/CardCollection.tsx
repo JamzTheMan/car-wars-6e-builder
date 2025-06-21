@@ -312,11 +312,10 @@ export function CardCollection() {
     }
   };
   // Reset functionality moved to DeckLayout menu
-
   return (
-    <div ref={drop} className="p-2 h-full relative">
+    <div className="h-full">
       {/* Filter Controls */}
-      <div className="mb-4">
+      <div className="px-2 mb-4">
         <div className="flex justify-between items-center mb-2">
           <button
             onClick={() => setFilterPanelOpen(!filterPanelOpen)}
@@ -455,85 +454,52 @@ export function CardCollection() {
           </div>
         )}
       </div>
-      {/* Upload Settings Panel removed - will be added back later */}
 
-      {/* Drag overlay - shows when dragging */}
-      {isOver && (
-        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+      {/* Card collection area with drag and drop */}
+      <div ref={drop} className="relative p-2">
+        {isOver && (
           <div
-            className={`absolute inset-0 ${isCardOver ? 'bg-red-500 bg-opacity-20 border-2 border-dashed border-red-400' : 'bg-blue-500 bg-opacity-20 border-2 border-dashed border-blue-400'} rounded-lg`}
-          ></div>
-          <div className="bg-gray-800 bg-opacity-90 p-6 rounded-lg text-center shadow-2xl">
-            {isCardOver ? (
-              <>
-                <FontAwesomeIcon icon={faTrash} className="w-16 h-16 text-red-400 mb-4" />
-                <div className="text-xl font-medium text-white mb-2">
-                  Drop to remove card from deck
-                </div>
-                <div className="text-sm text-gray-300">Card will be removed from Builder only</div>
-              </>
-            ) : (
-              <>
-                <div className="flex gap-8">
-                  <div className="text-center">
-                    <FontAwesomeIcon
-                      icon={faCloudUploadAlt}
-                      className="w-16 h-16 text-blue-400 mb-4"
-                    />
-                    <div className="text-xl font-medium text-white mb-2">
-                      Drop images to add cards
-                    </div>
-                    <div className="text-sm text-gray-300">Cards will use the current settings</div>
-                  </div>
-                  <div className="text-center">
-                    <FontAwesomeIcon
-                      icon={faFileImport}
-                      className="w-16 h-16 text-green-400 mb-4"
-                    />
-                    <div className="text-xl font-medium text-white mb-2">
-                      Drop CSV files to import cards
-                    </div>
-                    <div className="text-sm text-gray-300">
-                      Cards will use Blank_ images as placeholders
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Cards grid with fallback message */}
-      <div
-        className={`grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(138px,1fr))] ${isUploading ? 'opacity-50' : ''}`}
-      >
-        {cards.length > 0 ? (
-          filteredCards.map(card => <Card key={card.id} card={card} isInCollection={true} />)
-        ) : (
-          <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400 border-2 border-dashed border-gray-700 rounded-lg">
-            <div className="flex flex-col items-center">
-              <div className="flex flex-col items-center">
-                <FontAwesomeIcon icon={faCloudUploadAlt} className="w-12 h-12 mb-4 text-gray-500" />
-                <p className="text-center text-lg mb-1">Drag and drop card images here</p>
-                <br />
-              </div>
-              <div className="flex items-center w-full my-4 max-w-xs">
-                <div className="flex-grow h-px bg-gray-700"></div>
-                <span className="px-3 text-gray-500 text-sm uppercase tracking-wider">or</span>
-                <div className="flex-grow h-px bg-gray-700"></div>
-              </div>
-
-              <div className="flex flex-col items-center">
-                <FontAwesomeIcon icon={faFileImport} className="w-12 h-12 mb-4 text-gray-500" />
-                <p className="text-center text-lg mb-2">Import cards from CSV</p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-500 mt-4">
-              Imported cards will use Blank placeholder images
-            </p>
-          </div>
+            className={`absolute inset-0 z-50 pointer-events-none border-2 border-dashed ${
+              isCardOver ? 'border-red-400' : 'border-yellow-400'
+            } rounded-lg`}
+          />
         )}
+        {/* Cards grid with fallback message */}
+        <div
+          className={`grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(138px,1fr))] ${
+            isUploading ? 'opacity-50' : ''
+          }`}
+        >
+          {cards.length > 0 ? (
+            filteredCards.map(card => <Card key={card.id} card={card} isInCollection={true} />)
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400 border-2 border-dashed border-gray-700 rounded-lg">
+              <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center">
+                  <FontAwesomeIcon
+                    icon={faCloudUploadAlt}
+                    className="w-12 h-12 mb-4 text-gray-500"
+                  />
+                  <p className="text-center text-lg mb-1">Drag and drop card images here</p>
+                  <br />
+                </div>
+                <div className="flex items-center w-full my-4 max-w-xs">
+                  <div className="flex-grow h-px bg-gray-700"></div>
+                  <span className="px-3 text-gray-500 text-sm uppercase tracking-wider">or</span>
+                  <div className="flex-grow h-px bg-gray-700"></div>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <FontAwesomeIcon icon={faFileImport} className="w-12 h-12 mb-4 text-gray-500" />
+                  <p className="text-center text-lg mb-2">Import cards from CSV</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500 mt-4">
+                Imported cards will use Blank placeholder images
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
