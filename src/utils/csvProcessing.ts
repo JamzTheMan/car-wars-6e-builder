@@ -11,14 +11,14 @@ export function getPlaceholderImageUrl(cardType: CardType, subtype?: string): st
   // Special case for Crew cards with Driver or Gunner subtypes
   if (cardType === CardType.Crew && subtype) {
     if (subtype.toLowerCase() === 'driver') {
-      return `/assets/placeholders/Blank_Crew_Driver.png`;
+      return `/assets/placeholders/Blank_Crew_Driver.webp`;
     } else if (subtype.toLowerCase() === 'gunner') {
-      return `/assets/placeholders/Blank_Crew_Gunner.png`;
+      return `/assets/placeholders/Blank_Crew_Gunner.webp`;
     }
   }
 
   // Default case using the Blank_ prefix placeholder images for each card type
-  return `/assets/placeholders/Blank_${cardType}.png`;
+  return `/assets/placeholders/Blank_${cardType}.webp`;
 }
 
 /**

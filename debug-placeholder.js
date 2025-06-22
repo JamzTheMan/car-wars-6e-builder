@@ -8,7 +8,7 @@ const testGearCards = [
   {
     id: '1',
     name: 'Driving Gloves',
-    imageUrl: '/assets/placeholders/Blank_Gear.png',
+    imageUrl: '/assets/placeholders/Blank_Gear.webp',
     type: CardType.Gear,
     subtype: 'Driving',
     buildPointCost: 0,
@@ -19,7 +19,7 @@ const testGearCards = [
   {
     id: '2',
     name: 'Crash Helmet',
-    imageUrl: '/assets/placeholders/Blank_Gear.png',
+    imageUrl: '/assets/placeholders/Blank_Gear.webp',
     type: CardType.Gear,
     subtype: 'Head',
     buildPointCost: 0,
@@ -30,7 +30,7 @@ const testGearCards = [
   {
     id: '3',
     name: 'Racing Boots',
-    imageUrl: '/assets/placeholders/Blank_Gear.png',
+    imageUrl: '/assets/placeholders/Blank_Gear.webp',
     type: CardType.Gear,
     subtype: 'Foot',
     buildPointCost: 0,
@@ -41,7 +41,7 @@ const testGearCards = [
   {
     id: '4',
     name: 'Crash Suit',
-    imageUrl: '/assets/placeholders/Blank_Gear.png', 
+    imageUrl: '/assets/placeholders/Blank_Gear.webp', 
     type: CardType.Gear,
     subtype: 'Body',
     buildPointCost: 0,
@@ -56,7 +56,7 @@ const mockDeckCards = [
   {
     id: '100',
     name: 'Driving Gloves',
-    imageUrl: '/assets/placeholders/Blank_Gear.png',
+    imageUrl: '/assets/placeholders/Blank_Gear.webp',
     type: CardType.Gear,
     subtype: 'Driving',
     buildPointCost: 0,

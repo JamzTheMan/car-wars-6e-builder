@@ -41,6 +41,26 @@ export function generateVehicleName(): string {
     'Quantum',
     'Cyber',
     'Hyper',
+    'Plasma',
+    'Pulse',
+    'Vector',
+    'Flux',
+    'Neon',
+    'Chrome',
+    'Sonic',
+    'Swift',
+    'Vertex',
+    'Aegis',
+    'Apex',
+    'Echo',
+    'Nova',
+    'Prism',
+    'Radiant',
+    'Silencer',
+    'Synth',
+    'Tremor',
+    'Vapor',
+    'Zero',
   ];
 
   const suffixes = [
@@ -78,6 +98,26 @@ export function generateVehicleName(): string {
     'Phantom',
     'Vengeance',
     'Nemesis',
+    'Turbine',
+    'Piston',
+    'Dynamo',
+    'Circuit',
+    'Matrix',
+    'Engine',
+    'Vector',
+    'Pulse',
+    'Thrust',
+    'Charger',
+    'Reactor',
+    'Core',
+    'Drive',
+    'Machine',
+    'Runner',
+    'Drifter',
+    'Genesis',
+    'Protocol',
+    'Sprint',
+    'Surge',
   ];
 
   const vehicleTypes = [
@@ -109,14 +149,48 @@ export function generateVehicleName(): string {
     'Vanguard',
     'Assault Vehicle',
     'Dominator',
+    'Hypercar',
+    'Skimmer',
+    'Prowler',
+    'Drifter',
+    'Warframe',
+    'Leviathan',
+    'Hoverbike',
+    'Thunderbolt',
+    'Speedster',
+    'Ravager',
+    'Behemoth',
+    'Centurion',
+    'Dragster',
+    'Infiltrator',
+    'Nomad',
+    'Titan',
+    'Voyager',
+    'Warbringer',
+    'Zealot',
+    'Skyrunner',
+  ];
+
+  const modelDesignations = [
+    'GT', 'RS', 'XR', 'ZX', 'MK', 'EV', 'LX', 'ST', 'RX', 'GX',
+    'TT', 'SS', 'XV', 'QX', 'VX', 'DX', 'NX', 'TX', 'HX', 'WX'
+  ];
+
+  const modelNumbers = [
+    '100', '200', '300', '400', '500', '1000',
+    '50', '90', '95', 'X3', 'X5', 'X7', 'X9',
+    '3000', '5000', '7000', '9000',
+    'Zero', 'One', 'Two', 'Three'
   ];
 
   // Choose a random pattern
-  const pattern = Math.floor(Math.random() * 3);
+  const pattern = Math.floor(Math.random() * 5);
 
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
   const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
   const type = vehicleTypes[Math.floor(Math.random() * vehicleTypes.length)];
+  const designation = modelDesignations[Math.floor(Math.random() * modelDesignations.length)];
+  const number = modelNumbers[Math.floor(Math.random() * modelNumbers.length)];
 
   switch (pattern) {
     case 0: // PrefixSuffix (e.g., Razor Blade)
@@ -125,6 +199,10 @@ export function generateVehicleName(): string {
       return `${prefix} ${type}`;
     case 2: // The Prefix (e.g., The Reaper)
       return `The ${prefix}`;
+    case 3: // Type Designation-Number (e.g., Interceptor GT-3000)
+      return `${type} ${designation}-${number}`;
+    case 4: // Prefix Designation Number (e.g., Quantum RS 5000)
+      return `${prefix} ${designation} ${number}`;
     default:
       return `${prefix} ${type}`;
   }
