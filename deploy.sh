@@ -1,10 +1,29 @@
 #!/bin/bash
+# deploy.sh - Script to build and deploy Docker image for Car Wars 6E
+# Expected to run in a WSL environment with Docker Desktop installed
+
+# Check if Docker is available
+if ! command -v docker &> /dev/null; then
+    echo "Error: Docker is not installed or not in PATH"
+    echo "Please ensure:"
+    echo "1. Docker Desktop is installed and running"
+    echo "2. WSL 2 integration is enabled in Docker Desktop settings"
+    echo "3. You have restarted your WSL terminal after enabling integration"
+    exit 1
+fi
+
+# Check if Docker daemon is running
+if ! docker info &> /dev/null; then
+    echo "Error: Docker daemon is not running"
+    echo "Please start Docker Desktop and ensure it's running properly"
+    exit 1
+fi
 
 # Configuration
 IMAGE_NAME="car-wars-6e-builder"
 IMAGE_TAG="latest"
-REGISTRY_URL="YOUR_REGISTRY_URL" # Replace with your registry URL if you're using one
-VM_SSH_CONNECTION="user@your-vm-ip" # Replace with your VM SSH connection details
+# REGISTRY_URL="YOUR_REGISTRY_URL" # Replace with your registry URL if you're using one
+VM_SSH_CONNECTION="nerps.net" # Replace with your VM SSH connection details
 
 # Step 1: Build the Docker image
 echo "Building Docker image..."
@@ -31,5 +50,7 @@ scp ${IMAGE_NAME}.tar.gz ${VM_SSH_CONNECTION}:/tmp/
 echo "Loading image on VM..."
 ssh ${VM_SSH_CONNECTION} "docker load < /tmp/${IMAGE_NAME}.tar.gz && rm /tmp/${IMAGE_NAME}.tar.gz"
 
+echo "Cleaning up local files..."
+rm ${IMAGE_NAME}.tar.gz
+
 echo "Deployment prepared! Now login to Portainer and update your container."
-echo "You may need to SSH into your VM and manually pull the new image if using a registry."
