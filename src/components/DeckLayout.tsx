@@ -11,6 +11,11 @@ import { VehicleName } from './VehicleName';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faTrashAlt, faUpload, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useToast } from './Toast';
+import {
+  useCardValidationErrors,
+  validateAndAddCard,
+  validateCardMovement,
+} from '@/utils/cardValidation';
 
 // Re-export VehicleName for compatibility
 export { VehicleName };
@@ -504,6 +509,7 @@ export function DeckLayout() {
     };
     const { collectionCards } = useCardStore();
     const { showToast } = useToast();
+    const { handleValidationError } = useCardValidationErrors();
     const [{ isOver }, dropRef] = useDrop<
       CardType & { source: 'collection' | 'deck'; id: string },
       unknown,
@@ -522,151 +528,20 @@ export function DeckLayout() {
         },
         drop: (item: CardType & { source: 'collection' | 'deck' }) => {
           if (item.source === 'collection') {
-            // Add from collection to specific area
-            const validationResult = canAddCardToDeck(item);
-            if (validationResult.allowed) {
-              addToDeck(item.id, area);
-              showToast(`Added ${item.name} to your car`, 'success');
-            } else {
-              // Display appropriate error message
-              switch (validationResult.reason) {
-                case 'duplicate_gear':
-                  showToast(
-                    `You cannot equip multiple copies of the same gear card: "${item.name}"`,
-                    'error'
-                  );
-                  break;
-                case 'duplicate_sidearm':
-                  showToast(
-                    `You cannot equip multiple copies of the same sidearm: "${item.name}"`,
-                    'error'
-                  );
-                  break;
-                case 'duplicate_accessory':
-                  showToast(
-                    `You cannot equip multiple copies of the same accessory: "${item.name}"`,
-                    'error'
-                  );
-                  break;
-                case 'duplicate_upgrade':
-                  showToast(
-                    `You cannot equip multiple copies of the same upgrade: "${item.name}"`,
-                    'error'
-                  );
-                  break;
-                case 'weapon_cost_limit':
-                  showToast(
-                    `Weapons that cost 6+ BP cannot be used in games with ${validationResult.pointLimit} BP or less. This weapon costs ${validationResult.weaponCost} BP.`,
-                    'error'
-                  );
-                  break;
-                case 'crew_limit_reached':
-                  showToast(
-                    `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`,
-                    'error'
-                  );
-                  break;
-                case 'structure_limit_reached':
-                  if (validationResult.area) {
-                    showToast(
-                      `You cannot add another structure card to the ${validationResult.area} of your car.`,
-                      'error'
-                    );
-                  } else {
-                    showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
-                  }
-                  break;
-                case 'exclusive_limit_reached':
-                  showToast(
-                    `You already have an exclusive card in your vehicle. Only one exclusive card is allowed.`,
-                    'error'
-                  );
-                  break;
-                case 'invalid_side':
-                  if (validationResult.invalidSide) {
-                    showToast(
-                      `This card can only be placed on specific sides: ${validationResult.invalidSide}`,
-                      'error'
-                    );
-                  } else {
-                    showToast(`This card cannot be placed on this side of the vehicle.`, 'error');
-                  }
-                  break;
-                case 'same_subtype':
-                  if (validationResult.conflictingCard) {
-                    const cardType = item.type.toLowerCase();
-                    showToast(
-                      `Cannot equip multiple ${cardType}s with same subtype: "${item.subtype}" (already have "${validationResult.conflictingCard.name}")`,
-                      'error'
-                    );
-                  } else {
-                    const cardType = item.type.toLowerCase();
-                    showToast(
-                      `Cannot equip multiple ${cardType} cards of the same subtype: "${item.subtype}"`,
-                      'error'
-                    );
-                  }
-                  break;
-                case 'not_enough_points':
-                default:
-                  showToast('Not enough points to add this card to your deck!', 'error');
-              }
-            }
+            // Add from collection to specific area using the centralized function
+            validateAndAddCard(
+              item,
+              { canAddCardToDeck, addToDeck },
+              area,
+              showToast,
+              handleValidationError
+            );
           } else if (item.source === 'deck') {
-            // For Structure cards, check if target area already has a structure card
-            if (item.type === 'Structure') {
-              // Check if there's already a structure in this area
-              const hasStructureInArea = currentDeck.cards.some(
-                c => c.type === 'Structure' && c.area === area && c.id !== item.id
-              );
+            // Use the centralized validation function for card movements
+            const canMove = validateCardMovement(item, area, currentDeck.cards, showToast);
 
-              if (hasStructureInArea) {
-                showToast(
-                  `You cannot move this structure card to the ${area} of your car as another structure is already placed there.`,
-                  'error'
-                );
-                return;
-              }
-            }
-
-            // Check if the target area is allowed based on the card's sides field
-            if (item.sides && item.sides.trim() !== '') {
-              // Only validate vehicle area locations (front, back, left, right)
-              const isVehicleLocation = [
-                CardArea.Front,
-                CardArea.Back,
-                CardArea.Left,
-                CardArea.Right,
-              ].includes(area);
-
-              if (isVehicleLocation) {
-                // Convert area to a single character for comparison (F, B, L, R)
-                let areaChar = '';
-
-                switch (area) {
-                  case CardArea.Front:
-                    areaChar = 'F';
-                    break;
-                  case CardArea.Back:
-                    areaChar = 'B';
-                    break;
-                  case CardArea.Left:
-                    areaChar = 'L';
-                    break;
-                  case CardArea.Right:
-                    areaChar = 'R';
-                    break;
-                }
-
-                // If area is not allowed by sides restriction, don't update
-                if (areaChar && !item.sides.toUpperCase().includes(areaChar)) {
-                  showToast(
-                    `This card can only be placed on specific sides: ${item.sides.toUpperCase()}`,
-                    'error'
-                  );
-                  return;
-                }
-              }
+            if (!canMove) {
+              return;
             }
 
             // Move card between areas

@@ -1,5 +1,8 @@
 'use client';
 
+import { useToast } from './Toast';
+import { useCardStore } from '@/store/cardStore';
+import { useRef, useState, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import {
   Card as CardType,
@@ -7,21 +10,18 @@ import {
   CardType as CardTypeEnum,
   canCardTypeGoInArea,
 } from '@/types/types';
-import { useCardStore } from '@/store/cardStore';
+import { useCardValidationErrors, validateAndAddCard } from '@/utils/cardValidation';
+import { deleteCardImage } from '@/utils/cardDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTrash,
-  faPlus,
-  faClone,
-  faXmark,
   faCaretUp,
   faCaretDown,
   faCaretLeft,
   faCaretRight,
+  faTrash,
+  faClone,
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { deleteCardImage } from '@/utils/cardDelete';
-import { useState } from 'react';
-import { useToast } from './Toast';
 
 // Extended type for dragging with source information
 interface DragItem extends CardType {
@@ -56,6 +56,7 @@ export function Card({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const { showToast } = useToast();
+  const { handleValidationError } = useCardValidationErrors();
 
   const [{ isDragging }, dragRef] = useDrag<DragItem, unknown, { isDragging: boolean }>(
     () => ({
@@ -110,189 +111,31 @@ export function Card({
   };
   const handleAddToDeck = (e: React.MouseEvent, area?: CardArea) => {
     e.stopPropagation();
-    const validationResult = canAddCardToDeck(card);
-    if (validationResult.allowed) {
-      addToDeck(card.id, area);
+
+    // Use the centralized validation and add function
+    const cardAdded = validateAndAddCard(
+      card,
+      { canAddCardToDeck, addToDeck },
+      area,
+      showToast,
+      handleValidationError
+    );
+
+    if (cardAdded) {
       setIsPreviewOpen(false); // Close the preview after adding
-      showToast(`Added ${card.name} to your car`, 'success');
-    } else {
-      // Display appropriate error message
-      switch (validationResult.reason) {
-        case 'duplicate_gear':
-          showToast(
-            `You cannot equip multiple copies of the same gear card: "${card.name}"`,
-            'error'
-          );
-          break;
-        case 'duplicate_sidearm':
-          showToast(
-            `You cannot equip multiple copies of the same sidearm: "${card.name}"`,
-            'error'
-          );
-          break;
-        case 'duplicate_accessory':
-          showToast(
-            `You cannot equip multiple copies of the same accessory: "${card.name}"`,
-            'error'
-          );
-          break;
-        case 'duplicate_upgrade':
-          showToast(
-            `You cannot equip multiple copies of the same upgrade: "${card.name}"`,
-            'error'
-          );
-          break;
-        case 'weapon_cost_limit':
-          showToast(
-            `Weapons that cost 6+ BP cannot be used in games with ${validationResult.pointLimit} BP or less. This weapon costs ${validationResult.weaponCost} BP.`,
-            'error'
-          );
-          break;
-        case 'crew_limit_reached':
-          showToast(
-            `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`,
-            'error'
-          );
-          break;
-        case 'structure_limit_reached':
-          if (validationResult.area) {
-            showToast(
-              `You cannot add another structure card to the ${validationResult.area} of your car.`,
-              'error'
-            );
-          } else {
-            showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
-          }
-          break;
-        case 'exclusive_limit_reached':
-          showToast(
-            `You already have an exclusive card in your vehicle. Only one exclusive card is allowed.`,
-            'error'
-          );
-          break;
-        case 'invalid_side':
-          if (validationResult.invalidSide) {
-            showToast(
-              `This card can only be placed on specific sides: ${validationResult.invalidSide}`,
-              'error'
-            );
-          } else {
-            showToast(`This card cannot be placed on this side of the vehicle.`, 'error');
-          }
-          break;
-        case 'same_subtype':
-          if (validationResult.conflictingCard) {
-            const cardType = card.type.toLowerCase();
-            showToast(
-              `Cannot equip multiple ${cardType}s with same subtype: "${card.subtype}" (already have "${validationResult.conflictingCard.name}")`,
-              'error'
-            );
-          } else {
-            const cardType = card.type.toLowerCase();
-            showToast(
-              `Cannot equip multiple ${cardType} cards of the same subtype: "${card.subtype}"`,
-              'error'
-            );
-          }
-          break;
-        case 'not_enough_points':
-        default:
-          showToast('Not enough points to add this card to your deck!', 'error');
-      }
     }
   };
 
   const handleQuickAdd = (area: CardArea) => {
-    const validationResult = canAddCardToDeck(card);
-    if (validationResult.allowed) {
-      addToDeck(card.id, area);
-      showToast(`Added ${card.name} to ${area} of your car`, 'success');
-    } else {
-      // Re-use existing validation error handling
-      handleValidationError(validationResult);
-    }
+    // Use the centralized validation and add function
+    validateAndAddCard(
+      card,
+      { canAddCardToDeck, addToDeck },
+      area,
+      showToast,
+      handleValidationError
+    );
   };
-
-  const handleValidationError = (validationResult: ReturnType<typeof canAddCardToDeck>) => {
-    // Re-use existing validation error logic
-    switch (validationResult.reason) {
-      case 'duplicate_gear':
-        showToast(
-          `You cannot equip multiple copies of the same gear card: "${card.name}"`,
-          'error'
-        );
-        break;
-      case 'duplicate_sidearm':
-        showToast(`You cannot equip multiple copies of the same sidearm: "${card.name}"`, 'error');
-        break;
-      case 'duplicate_accessory':
-        showToast(
-          `You cannot equip multiple copies of the same accessory: "${card.name}"`,
-          'error'
-        );
-        break;
-      case 'duplicate_upgrade':
-        showToast(`You cannot equip multiple copies of the same upgrade: "${card.name}"`, 'error');
-        break;
-      case 'weapon_cost_limit':
-        showToast(
-          `Weapons that cost 6+ BP cannot be used in games with ${validationResult.pointLimit} BP or less. This weapon costs ${validationResult.weaponCost} BP.`,
-          'error'
-        );
-        break;
-      case 'crew_limit_reached':
-        showToast(
-          `You already have a ${validationResult.crewType} in your crew. Only one ${validationResult.crewType} is allowed.`,
-          'error'
-        );
-        break;
-      case 'structure_limit_reached':
-        if (validationResult.area) {
-          showToast(
-            `You cannot add another structure card to the ${validationResult.area} of your car.`,
-            'error'
-          );
-        } else {
-          showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
-        }
-        break;
-      case 'exclusive_limit_reached':
-        showToast(
-          `You already have an exclusive card in your vehicle. Only one exclusive card is allowed.`,
-          'error'
-        );
-        break;
-      case 'invalid_side':
-        if (validationResult.invalidSide) {
-          showToast(
-            `This card can only be placed on specific sides: ${validationResult.invalidSide}`,
-            'error'
-          );
-        } else {
-          showToast(`This card cannot be placed on this side of the vehicle.`, 'error');
-        }
-        break;
-      case 'same_subtype':
-        if (validationResult.conflictingCard) {
-          const cardType = card.type.toLowerCase();
-          showToast(
-            `Cannot equip multiple ${cardType}s with same subtype: "${card.subtype}" (already have "${validationResult.conflictingCard.name}")`,
-            'error'
-          );
-        } else {
-          const cardType = card.type.toLowerCase();
-          showToast(
-            `Cannot equip multiple ${cardType} cards of the same subtype: "${card.subtype}"`,
-            'error'
-          );
-        }
-        break;
-      case 'not_enough_points':
-      default:
-        showToast('Not enough points to add this card to your deck!', 'error');
-    }
-  };
-
   const openPreview = () => {
     if (!isDragging && !isPreviewOpen) {
       setIsPreviewOpen(true);

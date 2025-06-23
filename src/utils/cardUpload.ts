@@ -12,6 +12,9 @@ export interface CardUploadResult {
   isExistingFile: boolean;
   fileName: string;
   parsedName?: string; // For Name_Subtype format files
+  copies?: number; // Number of copies per purchase
+  exclusive?: boolean; // Only one exclusive card can be in a car
+  sides?: string; // Limits which sides the card can be placed on (F, B, L, R)
 }
 
 export async function uploadCardImage(

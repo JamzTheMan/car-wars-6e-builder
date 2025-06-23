@@ -256,6 +256,9 @@ export function CardCollection() {
             crewPointCost: uploadResult.crewPointCost,
             numberAllowed: uploadResult.numberAllowed,
             source: uploadResult.source,
+            copies: uploadResult.copies || 1,
+            exclusive: uploadResult.exclusive || false,
+            sides: uploadResult.sides || '',
           };
 
           // Add to collection

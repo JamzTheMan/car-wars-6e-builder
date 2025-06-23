@@ -98,7 +98,6 @@ function CardCollectionTitleUpload() {
           const cardBaseName = card.name.toLowerCase();
           return cardBaseName === baseName.toLowerCase();
         });
-
         if (existingCard) {
           const updatedCard = {
             id: existingCard.id,
@@ -110,6 +109,9 @@ function CardCollectionTitleUpload() {
             crewPointCost: uploadResult.crewPointCost,
             numberAllowed: uploadResult.numberAllowed,
             source: uploadResult.source,
+            copies: uploadResult.copies || 1,
+            exclusive: uploadResult.exclusive || false,
+            sides: uploadResult.sides || '',
           };
 
           removeFromCollection(existingCard.id);
@@ -118,7 +120,6 @@ function CardCollectionTitleUpload() {
           return;
         }
       }
-
       const newCard = {
         name: baseName,
         imageUrl: uploadResult.imageUrl,
@@ -128,6 +129,9 @@ function CardCollectionTitleUpload() {
         crewPointCost: uploadResult.crewPointCost,
         numberAllowed: uploadResult.numberAllowed,
         source: uploadResult.source,
+        copies: 1,
+        exclusive: false,
+        sides: '',
       };
 
       addToCollection(newCard);

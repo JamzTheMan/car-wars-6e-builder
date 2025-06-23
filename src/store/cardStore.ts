@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/types/types';
+import { validateCardForDeck, validateCardSidePlacement, validateCardMovement } from '@/utils/cardValidation';
 
 // Helper function to sort cards by custom type order, then cost/subtype, then name
 const sortCards = (cards: Card[]): Card[] => {
@@ -128,191 +129,15 @@ export const useCardStore = create<CardStore>()(
           return { allowed: false, reason: 'not_enough_points' };
         }
 
-        const availablePoints = get().getAvailablePoints();
-
-        // Check both build points and crew points
-        let canAdd = true;
-
-        if (card.buildPointCost > 0) {
-          // Apply copies if available - for every point spent, you get 'copies' number of cards
-          const effectiveBuildCost = card.copies && card.copies > 1 ? 
-            card.buildPointCost / card.copies : card.buildPointCost;
-          canAdd = canAdd && availablePoints.buildPoints >= effectiveBuildCost;
-        }
-
-        if (card.crewPointCost > 0) {
-          // Apply copies if available - for every point spent, you get 'copies' number of cards
-          const effectiveCrewCost = card.copies && card.copies > 1 ? 
-            card.crewPointCost / card.copies : card.crewPointCost;
-          canAdd = canAdd && availablePoints.crewPoints >= effectiveCrewCost;
-        }
-
-        // Not enough points
-        if (!canAdd) {
-          return { allowed: false, reason: 'not_enough_points' };
-        }
-        
-        // Check if card is exclusive and the deck already has an exclusive card
-        if (card.exclusive) {
-          const hasExclusiveCard = state.currentDeck.cards.some(c => c.exclusive);
-          if (hasExclusiveCard) {
-            return { allowed: false, reason: 'exclusive_limit_reached' };
-          }
-        }
-        
-        // Special rule: Weapons that cost 6 or more cannot be equipped in games using 24 BP or less
-        if (card.type === 'Weapon' && card.buildPointCost >= 6) {
-          // Check if the current deck has 24 BP or less
-          if (state.currentDeck.pointLimits.buildPoints <= 24) {
-            return { 
-              allowed: false, 
-              reason: 'weapon_cost_limit', 
-              weaponCost: card.buildPointCost,
-              pointLimit: state.currentDeck.pointLimits.buildPoints
-            };
-          }
-        }
-
-        // Special rules for Gear and Sidearm cards:
-        if ((card.type === 'Gear' || card.type === 'Sidearm') && state.currentDeck.cards.length > 0) {
-          // Get all cards of the same type currently in the deck
-          const sameTypeCardsInDeck = state.currentDeck.cards.filter(c => c.type === card.type);
-          
-          // Rule 1: Cannot equip multiple copies of the same card by name
-          // This is the primary check - if names match, it's a duplicate
-          const hasSameNameCard = sameTypeCardsInDeck.some(c => c.name === card.name);
-          
-          // Rule 1b: For real images (not placeholders), check if they're the same
-          // This handles custom uploaded cards that might have same image but different names
-          const isCardPlaceholder = !card.imageUrl || 
-            card.imageUrl.includes('Blank_') || 
-            card.imageUrl.includes('placeholders/');
-          // Check for placeholder images
-          
-          let hasSameImage = false;
-          
-          // Only do the image check if the new card has a real (non-placeholder) image
-          if (!isCardPlaceholder) {
-            hasSameImage = sameTypeCardsInDeck.some(c => {
-              const isDeckCardPlaceholder = !c.imageUrl || 
-                c.imageUrl.includes('Blank_') || 
-                c.imageUrl.includes('placeholders/');
-              
-              // Only compare when both are real images, not placeholders
-              return !isDeckCardPlaceholder && c.imageUrl === card.imageUrl;
-            });
-          }
-          
-          if (hasSameNameCard || hasSameImage) {
-            const reasonType = card.type === 'Gear' ? 'duplicate_gear' : 'duplicate_sidearm';
-            return { allowed: false, reason: reasonType };
-          }
-          
-          // Rule 2: Cannot equip a card with the same subtype as an existing card of the same type
-          if (card.subtype && card.subtype.trim() !== '') {
-            const conflictingCard = sameTypeCardsInDeck.find(c => 
-              c.subtype && c.subtype.trim() !== '' && c.subtype.toLowerCase() === card.subtype.toLowerCase()
-            );
-            
-            if (conflictingCard) {
-              return { allowed: false, reason: 'same_subtype', conflictingCard };
-            }
-          }
-        }
-        
-        // Special rules for Accessories: Cannot equip multiple accessories that share the same name
-        if (card.type === 'Accessory' && state.currentDeck.cards.length > 0) {
-          const accessoriesInDeck = state.currentDeck.cards.filter(c => c.type === 'Accessory');
-          
-          // Check for accessories with the same name
-          const hasSameName = accessoriesInDeck.some(c => c.name === card.name);
-          
-          if (hasSameName) {
-            return { allowed: false, reason: 'duplicate_accessory' };
-          }
-        }
-        
-        // Special rules for Upgrades: Cannot equip multiple upgrades that share the same name or subtype
-        if (card.type === 'Upgrade' && state.currentDeck.cards.length > 0) {
-          const upgradesInDeck = state.currentDeck.cards.filter(c => c.type === 'Upgrade');
-          
-          // Check for upgrades with the same name
-          const hasSameName = upgradesInDeck.some(c => c.name === card.name);
-          
-          if (hasSameName) {
-            return { allowed: false, reason: 'duplicate_upgrade' };
-          }
-          
-          // Check for upgrades with the same subtype
-          if (card.subtype && card.subtype.trim() !== '') {
-            const conflictingCard = upgradesInDeck.find(c => 
-              c.subtype && c.subtype.trim() !== '' && c.subtype.toLowerCase() === card.subtype.toLowerCase()
-            );
-            
-            if (conflictingCard) {
-              return { allowed: false, reason: 'same_subtype', conflictingCard };
-            }
-          }
-        }
-        // Special rules for Crew cards - limit to 1 Driver and 1 Gunner
-        if (card.type === 'Crew' && state.currentDeck.cards.length > 0) {
-          // Get all crew cards in the deck
-          const crewCardsInDeck = state.currentDeck.cards.filter(c => c.type === 'Crew');
-          
-          // Check if the card is a driver or gunner
-          if (card.subtype && card.subtype.trim() !== '') {
-            const subtypeNormalized = card.subtype.trim().toLowerCase();
-            
-            // Check for Driver limit
-            if (subtypeNormalized === 'driver') {
-              const hasDriver = crewCardsInDeck.some(c => 
-                c.subtype && c.subtype.trim().toLowerCase() === 'driver'
-              );
-              
-              if (hasDriver) {
-                return { 
-                  allowed: false, 
-                  reason: 'crew_limit_reached', 
-                  crewType: 'Driver'
-                };
-              }
-            }
-            
-            // Check for Gunner limit
-            if (subtypeNormalized === 'gunner') {
-              const hasGunner = crewCardsInDeck.some(c => 
-                c.subtype && c.subtype.trim().toLowerCase() === 'gunner'
-              );
-              
-              if (hasGunner) {
-                return { 
-                  allowed: false, 
-                  reason: 'crew_limit_reached', 
-                  crewType: 'Gunner'  
-                };
-              }
-            }
-          }
-        }        // Special rules for Structure cards - limit to 1 structure card per side
-        if (card.type === 'Structure' && state.currentDeck.cards.length > 0) {
-          // Count total structure cards
-          const totalStructures = state.currentDeck.cards.filter(c => c.type === 'Structure').length;
-          
-          // Check if already have 4 structure cards (maximum allowed)
-          if (totalStructures >= 4) {
-            return {
-              allowed: false,
-              reason: 'structure_limit_reached'
-            };
-          }
-          
-          // We can't check specific areas here since when checking if a card can be added,
-          // we don't know which area it will be added to yet.
-          // The actual area-specific validation will be done in the addToDeck and
-          // DeckLayout's drop handler.
-        }
-        return { allowed: true };
-      },      addToCollection: (card: Omit<Card, 'id'>) =>
+        // Use the centralized validation utility
+        return validateCardForDeck(
+          card, 
+          state.currentDeck.cards, 
+          state.currentDeck.pointLimits, 
+          state.currentDeck.pointsUsed
+        );
+      },
+      addToCollection: (card: Omit<Card, 'id'>) =>
         set(state => {
           // Create a new card with a unique ID
           const newCard = { ...card, id: crypto.randomUUID() };
@@ -407,31 +232,11 @@ export const useCardStore = create<CardStore>()(
             }
           }
           
-          // Check if the target area is allowed based on the card's sides field
-          if (cardTemplate.sides && cardTemplate.sides.trim() !== '') {
-            // Convert area to a single character for comparison (F, B, L, R)
-            let areaChar = '';
-            
-            switch (defaultArea) {
-              case CardArea.Front:
-                areaChar = 'F';
-                break;
-              case CardArea.Back:
-                areaChar = 'B';
-                break;
-              case CardArea.Left:
-                areaChar = 'L';
-                break;
-              case CardArea.Right:
-                areaChar = 'R';
-                break;
-            }
-            
-            // Skip validation for crew and gear/upgrade areas
-            if (areaChar && !cardTemplate.sides.toUpperCase().includes(areaChar)) {
-              // Area not allowed by sides restriction
-              return state;
-            }
+          // Validate side placement for the card
+          const sideValidation = validateCardSidePlacement(cardTemplate, defaultArea);
+          if (!sideValidation.allowed) {
+            // Don't add the card if side validation fails
+            return state;
           }
           
           // For Structure cards, check if there's already a structure in the target area
@@ -480,55 +285,19 @@ export const useCardStore = create<CardStore>()(
       updateCardArea: (id: string, area: CardArea) =>
         set(state => {
           if (!state.currentDeck) return state;
-          
-          // Find the card to update
+            // Find the card to update
           const cardToUpdate = state.currentDeck.cards.find(card => card.id === id);
           if (!cardToUpdate) return state;
           
-          // Check if the target area is allowed based on the card's sides field
-          if (cardToUpdate.sides && cardToUpdate.sides.trim() !== '') {
-            // Only validate vehicle area locations (front, back, left, right)
-            const isVehicleLocation = [CardArea.Front, CardArea.Back, CardArea.Left, CardArea.Right].includes(area);
-            
-            if (isVehicleLocation) {
-              // Convert area to a single character for comparison (F, B, L, R)
-              let areaChar = '';
-              
-              switch (area) {
-                case CardArea.Front:
-                  areaChar = 'F';
-                  break;
-                case CardArea.Back:
-                  areaChar = 'B';
-                  break;
-                case CardArea.Left:
-                  areaChar = 'L';
-                  break;
-                case CardArea.Right:
-                  areaChar = 'R';
-                  break;
-              }
-              
-              // If area is not allowed by sides restriction, don't update
-              if (areaChar && !cardToUpdate.sides.toUpperCase().includes(areaChar)) {
-                return state;
-              }
-            }
-          }
+          // Use the centralized validation function for card movements
+          const canMove = validateCardMovement(
+            cardToUpdate,
+            area,
+            state.currentDeck.cards
+          );
           
-          // For Structure cards, check if there's already a structure in the target area
-          if (cardToUpdate.type === 'Structure') {
-            const isVehicleLocation = [CardArea.Front, CardArea.Back, CardArea.Left, CardArea.Right].includes(area);
-            
-            if (isVehicleLocation) {
-              const hasStructureInArea = state.currentDeck.cards.some(c => 
-                c.type === 'Structure' && c.area === area && c.id !== id
-              );
-              
-              if (hasStructureInArea) {
-                return state;
-              }
-            }
+          if (!canMove) {
+            return state;
           }
           
           return {
