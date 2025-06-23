@@ -2,6 +2,31 @@ import { Card, CardArea } from '@/types/types';
 import { useToast } from '@/components/Toast';
 
 /**
+ * Helper function to convert side codes (F,B,L,R) to their full names
+ * @param sidesCodes String containing side codes (e.g. "FLR")
+ * @returns Formatted string with full side names (e.g. "Front, Left, Right")
+ */
+function formatSideNames(sidesCodes: string): string {
+  return sidesCodes
+    .split('')
+    .map(side => {
+      switch (side.toUpperCase()) {
+        case 'F':
+          return 'Front';
+        case 'B':
+          return 'Back';
+        case 'L':
+          return 'Left';
+        case 'R':
+          return 'Right';
+        default:
+          return side;
+      }
+    })
+    .join(' or ');
+}
+
+/**
  * Result of a card validation check
  */
 export interface CardValidationResult {
@@ -350,10 +375,10 @@ export function useCardValidationErrors() {
         break;
       case 'invalid_side':
         if (validationResult.invalidSide) {
-          showToast(
-            `This card can only be placed on specific sides: ${validationResult.invalidSide}`,
-            'error'
-          );
+          // Convert side shorthand letters to full names
+          const expandedSides = formatSideNames(validationResult.invalidSide);
+
+          showToast(`This card can only be placed on specific sides: ${expandedSides}`, 'error');
         } else {
           showToast(`This card cannot be placed on this side of the vehicle.`, 'error');
         }
@@ -496,10 +521,10 @@ export function validateCardMovement(
       // If area is not allowed by sides restriction, don't update
       if (areaChar && !card.sides.toUpperCase().includes(areaChar)) {
         if (showToast) {
-          showToast(
-            `This card can only be placed on specific sides: ${card.sides.toUpperCase()}`,
-            'error'
-          );
+          // Convert side shorthand letters to full names
+          const expandedSides = formatSideNames(card.sides);
+
+          showToast(`This card can only be placed on specific sides: ${expandedSides}`, 'error');
         }
         return false;
       }
