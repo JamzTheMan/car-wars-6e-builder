@@ -466,7 +466,7 @@ export function CardCollection() {
         )}
         {/* Cards grid with fallback message */}
         <div
-          className={`grid gap-x-1 gap-y-2 grid-cols-[repeat(auto-fit,minmax(138px,1fr))] ${
+          className={`grid gap-1 grid-cols-[repeat(auto-fit,minmax(clamp(138px,15vw,155px),1fr))] ${
             isUploading ? 'opacity-50' : ''
           }`}
         >
