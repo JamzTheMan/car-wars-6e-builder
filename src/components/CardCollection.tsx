@@ -295,10 +295,8 @@ export function CardCollection() {
         reader.readAsText(file);
 
         // Wait for the file to be read
-        const csvContent = await csvContentPromise;
-
-        // Process the CSV content using our utility
-        const newCards = processCSVToCards(csvContent, cards);
+        const csvContent = await csvContentPromise; // Process the CSV content using our utility
+        const newCards = await processCSVToCards(csvContent, cards);
 
         // Add each new card to the collection
         for (const newCard of newCards) {

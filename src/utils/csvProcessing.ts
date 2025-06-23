@@ -48,18 +48,52 @@ export function parseNameWithSubtype(name: string): { name: string; subtype?: st
 }
 
 /**
+ * Check if an uploaded image exists for a given card name
+ * This is a client-compatible version that uses the check-card-image API
+ * @param cardName Name of the card to check for image
+ * @returns URL to the image if found, or undefined if not found
+ */
+async function findExistingCardImage(cardName: string): Promise<string | undefined> {
+  try {
+    // Skip API call in SSR mode
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+    
+    const response = await fetch('/api/check-card-image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cardName }),
+    });
+
+    if (!response.ok) {
+      return undefined;
+    }
+
+    const result = await response.json();
+    return result.exists ? result.imageUrl : undefined;
+  } catch (error) {
+    console.error('Error checking for existing card images:', error);
+    return undefined;
+  }
+}
+
+/**
  * Process a CSV file and convert it to card data
  * @param csvContent The content of the CSV file as a string
  * @param collectionCards Array of existing cards in the collection (used to find blank cards)
- * @returns An array of card objects (without IDs)
+ * @returns A Promise resolving to an array of card objects (without IDs)
  */
-export function processCSVToCards(
+export async function processCSVToCards(
   csvContent: string,
   collectionCards: Card[] = []
-): Omit<Card, 'id'>[] {
+): Promise<Omit<Card, 'id'>[]> {
   const records = parseCSV(csvContent);
-
-  return records.map(record => {
+  
+  // Process each record and collect the promises
+  const cardPromises = records.map(async (record) => {
     // Get the card name and check for Name_Subtype format
     const rawName = record['Name'] || 'Unnamed Card';
     const parsedNameResult = parseNameWithSubtype(rawName);
@@ -78,9 +112,19 @@ export function processCSVToCards(
     // 2. From CSV Subtype field if available
     // 3. Empty string as fallback
     const subtype = parsedNameResult.subtype || record['Subtype'] || '';
+      // Use the blank card's image if available, otherwise use the placeholders
+    const defaultImageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
     
-    // Use the blank card's image if available, otherwise use the placeholders
-    const imageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
+    // Check for existing card images in the uploads directory
+    const existingImageUrl = await findExistingCardImage(parsedNameResult.name);
+    
+    // Also check if a card with the same name already exists in the collection
+    const existingCard = collectionCards.find(card => 
+      card.name.toLowerCase() === parsedNameResult.name.toLowerCase()
+    );
+    
+    // Priority: 1. Existing uploaded image, 2. Existing card in collection, 3. Default placeholder
+    const finalImageUrl = existingImageUrl || (existingCard ? existingCard.imageUrl : defaultImageUrl);
     
     // Process new fields
     // Copies: Number of copies given per purchase of points (default 1)
@@ -95,8 +139,7 @@ export function processCSVToCards(
     // Create a new card object
     const card = {
       name: parsedNameResult.name,
-      imageUrl: imageUrl,
-      type: cardType,
+      imageUrl: finalImageUrl,      type: cardType,
       subtype: subtype,
       buildPointCost: parseInt(record['Build Point Cost'] || '0') || 0,
       crewPointCost: parseInt(record['Crew Point Cost'] || '0') || 0,
@@ -106,8 +149,14 @@ export function processCSVToCards(
       exclusive: exclusive,
       sides: sides,
     };
-
-    console.log(`Processed card: ${card.name}, Type: ${card.type}, Subtype: ${card.subtype}`);
+      // Determine the source of the image for logging
+    const imageSource = existingImageUrl ? 'Uploads Directory' : 
+                      (existingCard ? 'Collection Match' : 'Default Placeholder');
+    
+    console.log(`Processed card: ${card.name}, Type: ${card.type}, Subtype: ${card.subtype}, Image Source: ${imageSource}`);
     return card;
   });
+  
+  // Wait for all the card promises to resolve
+  return Promise.all(cardPromises);
 }
