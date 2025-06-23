@@ -164,6 +164,22 @@ export function Card({
             showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
           }
           break;
+        case 'exclusive_limit_reached':
+          showToast(
+            `You already have an exclusive card in your vehicle. Only one exclusive card is allowed.`,
+            'error'
+          );
+          break;
+        case 'invalid_side':
+          if (validationResult.invalidSide) {
+            showToast(
+              `This card can only be placed on specific sides: ${validationResult.invalidSide}`,
+              'error'
+            );
+          } else {
+            showToast(`This card cannot be placed on this side of the vehicle.`, 'error');
+          }
+          break;
         case 'same_subtype':
           if (validationResult.conflictingCard) {
             const cardType = card.type.toLowerCase();
@@ -238,6 +254,22 @@ export function Card({
           );
         } else {
           showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
+        }
+        break;
+      case 'exclusive_limit_reached':
+        showToast(
+          `You already have an exclusive card in your vehicle. Only one exclusive card is allowed.`,
+          'error'
+        );
+        break;
+      case 'invalid_side':
+        if (validationResult.invalidSide) {
+          showToast(
+            `This card can only be placed on specific sides: ${validationResult.invalidSide}`,
+            'error'
+          );
+        } else {
+          showToast(`This card cannot be placed on this side of the vehicle.`, 'error');
         }
         break;
       case 'same_subtype':
@@ -523,7 +555,30 @@ export function Card({
                     <p className="text-gray-600">
                       <span className="font-medium">Cost:</span>{' '}
                       {(card.buildPointCost ?? 0) + (card.crewPointCost ?? 0)} points
-                    </p>{' '}
+                    </p>
+                    {/* Display copies information if greater than 1 */}
+                    {card.copies && card.copies > 1 && (
+                      <p className="text-gray-600">
+                        <span className="font-medium">Copies per purchase:</span> {card.copies}
+                      </p>
+                    )}
+                    {/* Display exclusive status if true */}
+                    {card.exclusive && (
+                      <p className="text-gray-600">
+                        <span className="font-medium">Exclusive:</span> Yes (Only one exclusive card
+                        allowed per vehicle)
+                      </p>
+                    )}
+                    {/* Display side restrictions if present */}
+                    {card.sides && card.sides.trim() !== '' && (
+                      <p className="text-gray-600">
+                        <span className="font-medium">Allowed locations:</span>{' '}
+                        {card.sides.includes('F') ? 'Front ' : ''}
+                        {card.sides.includes('B') ? 'Back ' : ''}
+                        {card.sides.includes('L') ? 'Left ' : ''}
+                        {card.sides.includes('R') ? 'Right' : ''}
+                      </p>
+                    )}
                     {/* Conditionally show description if available */}
                     {card.description && (
                       <div className="mt-4">

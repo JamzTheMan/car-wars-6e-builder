@@ -40,9 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Local data files
-*.csv
-
 # User uploads
 /public/uploads/**
 

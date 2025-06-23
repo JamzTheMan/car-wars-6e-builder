@@ -64,12 +64,15 @@ const sortCards = (cards: Card[]): Card[] => {
 
 interface CardValidationResult {
   allowed: boolean;
-  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'duplicate_accessory' | 'duplicate_upgrade' | 'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached' | 'weapon_cost_limit';
+  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'duplicate_accessory' | 'duplicate_upgrade' | 
+           'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached' | 
+           'weapon_cost_limit' | 'exclusive_limit_reached' | 'invalid_side';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
   area?: CardArea;
   weaponCost?: number;
   pointLimit?: number;
+  invalidSide?: string;
 }
 
 interface CardStore {
@@ -131,14 +134,30 @@ export const useCardStore = create<CardStore>()(
         let canAdd = true;
 
         if (card.buildPointCost > 0) {
-          canAdd = canAdd && availablePoints.buildPoints >= card.buildPointCost;
+          // Apply copies if available - for every point spent, you get 'copies' number of cards
+          const effectiveBuildCost = card.copies && card.copies > 1 ? 
+            card.buildPointCost / card.copies : card.buildPointCost;
+          canAdd = canAdd && availablePoints.buildPoints >= effectiveBuildCost;
         }
 
         if (card.crewPointCost > 0) {
-          canAdd = canAdd && availablePoints.crewPoints >= card.crewPointCost;
-        }          // Not enough points
+          // Apply copies if available - for every point spent, you get 'copies' number of cards
+          const effectiveCrewCost = card.copies && card.copies > 1 ? 
+            card.crewPointCost / card.copies : card.crewPointCost;
+          canAdd = canAdd && availablePoints.crewPoints >= effectiveCrewCost;
+        }
+
+        // Not enough points
         if (!canAdd) {
           return { allowed: false, reason: 'not_enough_points' };
+        }
+        
+        // Check if card is exclusive and the deck already has an exclusive card
+        if (card.exclusive) {
+          const hasExclusiveCard = state.currentDeck.cards.some(c => c.exclusive);
+          if (hasExclusiveCard) {
+            return { allowed: false, reason: 'exclusive_limit_reached' };
+          }
         }
         
         // Special rule: Weapons that cost 6 or more cannot be equipped in games using 24 BP or less
@@ -153,7 +172,8 @@ export const useCardStore = create<CardStore>()(
             };
           }
         }
-          // Special rules for Gear and Sidearm cards:
+
+        // Special rules for Gear and Sidearm cards:
         if ((card.type === 'Gear' || card.type === 'Sidearm') && state.currentDeck.cards.length > 0) {
           // Get all cards of the same type currently in the deck
           const sameTypeCardsInDeck = state.currentDeck.cards.filter(c => c.type === card.type);
@@ -347,6 +367,7 @@ export const useCardStore = create<CardStore>()(
             // Start with an empty deck
             return {
               collectionCards: [],
+
               currentDeck: {
                 ...state.currentDeck,
                 cards: [],
@@ -383,6 +404,33 @@ export const useCardStore = create<CardStore>()(
             } else {
               // Default location for weapons, accessories, and structure
               defaultArea = CardArea.Front;
+            }
+          }
+          
+          // Check if the target area is allowed based on the card's sides field
+          if (cardTemplate.sides && cardTemplate.sides.trim() !== '') {
+            // Convert area to a single character for comparison (F, B, L, R)
+            let areaChar = '';
+            
+            switch (defaultArea) {
+              case CardArea.Front:
+                areaChar = 'F';
+                break;
+              case CardArea.Back:
+                areaChar = 'B';
+                break;
+              case CardArea.Left:
+                areaChar = 'L';
+                break;
+              case CardArea.Right:
+                areaChar = 'R';
+                break;
+            }
+            
+            // Skip validation for crew and gear/upgrade areas
+            if (areaChar && !cardTemplate.sides.toUpperCase().includes(areaChar)) {
+              // Area not allowed by sides restriction
+              return state;
             }
           }
           
@@ -430,16 +478,68 @@ export const useCardStore = create<CardStore>()(
         }),
 
       updateCardArea: (id: string, area: CardArea) =>
-        set(state => ({
-          currentDeck: state.currentDeck
-            ? {
-                ...state.currentDeck,
-                cards: state.currentDeck.cards.map(card =>
-                  card.id === id ? { ...card, area } : card
-                ),
+        set(state => {
+          if (!state.currentDeck) return state;
+          
+          // Find the card to update
+          const cardToUpdate = state.currentDeck.cards.find(card => card.id === id);
+          if (!cardToUpdate) return state;
+          
+          // Check if the target area is allowed based on the card's sides field
+          if (cardToUpdate.sides && cardToUpdate.sides.trim() !== '') {
+            // Only validate vehicle area locations (front, back, left, right)
+            const isVehicleLocation = [CardArea.Front, CardArea.Back, CardArea.Left, CardArea.Right].includes(area);
+            
+            if (isVehicleLocation) {
+              // Convert area to a single character for comparison (F, B, L, R)
+              let areaChar = '';
+              
+              switch (area) {
+                case CardArea.Front:
+                  areaChar = 'F';
+                  break;
+                case CardArea.Back:
+                  areaChar = 'B';
+                  break;
+                case CardArea.Left:
+                  areaChar = 'L';
+                  break;
+                case CardArea.Right:
+                  areaChar = 'R';
+                  break;
               }
-            : null,
-        })),
+              
+              // If area is not allowed by sides restriction, don't update
+              if (areaChar && !cardToUpdate.sides.toUpperCase().includes(areaChar)) {
+                return state;
+              }
+            }
+          }
+          
+          // For Structure cards, check if there's already a structure in the target area
+          if (cardToUpdate.type === 'Structure') {
+            const isVehicleLocation = [CardArea.Front, CardArea.Back, CardArea.Left, CardArea.Right].includes(area);
+            
+            if (isVehicleLocation) {
+              const hasStructureInArea = state.currentDeck.cards.some(c => 
+                c.type === 'Structure' && c.area === area && c.id !== id
+              );
+              
+              if (hasStructureInArea) {
+                return state;
+              }
+            }
+          }
+          
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              cards: state.currentDeck.cards.map(card =>
+                card.id === id ? { ...card, area } : card
+              ),
+            }
+          };
+        }),
 
       removeFromDeck: (id: string) =>
         set(state => {

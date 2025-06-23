@@ -288,7 +288,8 @@ export function DeckLayoutMenu() {
           className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
           onClick={() => setIsEditingPoints(!isEditingPoints)}
           aria-label="Edit build and crew points"
-          title="Edit build and crew points">
+          title="Edit build and crew points"
+        >
           <FontAwesomeIcon icon={faGear} className="h-5 w-5" />
         </button>
       </div>
@@ -575,6 +576,22 @@ export function DeckLayout() {
                     showToast(`You cannot add more than 4 structure cards to your car.`, 'error');
                   }
                   break;
+                case 'exclusive_limit_reached':
+                  showToast(
+                    `You already have an exclusive card in your vehicle. Only one exclusive card is allowed.`,
+                    'error'
+                  );
+                  break;
+                case 'invalid_side':
+                  if (validationResult.invalidSide) {
+                    showToast(
+                      `This card can only be placed on specific sides: ${validationResult.invalidSide}`,
+                      'error'
+                    );
+                  } else {
+                    showToast(`This card cannot be placed on this side of the vehicle.`, 'error');
+                  }
+                  break;
                 case 'same_subtype':
                   if (validationResult.conflictingCard) {
                     const cardType = item.type.toLowerCase();
@@ -609,6 +626,46 @@ export function DeckLayout() {
                   'error'
                 );
                 return;
+              }
+            }
+
+            // Check if the target area is allowed based on the card's sides field
+            if (item.sides && item.sides.trim() !== '') {
+              // Only validate vehicle area locations (front, back, left, right)
+              const isVehicleLocation = [
+                CardArea.Front,
+                CardArea.Back,
+                CardArea.Left,
+                CardArea.Right,
+              ].includes(area);
+
+              if (isVehicleLocation) {
+                // Convert area to a single character for comparison (F, B, L, R)
+                let areaChar = '';
+
+                switch (area) {
+                  case CardArea.Front:
+                    areaChar = 'F';
+                    break;
+                  case CardArea.Back:
+                    areaChar = 'B';
+                    break;
+                  case CardArea.Left:
+                    areaChar = 'L';
+                    break;
+                  case CardArea.Right:
+                    areaChar = 'R';
+                    break;
+                }
+
+                // If area is not allowed by sides restriction, don't update
+                if (areaChar && !item.sides.toUpperCase().includes(areaChar)) {
+                  showToast(
+                    `This card can only be placed on specific sides: ${item.sides.toUpperCase()}`,
+                    'error'
+                  );
+                  return;
+                }
               }
             }
 

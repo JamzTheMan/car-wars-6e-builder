@@ -44,6 +44,9 @@ export interface Card {
   crewPointCost: number;
   numberAllowed: number;
   source: string;
+  copies: number; // Number of copies per purchase
+  exclusive: boolean; // Only one exclusive card can be in a car
+  sides: string; // Limits which sides the card can be placed on (F, B, L, R)
   description?: string; // Making it optional since existing cards may not have it
   area?: CardArea;
   position?: {

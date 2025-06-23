@@ -82,6 +82,16 @@ export function processCSVToCards(
     // Use the blank card's image if available, otherwise use the placeholders
     const imageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
     
+    // Process new fields
+    // Copies: Number of copies given per purchase of points (default 1)
+    const copies = record['Copies'] ? parseInt(record['Copies']) || 1 : 1;
+    
+    // Exclusive: Whether card is exclusive (only one can be used)
+    const exclusive = record['Exclusive'] === 'y' || record['Exclusive'] === 'yes' || record['Exclusive'] === 'true';
+    
+    // Sides: Which sides of the car the card can be placed on (F, B, L, R)
+    const sides = record['Sides'] || '';
+    
     // Create a new card object
     const card = {
       name: parsedNameResult.name,
@@ -92,6 +102,9 @@ export function processCSVToCards(
       crewPointCost: parseInt(record['Crew Point Cost'] || '0') || 0,
       numberAllowed: parseInt(record['Number Allowed'] || '1') || 1,
       source: record['Source'] || '',
+      copies: copies,
+      exclusive: exclusive,
+      sides: sides,
     };
 
     console.log(`Processed card: ${card.name}, Type: ${card.type}, Subtype: ${card.subtype}`);
