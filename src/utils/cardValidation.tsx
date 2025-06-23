@@ -393,12 +393,11 @@ export function useCardValidationErrors() {
  * @returns True if the card was added successfully
  */
 export function validateAndAddCard(
-  card: Card,
-  {
+  card: Card,  {
     canAddCardToDeck,
     addToDeck,
   }: {
-    canAddCardToDeck: (card: Card) => CardValidationResult;
+    canAddCardToDeck: (card: Card, targetArea?: CardArea) => CardValidationResult;
     addToDeck: (cardId: string, area?: CardArea) => void;
   },
   targetArea?: CardArea,
@@ -409,9 +408,8 @@ export function validateAndAddCard(
     cardType: string,
     cardSubtype?: string
   ) => void
-): boolean {
-  // Use the central validation function
-  const validationResult = canAddCardToDeck(card);
+): boolean {  // Use the central validation function - pass the target area to ensure structure limits are checked
+  const validationResult = canAddCardToDeck(card, targetArea);
 
   // If validation passes, add the card
   if (validationResult.allowed) {

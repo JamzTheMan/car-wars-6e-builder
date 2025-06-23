@@ -1,22 +1,22 @@
 ﻿Name,Type,Subtype,Build Point Cost,Crew Point Cost,Copies,Number Allowed,Exclusive,Sides,Source
 Armored Beer Refrigerator,Accessory,,0,,,1,,,Core
 Grilled Cheese Dispenser,Accessory,,0,,,1,,,Sonic Strike
-Advanced Brakes,Accessory,,1,,,1,,,Core
+Advanced Brakes,Accessory,,1,,,1,,b,Core
 Advanced Firing Interface,Accessory,,1,,,1,,,Miniatures Set 1
 Aerodynamic Fairings,Accessory,,1,,,1,,,Miniatures Set 1
 Automatic Fire Suppressor,Accessory,,1,,,1,,,Core
 Autopilot,Accessory,,1,,,1,,,Uncle Al's Upgrade
-Drag Chute,Accessory,,1,,,1,,,Uncle Al's Upgrade
+Drag Chute,Accessory,,1,,,1,,b,Uncle Al's Upgrade
 Fire Extinguisher,Accessory,,1,,,1,,,Miniatures Set 3
 Magnetic Dampers,Accessory,,1,,,1,,,Miniatures Set 4
 Off-Road Suspension,Accessory,,1,,,1,,,Playmat 1
-Power Plant Superconductor,Accessory,,1,,,1,,,Uncle Al's Upgrade
+Power Plant Superconductor,Accessory,,1,,,1,,b,Uncle Al's Upgrade
 Radar Detector,Accessory,,1,,,1,,,Uncle Al's Upgrade
 Regenerative Brakes,Accessory,,1,,,1,,,Miniatures Set 2
 Sharkfin Aero Package,Accessory,,1,,,1,,,Uncle Al's Upgrade
-Splitter,Accessory,,1,,,1,,,Miniatures Set 3
-Spoiler,Accessory,,1,,,1,,,Miniatures Set 3
-Superbooster,Accessory,,1,,,1,,,Core
+Splitter,Accessory,,1,,,1,,f,Miniatures Set 3
+Spoiler,Accessory,,1,,,1,,fb,Miniatures Set 3
+Superbooster,Accessory,,1,,,1,,f,Core
 Targeting Computer,Accessory,,1,,,1,,,Core
 Boost Cell,Accessory,,2,,,1,,,Gonzo Gear
 Dynamic Suspension,Accessory,,2,,,1,,,Core
@@ -24,7 +24,7 @@ High-Torque Differential,Accessory,,2,,,1,,,Miniatures Set 4
 Radar Jammer,Accessory,,2,,,1,,,Uncle Al's Upgrade
 Rugged Suspension,Accessory,,2,,,1,,,Miniatures Set 3
 Supplemental Power Cell,Accessory,,2,,,1,,,Uncle Al's Upgrade
-Thundercat Battery,Accessory,,2,,,1,,,Miniatures Set 2
+Thundercat Battery,Accessory,,2,,,1,,f,Miniatures Set 2
 Rookie,Crew,Driver,,0,,1,,,Core
 Wingnut,Crew,Driver,,0,,1,,,Crew
 Hound,Crew,Gunner,,0,,1,,,Crew

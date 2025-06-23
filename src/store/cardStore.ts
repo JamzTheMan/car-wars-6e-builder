@@ -91,7 +91,7 @@ interface CardStore {
   updateDeckName: (name: string) => void;
   updateDeckBackground: (imageUrl: string) => void;
   updatePointLimits: (limits: PointLimits) => void;
-  canAddCardToDeck: (card: Card) => CardValidationResult;
+  canAddCardToDeck: (card: Card, targetArea?: CardArea) => CardValidationResult;
   getAvailablePoints: () => { buildPoints: number; crewPoints: number };
   resetDeck: () => void;
 }
@@ -122,20 +122,65 @@ export const useCardStore = create<CardStore>()(
           crewPoints:
             state.currentDeck.pointLimits.crewPoints - state.currentDeck.pointsUsed.crewPoints,
         };
-      },      canAddCardToDeck: (card: Card) => {
+      },      canAddCardToDeck: (card: Card, targetArea?: CardArea) => {
         // Check if we can add the card to the current deck
         const state = get();
         if (!state.currentDeck) {
           return { allowed: false, reason: 'not_enough_points' };
         }
 
-        // Use the centralized validation utility
-        return validateCardForDeck(
+        // Use the centralized validation utility for deck validation
+        const deckValidation = validateCardForDeck(
           card, 
           state.currentDeck.cards, 
           state.currentDeck.pointLimits, 
           state.currentDeck.pointsUsed
         );
+        
+        // If deck validation fails, return that result
+        if (!deckValidation.allowed) {
+          return deckValidation;
+        }
+        
+        // Additional structure card area validation
+        // Determine target area if not provided explicitly
+        const area = targetArea || (() => {
+          if (card.type === 'Crew' || card.type === 'Sidearm') {
+            return CardArea.Crew;
+          } else if (card.type === 'Gear' || card.type === 'Upgrade') {
+            return CardArea.GearUpgrade;
+          } else {
+            return CardArea.Front; // Default for weapons, accessories, structure
+          }
+        })();
+        
+        // For Structure cards, check if there's already a structure in the target area
+        if (card.type === 'Structure') {
+          const isVehicleLocation = [CardArea.Front, CardArea.Back, CardArea.Left, CardArea.Right].includes(area);
+          
+          if (isVehicleLocation) {
+            const hasStructureInArea = state.currentDeck.cards.some(c => 
+              c.type === 'Structure' && c.area === area
+            );
+              
+            if (hasStructureInArea) {
+              return {
+                allowed: false,
+                reason: 'structure_limit_reached',
+                area: area
+              };
+            }
+          }
+        }
+        
+        // Validate side placement for the card
+        const sideValidation = validateCardSidePlacement(card, area);
+        if (!sideValidation.allowed) {
+          return sideValidation;
+        }
+        
+        // All validations passed
+        return { allowed: true };
       },
       addToCollection: (card: Omit<Card, 'id'>) =>
         set(state => {
@@ -210,16 +255,14 @@ export const useCardStore = create<CardStore>()(
           // Find the card in the collection
           const cardTemplate = state.collectionCards.find(card => card.id === cardId);
           if (!cardTemplate) return state;
-          
-          // First, check if we can add this card using the canAddCardToDeck function
-          const validationResult = useCardStore.getState().canAddCardToDeck(cardTemplate);
+            // First, check if we can add this card using the canAddCardToDeck function
+          // Pass the area to validate structure placement too
+          const validationResult = useCardStore.getState().canAddCardToDeck(cardTemplate, area);
           if (!validationResult.allowed) {
             // Don't add the card if validation fails
             // Note: Error messages are handled by the components that call this function
             return state;
-          }
-
-          // Determine default area based on card type
+          }          // Determine default area based on card type
           let defaultArea: CardArea | undefined = area;
           if (!defaultArea) {
             if (cardTemplate.type === 'Crew' || cardTemplate.type === 'Sidearm') {
@@ -232,28 +275,8 @@ export const useCardStore = create<CardStore>()(
             }
           }
           
-          // Validate side placement for the card
-          const sideValidation = validateCardSidePlacement(cardTemplate, defaultArea);
-          if (!sideValidation.allowed) {
-            // Don't add the card if side validation fails
-            return state;
-          }
-          
-          // For Structure cards, check if there's already a structure in the target area
-          if (cardTemplate.type === 'Structure') {
-            // Only check if the target area is a vehicle location (not crew or gear/upgrade)
-            const isVehicleLocation = [CardArea.Front, CardArea.Back, CardArea.Left, CardArea.Right].includes(defaultArea);
-            
-            if (isVehicleLocation) {
-              const hasStructureInArea = state.currentDeck.cards.some(c => 
-                c.type === 'Structure' && c.area === defaultArea
-              );
-                if (hasStructureInArea) {
-                // Just return state unchanged - error handled by components through validation
-                return state;
-              }
-            }
-          }
+          // NOTE: All placement validations are now handled in canAddCardToDeck, 
+          // which has already been called with the same area parameter
 
           // Create a new instance with a different ID
           const newCard = {
