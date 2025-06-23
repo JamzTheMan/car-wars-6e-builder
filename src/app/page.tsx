@@ -20,15 +20,15 @@ function PointsSummary() {
   return (
     <div className="flex items-center space-x-2 text-xs text-gray-300">
       <span className="bg-blue-900 border border-blue-700 rounded px-2 py-0.5">
-        BP:{' '}
-        <span className="font-bold text-blue-200">
-          {pointsUsed.buildPoints} / {pointLimits.buildPoints}
-        </span>
-      </span>
-      <span className="bg-green-900 border border-green-700 rounded px-2 py-0.5">
         CP:{' '}
         <span className="font-bold text-green-200">
           {pointsUsed.crewPoints} / {pointLimits.crewPoints}
+        </span>
+      </span>
+      <span className="bg-red-900 border border-red-700 rounded px-2 py-0.5">
+        BP:{' '}
+        <span className="font-bold text-blue-200">
+          {pointsUsed.buildPoints} / {pointLimits.buildPoints}
         </span>
       </span>
     </div>

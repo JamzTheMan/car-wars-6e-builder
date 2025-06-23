@@ -491,7 +491,7 @@ export function DeckLayout() {
         case CardArea.Crew:
           return 'bg-blue-900 bg-opacity-20';
         case CardArea.GearUpgrade:
-          return 'bg-green-900 bg-opacity-20';
+          return 'bg-purple-950 bg-opacity-20';
         case CardArea.Front:
         case CardArea.Back:
         case CardArea.Left:
@@ -707,7 +707,7 @@ export function DeckLayout() {
       >
         {' '}
         {/* No direction indicators - using area labels instead */}
-        <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-2 p-2">
+        <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-1 p-1">
           {' '}
           {/* Top row */}
           <AreaDropTarget area={CardArea.Crew} label="Crew & Sidearms" className="h-full" />
