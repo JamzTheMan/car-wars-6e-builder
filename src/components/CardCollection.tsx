@@ -69,12 +69,12 @@ export function CardCollection() {
   const [isUploading, setIsUploading] = useState(false);
   // Filter states
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
-  const [filterCardType, setFilterCardType] = useState<string>('');
-  const [filterSubtype, setFilterSubtype] = useState<string>('');
+  const [filterCardTypes, setFilterCardTypes] = useState<string[]>([]);
+  const [filterSubtypes, setFilterSubtypes] = useState<string[]>([]);
   const [filterMinCost, setFilterMinCost] = useState<number>(0);
   const [filterMaxCost, setFilterMaxCost] = useState<number>(8);
   const [costFilterEnabled, setCostFilterEnabled] = useState<boolean>(false);
-  const [filterSource, setFilterSource] = useState<string>('');
+  const [filterSources, setFilterSources] = useState<string[]>([]);
 
   const {
     collectionCards: cards,
@@ -160,13 +160,13 @@ export function CardCollection() {
   const filteredCards = useMemo(() => {
     // Cards are already sorted at the store level, so we just need to filter
     return cards.filter(card => {
-      // Filter by card type
-      if (filterCardType && card.type !== filterCardType) {
+      // Filter by card type - if any card types are selected, the card must match one of them
+      if (filterCardTypes.length > 0 && !filterCardTypes.includes(card.type)) {
         return false;
       }
 
-      // Filter by subtype
-      if (filterSubtype && (!card.subtype || card.subtype !== filterSubtype)) {
+      // Filter by subtype - if any subtypes are selected, the card must match one of them
+      if (filterSubtypes.length > 0 && (!card.subtype || !filterSubtypes.includes(card.subtype))) {
         return false;
       }
 
@@ -184,8 +184,8 @@ export function CardCollection() {
         }
       }
 
-      // Filter by source
-      if (filterSource && (!card.source || card.source !== filterSource)) {
+      // Filter by source - if any sources are selected, the card must match one of them
+      if (filterSources.length > 0 && (!card.source || !filterSources.includes(card.source))) {
         return false;
       }
 
@@ -194,21 +194,21 @@ export function CardCollection() {
     // Note: No need to sort here as the cards collection is already sorted
   }, [
     cards,
-    filterCardType,
-    filterSubtype,
+    filterCardTypes,
+    filterSubtypes,
     filterMinCost,
     filterMaxCost,
     costFilterEnabled,
-    filterSource,
+    filterSources,
   ]);
   // Reset all filters
   const resetFilters = () => {
-    setFilterCardType('');
-    setFilterSubtype('');
+    setFilterCardTypes([]);
+    setFilterSubtypes([]);
     setFilterMinCost(0);
     setFilterMaxCost(8);
     setCostFilterEnabled(false);
-    setFilterSource('');
+    setFilterSources([]);
   };
 
   // Create a multi-drop target that accepts both files and cards
@@ -412,14 +412,20 @@ export function CardCollection() {
                 className="mr-2 h-3 w-3"
               />
               {filterPanelOpen ? 'Hide Filters' : 'Filter Cards'}
-              {(filterCardType || filterSubtype || costFilterEnabled || filterSource) && (
+              {(filterCardTypes.length > 0 ||
+                filterSubtypes.length > 0 ||
+                costFilterEnabled ||
+                filterSources.length > 0) && (
                 <span className="ml-2 bg-blue-600 px-1.5 py-0.5 rounded-full text-xs">Active</span>
               )}
             </button>
           </div>
 
           <div className="flex items-center">
-            {(filterCardType || filterSubtype || costFilterEnabled || filterSource) && (
+            {(filterCardTypes.length > 0 ||
+              filterSubtypes.length > 0 ||
+              costFilterEnabled ||
+              filterSources.length > 0) && (
               <>
                 <span className="text-xs text-gray-400 mr-2">
                   {filteredCards.length} of {cards.length} cards
@@ -435,18 +441,34 @@ export function CardCollection() {
         {/* Filter Panel */}
         {filterPanelOpen && (
           <div className="flex flex-col space-y-3 p-3 bg-gray-800 rounded border border-gray-700 mb-3">
+            <p className="text-xs text-gray-400 mb-2">
+              <span className="font-medium">Tip:</span> Hold Ctrl/Cmd to select multiple items in
+              each dropdown, or click and drag to select adjacent items.
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {/* Card Type Filter */}
               <div>
                 <label className="font-medium text-sm">Card Type</label>
                 <select
                   id="filter-card-type"
-                  value={filterCardType}
-                  onChange={e => setFilterCardType(e.target.value)}
+                  value={filterCardTypes}
+                  onChange={e => {
+                    const selectedOptions = Array.from(e.target.selectedOptions).map(
+                      option => option.value
+                    );
+                    setFilterCardTypes(selectedOptions);
+                  }}
                   className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
                   aria-label="Card Type"
+                  multiple
+                  size={4}
                 >
-                  <option value="">Any Type</option>
+                  {/* Empty selection means "Any Type" */}
+                  {filterCardTypes.length === 0 && (
+                    <option value="" disabled>
+                      Select Card Type(s)
+                    </option>
+                  )}
                   <optgroup label="Build Point Cards">
                     {Object.entries(CardTypeCategories)
                       .filter(([_, category]) => category === 'BuildPoints')
@@ -474,11 +496,23 @@ export function CardCollection() {
                 </label>
                 <select
                   id="filter-subtype"
-                  value={filterSubtype}
-                  onChange={e => setFilterSubtype(e.target.value)}
+                  value={filterSubtypes}
+                  onChange={e => {
+                    const selectedOptions = Array.from(e.target.selectedOptions).map(
+                      option => option.value
+                    );
+                    setFilterSubtypes(selectedOptions);
+                  }}
                   className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                  multiple
+                  size={4}
                 >
-                  <option value="">Any Subtype</option>{' '}
+                  {/* Empty selection means "Any Subtype" */}
+                  {filterSubtypes.length === 0 && (
+                    <option value="" disabled>
+                      Select Subtype(s)
+                    </option>
+                  )}{' '}
                   {/* Display subtypes directly grouped by card type */}
                   {Object.entries(subtypesByCardType).map(([type, subtypes]) => {
                     // Only render card types that have subtypes
@@ -496,6 +530,39 @@ export function CardCollection() {
                       </optgroup>
                     );
                   })}
+                </select>
+              </div>
+              {/* Source Filter */}
+              <div>
+                <label className="font-medium text-sm">Source</label>
+                <label htmlFor="filter-source" className="font-medium text-sm sr-only">
+                  Source
+                </label>
+                <select
+                  id="filter-source"
+                  title="Source"
+                  value={filterSources}
+                  onChange={e => {
+                    const selectedOptions = Array.from(e.target.selectedOptions).map(
+                      option => option.value
+                    );
+                    setFilterSources(selectedOptions);
+                  }}
+                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
+                  multiple
+                  size={4}
+                >
+                  {/* Empty selection means "Any Source" */}
+                  {filterSources.length === 0 && (
+                    <option value="" disabled>
+                      Select Source(s)
+                    </option>
+                  )}
+                  {uniqueSources.map(source => (
+                    <option key={source} value={source}>
+                      {source}
+                    </option>
+                  ))}
                 </select>
               </div>
               {/* Cost Filter (Build or Crew Point Cost) - Dual Range Slider */}
@@ -571,27 +638,6 @@ export function CardCollection() {
                     <span>Max</span>
                   </div>
                 </div>
-              </div>
-              {/* Source Filter */}
-              <div>
-                <label className="font-medium text-sm">Source</label>
-                <label htmlFor="filter-source" className="font-medium text-sm sr-only">
-                  Source
-                </label>
-                <select
-                  id="filter-source"
-                  title="Source"
-                  value={filterSource}
-                  onChange={e => setFilterSource(e.target.value)}
-                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                >
-                  <option value="">Any Source</option>
-                  {uniqueSources.map(source => (
-                    <option key={source} value={source}>
-                      {source}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
           </div>
