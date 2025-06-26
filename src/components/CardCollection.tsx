@@ -138,13 +138,19 @@ export function CardCollection() {
         return false;
       }
 
-      // Filter by cost (either build point cost OR crew point cost)
-      if (
-        filterCost !== null &&
-        card.buildPointCost !== filterCost &&
-        card.crewPointCost !== filterCost
-      ) {
-        return false;
+      // Filter by cost
+      if (filterCost !== null) {
+        if (filterCost === 0) {
+          // For cost = 0, require BOTH build and crew costs to be 0
+          if (card.buildPointCost !== 0 || card.crewPointCost !== 0) {
+            return false;
+          }
+        } else {
+          // For costs > 0, keep existing behavior (either build OR crew cost matches)
+          if (card.buildPointCost !== filterCost && card.crewPointCost !== filterCost) {
+            return false;
+          }
+        }
       }
 
       // Filter by source
