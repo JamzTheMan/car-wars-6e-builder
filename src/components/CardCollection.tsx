@@ -72,6 +72,7 @@ export function CardCollection() {
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const [filterCardTypes, setFilterCardTypes] = useState<string[]>([]);
   const [filterSubtypes, setFilterSubtypes] = useState<string[]>([]);
+  const [filterCardName, setFilterCardName] = useState<string>('');
   const [filterMinCost, setFilterMinCost] = useState<number>(0);
   const [filterMaxCost, setFilterMaxCost] = useState<number>(8);
   const [costFilterEnabled, setCostFilterEnabled] = useState<boolean>(false);
@@ -171,6 +172,14 @@ export function CardCollection() {
         return false;
       }
 
+      // Filter by card name - if a card name is entered, the card name must include this value
+      if (
+        filterCardName.trim() !== '' &&
+        (!card.name || !card.name.toLowerCase().includes(filterCardName.toLowerCase()))
+      ) {
+        return false;
+      }
+
       // Filter by cost range
       if (costFilterEnabled) {
         // Get the effective cost - the maximum of build and crew point costs
@@ -197,6 +206,7 @@ export function CardCollection() {
     cards,
     filterCardTypes,
     filterSubtypes,
+    filterCardName,
     filterMinCost,
     filterMaxCost,
     costFilterEnabled,
@@ -206,6 +216,7 @@ export function CardCollection() {
   const resetFilters = () => {
     setFilterCardTypes([]);
     setFilterSubtypes([]);
+    setFilterCardName('');
     setFilterMinCost(0);
     setFilterMaxCost(8);
     setCostFilterEnabled(false);
@@ -425,6 +436,7 @@ export function CardCollection() {
           <div className="flex items-center">
             {(filterCardTypes.length > 0 ||
               filterSubtypes.length > 0 ||
+              filterCardName.trim() !== '' ||
               costFilterEnabled ||
               filterSources.length > 0) && (
               <>
@@ -502,77 +514,103 @@ export function CardCollection() {
                   }))}
                 />
               </div>
-              {/* Cost Filter (Build or Crew Point Cost) - Dual Range Slider */}
-              <div className="col-span-1 md:col-span-2">
-                <div className="flex items-center justify-between">
-                  <label className="font-medium text-sm">Cost Range (BP or CP)</label>
-                  <div className="flex items-center">
+              {/* Card Name and Cost Filter on same line */}
+              <div className="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col md:flex-row md:space-x-4">
+                {/* Card Name Filter - Text Input */}
+                <div className="flex-1 w-full md:w-1/2 mb-3 md:mb-0">
+                  <label className="font-medium text-sm mb-1 block">Card Name</label>
+                  <div className="relative">
                     <input
-                      type="checkbox"
-                      id="cost-filter-enabled"
-                      className="mr-2 h-4 w-4"
-                      checked={costFilterEnabled}
-                      onChange={e => setCostFilterEnabled(e.target.checked)}
+                      type="text"
+                      placeholder="Search by card name..."
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      value={filterCardName}
+                      onChange={e => setFilterCardName(e.target.value)}
                     />
-                    <label htmlFor="cost-filter-enabled" className="text-sm text-gray-300">
-                      {costFilterEnabled ? 'Enabled' : 'Disabled'}
-                    </label>
+                    {filterCardName && (
+                      <button
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                        onClick={() => setFilterCardName('')}
+                        aria-label="Clear card name filter"
+                      >
+                        ×
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                <div className={`mt-2 px-1 ${costFilterEnabled ? 'opacity-100' : 'opacity-50'}`}>
-                  <div className="flex justify-between mb-1 text-xs text-gray-400">
+                {/* Cost Filter (Build or Crew Point Cost) - Dual Range Slider */}
+                <div className="flex-1 w-full md:w-1/2">
+                  <div className="flex items-center justify-between">
+                    <label className="font-medium text-sm">Cost Range (BP or CP)</label>
                     <div className="flex items-center">
-                      <span className="w-4 text-center">{filterMinCost}</span>
-                      <span className="ml-1">BP/CP</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="w-4 text-center">{filterMaxCost}</span>
-                      <span className="ml-1">BP/CP</span>
+                      <input
+                        type="checkbox"
+                        id="cost-filter-enabled"
+                        className="mr-2 h-4 w-4"
+                        checked={costFilterEnabled}
+                        onChange={e => setCostFilterEnabled(e.target.checked)}
+                      />
+                      <label htmlFor="cost-filter-enabled" className="text-sm text-gray-300">
+                        {costFilterEnabled ? 'Enabled' : 'Disabled'}
+                      </label>
                     </div>
                   </div>
 
-                  <div className="relative h-7">
-                    {/* Min Cost Slider */}
-                    <input
-                      type="range"
-                      min="0"
-                      max="8"
-                      step="1"
-                      value={filterMinCost}
-                      onChange={e => {
-                        const value = Number(e.target.value);
-                        setFilterMinCost(Math.min(value, filterMaxCost));
-                      }}
-                      disabled={!costFilterEnabled}
-                      className="absolute w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer"
-                      id="min-cost-range"
-                      aria-label="Minimum cost filter"
-                      title="Minimum cost filter"
-                    />
+                  <div className={`mt-2 px-1 ${costFilterEnabled ? 'opacity-100' : 'opacity-50'}`}>
+                    <div className="flex justify-between mb-1 text-xs text-gray-400">
+                      <div className="flex items-center">
+                        <span className="w-4 text-center">{filterMinCost}</span>
+                        <span className="ml-1">BP/CP</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="w-4 text-center">{filterMaxCost}</span>
+                        <span className="ml-1">BP/CP</span>
+                      </div>
+                    </div>
 
-                    {/* Max Cost Slider */}
-                    <input
-                      type="range"
-                      min="0"
-                      max="8"
-                      step="1"
-                      value={filterMaxCost}
-                      onChange={e => {
-                        const value = Number(e.target.value);
-                        setFilterMaxCost(Math.max(value, filterMinCost));
-                      }}
-                      disabled={!costFilterEnabled}
-                      className="absolute w-full bg-transparent h-2 rounded-lg appearance-none cursor-pointer"
-                      id="max-cost-range"
-                      aria-label="Maximum cost filter"
-                      title="Maximum cost filter"
-                    />
-                  </div>
+                    <div className="relative h-7">
+                      {/* Min Cost Slider */}
+                      <input
+                        type="range"
+                        min="0"
+                        max="8"
+                        step="1"
+                        value={filterMinCost}
+                        onChange={e => {
+                          const value = Number(e.target.value);
+                          setFilterMinCost(Math.min(value, filterMaxCost));
+                        }}
+                        disabled={!costFilterEnabled}
+                        className="absolute w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer"
+                        id="min-cost-range"
+                        aria-label="Minimum cost filter"
+                        title="Minimum cost filter"
+                      />
 
-                  <div className="flex justify-between mt-1.5 text-xs text-gray-500">
-                    <span>Min</span>
-                    <span>Max</span>
+                      {/* Max Cost Slider */}
+                      <input
+                        type="range"
+                        min="0"
+                        max="8"
+                        step="1"
+                        value={filterMaxCost}
+                        onChange={e => {
+                          const value = Number(e.target.value);
+                          setFilterMaxCost(Math.max(value, filterMinCost));
+                        }}
+                        disabled={!costFilterEnabled}
+                        className="absolute w-full bg-transparent h-2 rounded-lg appearance-none cursor-pointer"
+                        id="max-cost-range"
+                        aria-label="Maximum cost filter"
+                        title="Maximum cost filter"
+                      />
+                    </div>
+
+                    <div className="flex justify-between mt-1.5 text-xs text-gray-500">
+                      <span>Min</span>
+                      <span>Max</span>
+                    </div>
                   </div>
                 </div>
               </div>

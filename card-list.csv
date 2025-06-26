@@ -197,15 +197,15 @@ Armored Disruptor,Weapon,Shock,3,,,2,,,Sonic Strike
 Disruptor,Weapon,Shock,3,,,2,,,Miniatures Set 2
 Turreted Arc Rifle,Weapon,Shock,3,,,1,y,,Linked Weapons
 Heavy Machine Gun,Weapon,Shred,3,,,2,,,Core
-Light Machine Gun - Incendiary Rounds,Weapon,Shred,3,,,2,,,Miniatures Set 3
+Light Machine Gun Incendiary Rounds,Weapon,Shred,3,,,2,,,Miniatures Set 3
 Scatter Gun,Weapon,Shred,3,,,2,,,Miniatures Set 1
 Spike Gun,Weapon,Shred,3,,,2,,,Uncle Al's Upgrade
-Standard Machine Gun - Tracer Rounds,Weapon,Shred,3,,,2,,,Uncle Al's Upgrade
+Standard Machine Gun Tracer Rounds,Weapon,Shred,3,,,2,,,Uncle Al's Upgrade
 Turreted Machine Gun,Weapon,Shred,3,,,1,y,,Armory
 Turreted Shotgun,Weapon,Shred,3,,,1,y,,Linked Weapons
 Heavy Recoilless Rifle,Weapon,Slug,3,,,2,,,Armory
 Jackhammer,Weapon,Slug,3,,,2,,,Miniatures Set 3
-Standard Recoilless Rifle - Explosive Rounds,Weapon,Slug,3,,,2,,,Uncle Al's Upgrade
+Standard Recoilless Rifle Explosive Rounds,Weapon,Slug,3,,,2,,,Uncle Al's Upgrade
 Turreted Recoilless Rifle,Weapon,Slug,3,,,1,y,,Armory
 Ol' Yeller,Weapon,Sonic,3,,,2,,,Sonic Strike
 Mako,Weapon,Blast,4,,,2,,,Gonzo Gear
@@ -214,7 +214,7 @@ Rapid-Cycle Laser,Weapon,Laser,4,,,2,,,Miniatures Set 2
 Flamesaw,Weapon,Melee,4,,,2,,,Gonzo Gear
 Arc Rifle,Weapon,Shock,4,,,2,,,Miniatures Set 2
 Linked Standard Machine Guns,Weapon,Shred,4,,,2,,,Linked Weapons
-Standard Machine Gun - Incendiary Rounds,Weapon,Shred,4,,,2,,,Miniatures Set 2
+Standard Machine Gun Incendiary Rounds,Weapon,Shred,4,,,2,,,Miniatures Set 2
 Vulcan,Weapon,Shred,4,,,2,,,Armory
 Anti-Tank Gun,Weapon,Slug,4,,,2,,,Core
 Stovepipe,Weapon,Slug,4,,,2,,,Miniatures Set 3
@@ -224,7 +224,7 @@ Twin Laser,Weapon,Laser,5,,,2,,,Uncle Al's Upgrade
 Flail,Weapon,Melee,5,,,2,,,Gonzo Gear
 Betatron,Weapon,Shock,5,,,2,,,Miniatures Set 4
 Linked Disruptors,Weapon,Shock,5,,,2,,,Linked Weapons
-Heavy Machine Gun - Incendiary Rounds,Weapon,Shred,5,,,2,,,Miniatures Set 4
+Heavy Machine Gun Incendiary Rounds,Weapon,Shred,5,,,2,,,Miniatures Set 4
 Longbow,Weapon,Shred,5,,,2,,,Uncle Al's Upgrade
 Ravager,Weapon,Shred,5,,,2,,,Miniatures Set 3
 Thresher,Weapon,Shred,5,,,2,,,Core
