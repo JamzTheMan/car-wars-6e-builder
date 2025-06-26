@@ -383,9 +383,13 @@ export const useCardStore = create<CardStore>()(
             }
           })();
 
+          // Generate a new unique ID for the card in the deck
+          const uniqueId = `${cardId}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
           // Clone the card for the deck and add area information
           const deckCard = { 
             ...cardToAdd, 
+            id: uniqueId, // Use the new unique ID
             area: targetArea,
             // Default positions based on area
             x: 0, 

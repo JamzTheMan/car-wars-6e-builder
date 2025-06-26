@@ -182,7 +182,7 @@ export function DeckLayoutMenu() {
         const content = e.target?.result as string;
         const importedDeck = JSON.parse(content);
 
-        console.log('Attempting to import car:', importedDeck);
+        console.log('Attempting to import vehicle:', importedDeck);
 
         // Validate the imported deck structure
         if (!validateImportedDeck(importedDeck)) {
@@ -228,17 +228,28 @@ export function DeckLayoutMenu() {
           }
 
           throw new Error(
-            'Invalid car: The imported file is missing required properties or has invalid data.'
+            'Invalid vehicle: The imported file is missing required properties or has invalid data.'
           );
         }
 
         // Ask for confirmation before overwriting
-        if (!confirm('This will overwrite your current car. Are you sure you want to continue?')) {
+        if (
+          !confirm('This will overwrite your current vehicle. Are you sure you want to continue?')
+        ) {
           return;
         }
 
-        // Set the imported deck
-        setDeck(importedDeck);
+        // Ensure all cards in the imported deck have unique IDs to prevent React key conflicts
+        const importedDeckWithUniqueCardIds = {
+          ...importedDeck,
+          cards: importedDeck.cards.map(card => ({
+            ...card,
+            id: `${card.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          })),
+        };
+
+        // Set the imported deck with unique card IDs
+        setDeck(importedDeckWithUniqueCardIds as typeof importedDeck);
         setBuildPoints(importedDeck.pointLimits.buildPoints);
         setCrewPoints(importedDeck.pointLimits.crewPoints);
 
@@ -252,11 +263,11 @@ export function DeckLayoutMenu() {
           setIsCustom(false);
         }
 
-        showToast('Deck imported successfully!', 'success');
+        showToast('Vehicle imported successfully!', 'success');
       } catch (error) {
         console.error('Import error:', error);
         showToast(
-          `Failed to import deck: ${error instanceof Error ? error.message : 'Invalid file format'}`,
+          `Failed to import vehicle: ${error instanceof Error ? error.message : 'Invalid file format'}`,
           'error'
         );
       }

@@ -440,9 +440,10 @@ export function validateAndAddCard(
 
   // If validation passes, add the card
   if (validationResult.allowed) {
+    // Pass the original card ID to addToDeck which will now generate a unique ID internally
     addToDeck(card.id, targetArea);
     if (showToast) {
-      showToast(`Added ${card.name} to your car`, 'success');
+      showToast(`Added ${card.name} to your vehicle`, 'success');
     }
     return true;
   } else {
@@ -451,7 +452,7 @@ export function validateAndAddCard(
       handleValidationError(validationResult, card.name, card.type, card.subtype);
     } else if (showToast) {
       // Fallback if no handler is provided but we have toast
-      showToast(`Cannot add ${card.name} to your car`, 'error');
+      showToast(`Cannot add ${card.name} to your vehicle`, 'error');
     }
     return false;
   }
