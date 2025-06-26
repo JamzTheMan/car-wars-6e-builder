@@ -316,3 +316,232 @@ body {
   transform: scale(1.2) translateZ(0);
   transition: transform 0.3s ease-in-out;
 }
+
+/* Print styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  .print-view, .print-view * {
+    visibility: visible;
+  }
+  
+  .print-view {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    color: black;
+    height: auto;
+  }
+  
+  /* Hide no cards messages in print */
+  .print-section li:only-child:not(.card-list-item) {
+    display: none;
+  }
+  
+  /* Ensure page breaks don't happen within cards */
+  .card-list-item {
+    page-break-inside: avoid;
+  }
+}
+
+/* Page orientation styles - handled in the component */
+
+.print-view {
+  background: white;
+  color: black;
+  padding: 20px;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+/* Full layout print styles */
+.print-full-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.print-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.print-points-summary {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.print-layout-grid {
+  display: grid;
+  grid-template-areas: 
+    "left front right"
+    "left crew right"
+    "left gearupgrade right"
+    "left back right";
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 15px;
+}
+
+.print-area {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.print-area h2 {
+  text-align: center;
+  color: #900;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.print-area-front { grid-area: front; }
+.print-area-back { grid-area: back; }
+.print-area-left { grid-area: left; }
+.print-area-right { grid-area: right; }
+.print-area-crew { grid-area: crew; }
+.print-area-gearupgrade { grid-area: gearupgrade; }
+
+.print-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.print-card {
+  width: 150px;
+  height: 210px; /* Maintain card aspect ratio */
+  overflow: hidden;
+}
+
+.print-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Simple layout print styles */
+.print-simple-layout {
+  font-family: Arial, sans-serif;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.print-simple-layout h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.print-simple-layout .print-points-summary {
+  margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+  font-weight: bold;
+}
+
+.print-section {
+  margin-bottom: 25px;
+  page-break-inside: avoid;
+}
+
+.print-section h2 {
+  font-size: 18px;
+  padding: 5px 0;
+  margin-bottom: 12px;
+  text-align: center;
+  color: #900;
+  font-weight: bold;
+}
+
+.print-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.print-section li {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.card-list-item {
+  display: flex;
+  position: relative;
+  margin-bottom: 12px;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.card-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-right: 10px;
+  flex-shrink: 0;
+  max-width: 70%;
+}
+
+/* Dotted leader line */
+.card-list-item:after {
+  content: '';
+  flex-grow: 1;
+  height: 1px;
+  border-bottom: 1px dotted #999;
+  margin: 0 8px;
+  order: 1;
+  min-width: 20px; /* Ensure there's at least some dotted line */
+  display: block; /* Ensure it shows in all browsers */
+}
+
+.card-name {
+  font-weight: bold;
+  margin-right: 5px;
+  text-transform: uppercase;
+  font-size: 1.05em; /* Slightly larger for emphasis */
+}
+
+.card-type {
+  color: #444;
+  font-style: italic;
+}
+
+.card-points {
+  font-weight: bold;
+  text-align: right;
+  min-width: 40px; /* Give more space for larger numbers */
+  order: 2;
+  flex-shrink: 0; /* Prevent shrinking */
+  font-size: 1.05em; /* Slightly larger for emphasis */
+}
+
+/* Hide print view by default but show when printing */
+.print-view {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background-color: white;
+  overflow-y: auto;
+}
+
+@media screen {
+  .print-view {
+    overflow-y: auto;
+    padding-bottom: 50px;
+  }
+}

@@ -16,6 +16,7 @@ import {
   validateAndAddCard,
   validateCardMovement,
 } from '@/utils/cardValidation';
+import { PrintButton } from './PrintButton';
 
 // Re-export VehicleName for compatibility
 export { VehicleName };
@@ -288,6 +289,9 @@ export function DeckLayoutMenu() {
         >
           <FontAwesomeIcon icon={faUpload} className="h-5 w-5" />
         </button>
+
+        {/* Print button */}
+        <PrintButton />
 
         <button
           className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
@@ -658,7 +662,7 @@ export function DeckLayout() {
           </div>
           <AreaDropTarget area={CardArea.Right} label="Right Side" className="row-span-2 h-full" />
           {/* Bottom center has the Back area */}
-          <AreaDropTarget area={CardArea.Back} label="Rear Area" className="h-full" />
+          <AreaDropTarget area={CardArea.Back} label="Back Area" className="h-full" />
         </div>
       </div>
     </div>
