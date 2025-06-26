@@ -242,7 +242,7 @@ function CardCollectionTitleUpload() {
 export default function Home() {
   const { setDeck, currentDeck } = useCardStore();
   const [isStoreHydrated, setIsStoreHydrated] = useState(false);
-  const [leftPanelWidth, setLeftPanelWidth] = useState(30); // percentage
+  const [leftPanelWidth, setLeftPanelWidth] = useState(30); // percentage - will be updated from preferences
   const [isDragging, setIsDragging] = useState(false);
 
   const handleMouseDown = () => {
@@ -253,6 +253,15 @@ export default function Home() {
   const handleMouseUp = () => {
     setIsDragging(false);
     document.body.style.cursor = 'default';
+
+    // Save the panel width when the user finishes dragging
+    import('../utils/userPreferences').then(({ savePanelWidth, debugPrintUserPreferences }) => {
+      console.log('Saving panel width:', leftPanelWidth);
+      savePanelWidth(leftPanelWidth);
+
+      // Debug: print the saved preferences
+      setTimeout(debugPrintUserPreferences, 100);
+    });
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -281,6 +290,23 @@ export default function Home() {
       window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging]);
+
+  // Load user layout preferences on component mount
+  useEffect(() => {
+    // Import is inside useEffect to avoid SSR issues
+    import('../utils/userPreferences').then(({ getPanelWidth, debugPrintUserPreferences }) => {
+      // Debug: print the saved preferences on load
+      debugPrintUserPreferences();
+
+      const savedWidth = getPanelWidth();
+
+      console.log('Loading saved panel width:', savedWidth);
+
+      // Apply saved width
+      setLeftPanelWidth(savedWidth);
+      document.documentElement.style.setProperty('--panel-width', `${savedWidth}%`);
+    });
+  }, []);
 
   useEffect(() => {
     // Handle store hydration

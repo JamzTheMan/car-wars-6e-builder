@@ -6,6 +6,7 @@ import { useCardStore } from '@/store/cardStore';
 import { CardType, CardTypeCategories } from '@/types/types';
 import { useCardUpload } from '@/context/CardUploadContext';
 import { uploadCardImage } from '@/utils/cardUpload';
+import { getUserPreferences, saveFilterPreferences } from '@/utils/userPreferences';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToastContext } from '@/components/Toast';
 import { ChipSelector } from '@/components/ChipSelector';
@@ -68,7 +69,7 @@ export function CardCollection() {
     setNewSource,
   } = useCardUpload();
   const [isUploading, setIsUploading] = useState(false);
-  // Filter states
+  // Filter states - default values will be replaced by user preferences
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const [filterCardTypes, setFilterCardTypes] = useState<string[]>([]);
   const [filterSubtypes, setFilterSubtypes] = useState<string[]>([]);
@@ -77,6 +78,62 @@ export function CardCollection() {
   const [filterMaxCost, setFilterMaxCost] = useState<number>(8);
   const [costFilterEnabled, setCostFilterEnabled] = useState<boolean>(false);
   const [filterSources, setFilterSources] = useState<string[]>([]);
+
+  // Load saved filter preferences on mount
+  useEffect(() => {
+    const userPrefs = getUserPreferences();
+    const { filterPreferences } = userPrefs;
+
+    setFilterPanelOpen(filterPreferences.filterPanelOpen);
+    setFilterCardTypes(filterPreferences.filterCardTypes);
+    setFilterSubtypes(filterPreferences.filterSubtypes);
+    setFilterCardName(filterPreferences.filterCardName);
+    setFilterMinCost(filterPreferences.filterMinCost);
+    setFilterMaxCost(filterPreferences.filterMaxCost);
+    setCostFilterEnabled(filterPreferences.costFilterEnabled);
+    setFilterSources(filterPreferences.filterSources);
+  }, []);
+
+  // Custom setters that save preferences
+  const updateFilterPanelOpen = (value: boolean) => {
+    setFilterPanelOpen(value);
+    saveFilterPreferences({ filterPanelOpen: value });
+  };
+
+  const updateFilterCardTypes = (value: string[]) => {
+    setFilterCardTypes(value);
+    saveFilterPreferences({ filterCardTypes: value });
+  };
+
+  const updateFilterSubtypes = (value: string[]) => {
+    setFilterSubtypes(value);
+    saveFilterPreferences({ filterSubtypes: value });
+  };
+
+  const updateFilterCardName = (value: string) => {
+    setFilterCardName(value);
+    saveFilterPreferences({ filterCardName: value });
+  };
+
+  const updateFilterMinCost = (value: number) => {
+    setFilterMinCost(value);
+    saveFilterPreferences({ filterMinCost: value });
+  };
+
+  const updateFilterMaxCost = (value: number) => {
+    setFilterMaxCost(value);
+    saveFilterPreferences({ filterMaxCost: value });
+  };
+
+  const updateCostFilterEnabled = (value: boolean) => {
+    setCostFilterEnabled(value);
+    saveFilterPreferences({ costFilterEnabled: value });
+  };
+
+  const updateFilterSources = (value: string[]) => {
+    setFilterSources(value);
+    saveFilterPreferences({ filterSources: value });
+  };
 
   const {
     collectionCards: cards,
@@ -214,13 +271,13 @@ export function CardCollection() {
   ]);
   // Reset all filters
   const resetFilters = () => {
-    setFilterCardTypes([]);
-    setFilterSubtypes([]);
-    setFilterCardName('');
-    setFilterMinCost(0);
-    setFilterMaxCost(8);
-    setCostFilterEnabled(false);
-    setFilterSources([]);
+    updateFilterCardTypes([]);
+    updateFilterSubtypes([]);
+    updateFilterCardName('');
+    updateFilterMinCost(0);
+    updateFilterMaxCost(8);
+    updateCostFilterEnabled(false);
+    updateFilterSources([]);
   };
 
   // Create a multi-drop target that accepts both files and cards
@@ -416,7 +473,7 @@ export function CardCollection() {
         <div className="flex justify-between items-center mb-2">
           <div className="flex space-x-2">
             <button
-              onClick={() => setFilterPanelOpen(!filterPanelOpen)}
+              onClick={() => updateFilterPanelOpen(!filterPanelOpen)}
               className="flex items-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded"
             >
               <FontAwesomeIcon
@@ -464,7 +521,7 @@ export function CardCollection() {
                 <ChipSelector
                   label="Card Type"
                   selectedValues={filterCardTypes}
-                  onChange={setFilterCardTypes}
+                  onChange={updateFilterCardTypes}
                   options={[]} // This is required but not used when groupedOptions is provided
                   groupedOptions={{
                     'Build Point Cards': Object.entries(CardTypeCategories)
@@ -481,7 +538,7 @@ export function CardCollection() {
                 <ChipSelector
                   label="Subtype"
                   selectedValues={filterSubtypes}
-                  onChange={setFilterSubtypes}
+                  onChange={updateFilterSubtypes}
                   options={[]}
                   groupedOptions={
                     // Convert the subtypesByCardType object to the format expected by ChipSelector
@@ -507,7 +564,7 @@ export function CardCollection() {
                 <ChipSelector
                   label="Source"
                   selectedValues={filterSources}
-                  onChange={setFilterSources}
+                  onChange={updateFilterSources}
                   options={uniqueSources.map(source => ({
                     value: source,
                     label: source,
@@ -525,12 +582,12 @@ export function CardCollection() {
                       placeholder="Search by card name..."
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       value={filterCardName}
-                      onChange={e => setFilterCardName(e.target.value)}
+                      onChange={e => updateFilterCardName(e.target.value)}
                     />
                     {filterCardName && (
                       <button
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
-                        onClick={() => setFilterCardName('')}
+                        onClick={() => updateFilterCardName('')}
                         aria-label="Clear card name filter"
                       >
                         ×
@@ -549,7 +606,7 @@ export function CardCollection() {
                         id="cost-filter-enabled"
                         className="mr-2 h-4 w-4"
                         checked={costFilterEnabled}
-                        onChange={e => setCostFilterEnabled(e.target.checked)}
+                        onChange={e => updateCostFilterEnabled(e.target.checked)}
                       />
                       <label htmlFor="cost-filter-enabled" className="text-sm text-gray-300">
                         {costFilterEnabled ? 'Enabled' : 'Disabled'}
@@ -579,7 +636,7 @@ export function CardCollection() {
                         value={filterMinCost}
                         onChange={e => {
                           const value = Number(e.target.value);
-                          setFilterMinCost(Math.min(value, filterMaxCost));
+                          updateFilterMinCost(Math.min(value, filterMaxCost));
                         }}
                         disabled={!costFilterEnabled}
                         className="absolute w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer"
@@ -597,7 +654,7 @@ export function CardCollection() {
                         value={filterMaxCost}
                         onChange={e => {
                           const value = Number(e.target.value);
-                          setFilterMaxCost(Math.max(value, filterMinCost));
+                          updateFilterMaxCost(Math.max(value, filterMinCost));
                         }}
                         disabled={!costFilterEnabled}
                         className="absolute w-full bg-transparent h-2 rounded-lg appearance-none cursor-pointer"
