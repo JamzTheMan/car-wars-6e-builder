@@ -8,6 +8,7 @@ import { useCardUpload } from '@/context/CardUploadContext';
 import { uploadCardImage } from '@/utils/cardUpload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToastContext } from '@/components/Toast';
+import { ChipSelector } from '@/components/ChipSelector';
 import {
   faCloudUploadAlt,
   faFileImport,
@@ -442,128 +443,64 @@ export function CardCollection() {
         {filterPanelOpen && (
           <div className="flex flex-col space-y-3 p-3 bg-gray-800 rounded border border-gray-700 mb-3">
             <p className="text-xs text-gray-400 mb-2">
-              <span className="font-medium">Tip:</span> Hold Ctrl/Cmd to select multiple items in
-              each dropdown, or click and drag to select adjacent items.
+              <span className="font-medium">Tip:</span> Click the filters to open dropdowns, select
+              options, and click the × on chips to remove selections.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {/* Card Type Filter */}
-              <div>
-                <label className="font-medium text-sm">Card Type</label>
-                <select
-                  id="filter-card-type"
-                  value={filterCardTypes}
-                  onChange={e => {
-                    const selectedOptions = Array.from(e.target.selectedOptions).map(
-                      option => option.value
-                    );
-                    setFilterCardTypes(selectedOptions);
-                  }}
-                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                  aria-label="Card Type"
-                  multiple
-                  size={4}
-                >
-                  {/* Empty selection means "Any Type" */}
-                  {filterCardTypes.length === 0 && (
-                    <option value="" disabled>
-                      Select Card Type(s)
-                    </option>
-                  )}
-                  <optgroup label="Build Point Cards">
-                    {Object.entries(CardTypeCategories)
+              {/* Card Type Filter - Chip Selector */}
+              <div className="relative">
+                <ChipSelector
+                  label="Card Type"
+                  selectedValues={filterCardTypes}
+                  onChange={setFilterCardTypes}
+                  options={[]} // This is required but not used when groupedOptions is provided
+                  groupedOptions={{
+                    'Build Point Cards': Object.entries(CardTypeCategories)
                       .filter(([_, category]) => category === 'BuildPoints')
-                      .map(([type]) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                  </optgroup>
-                  <optgroup label="Crew Point Cards">
-                    {Object.entries(CardTypeCategories)
+                      .map(([type]) => ({ value: type, label: type })),
+                    'Crew Point Cards': Object.entries(CardTypeCategories)
                       .filter(([_, category]) => category === 'CrewPoints')
-                      .map(([type]) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                  </optgroup>
-                </select>
+                      .map(([type]) => ({ value: type, label: type })),
+                  }}
+                />
               </div>{' '}
-              {/* Subtype Filter */}
-              <div>
-                <label htmlFor="filter-subtype" className="font-medium text-sm">
-                  Subtype
-                </label>
-                <select
-                  id="filter-subtype"
-                  value={filterSubtypes}
-                  onChange={e => {
-                    const selectedOptions = Array.from(e.target.selectedOptions).map(
-                      option => option.value
-                    );
-                    setFilterSubtypes(selectedOptions);
-                  }}
-                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                  multiple
-                  size={4}
-                >
-                  {/* Empty selection means "Any Subtype" */}
-                  {filterSubtypes.length === 0 && (
-                    <option value="" disabled>
-                      Select Subtype(s)
-                    </option>
-                  )}{' '}
-                  {/* Display subtypes directly grouped by card type */}
-                  {Object.entries(subtypesByCardType).map(([type, subtypes]) => {
-                    // Only render card types that have subtypes
-                    if (subtypes.length === 0) {
-                      return null;
-                    }
+              {/* Subtype Filter - Chip Selector */}
+              <div className="relative">
+                <ChipSelector
+                  label="Subtype"
+                  selectedValues={filterSubtypes}
+                  onChange={setFilterSubtypes}
+                  options={[]}
+                  groupedOptions={
+                    // Convert the subtypesByCardType object to the format expected by ChipSelector
+                    Object.entries(subtypesByCardType).reduce(
+                      (acc, [type, subtypes]) => {
+                        // Skip card types with no subtypes
+                        if (subtypes.length === 0) return acc;
 
-                    return (
-                      <optgroup key={type} label={`${type} Subtypes`}>
-                        {subtypes.map(subtype => (
-                          <option key={subtype} value={subtype}>
-                            {subtype}
-                          </option>
-                        ))}
-                      </optgroup>
-                    );
-                  })}
-                </select>
+                        // Add subtypes for this card type
+                        acc[`${type} Subtypes`] = subtypes.map(subtype => ({
+                          value: subtype,
+                          label: subtype,
+                        }));
+                        return acc;
+                      },
+                      {} as Record<string, { value: string; label: string }[]>
+                    )
+                  }
+                />
               </div>
-              {/* Source Filter */}
-              <div>
-                <label className="font-medium text-sm">Source</label>
-                <label htmlFor="filter-source" className="font-medium text-sm sr-only">
-                  Source
-                </label>
-                <select
-                  id="filter-source"
-                  title="Source"
-                  value={filterSources}
-                  onChange={e => {
-                    const selectedOptions = Array.from(e.target.selectedOptions).map(
-                      option => option.value
-                    );
-                    setFilterSources(selectedOptions);
-                  }}
-                  className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-3 py-2 w-full"
-                  multiple
-                  size={4}
-                >
-                  {/* Empty selection means "Any Source" */}
-                  {filterSources.length === 0 && (
-                    <option value="" disabled>
-                      Select Source(s)
-                    </option>
-                  )}
-                  {uniqueSources.map(source => (
-                    <option key={source} value={source}>
-                      {source}
-                    </option>
-                  ))}
-                </select>
+              {/* Source Filter - Chip Selector */}
+              <div className="relative">
+                <ChipSelector
+                  label="Source"
+                  selectedValues={filterSources}
+                  onChange={setFilterSources}
+                  options={uniqueSources.map(source => ({
+                    value: source,
+                    label: source,
+                  }))}
+                />
               </div>
               {/* Cost Filter (Build or Crew Point Cost) - Dual Range Slider */}
               <div className="col-span-1 md:col-span-2">
