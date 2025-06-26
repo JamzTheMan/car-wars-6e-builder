@@ -316,9 +316,9 @@ export function CardCollection() {
           )
         ) {
           // Replace the entire collection - always generate new unique IDs
-          const cardsWithUniqueIds = newCards.map(card => ({ 
-            ...card, 
-            id: crypto.randomUUID() 
+          const cardsWithUniqueIds = newCards.map(card => ({
+            ...card,
+            id: crypto.randomUUID(),
           }));
           await bulkUpdateCollection(cardsWithUniqueIds);
         } else {
