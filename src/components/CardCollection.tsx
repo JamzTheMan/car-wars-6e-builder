@@ -377,8 +377,7 @@ export function CardCollection() {
                   Reset
                 </button>
               </>
-            )}{' '}
-            {!isLoading && <span className="text-xs text-gray-400 mx-2">{cards.length} cards</span>}
+            )}
           </div>
         </div>
 
