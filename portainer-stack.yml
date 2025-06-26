@@ -26,6 +26,9 @@ services:
       - type: bind
         source: /srv/carwars-6e-builder/public/uploads
         target: /app/public/uploads
+      - type: bind
+        source: /srv/carwars-6e-builder/app/data
+        target: /app/src/data
 networks:
   proxy:
     external: true
