@@ -79,10 +79,12 @@ interface CardValidationResult {
 interface CardStore {
   collectionCards: Card[];
   currentDeck: DeckLayout | null;
-  addToCollection: (card: Omit<Card, 'id'>) => void;
-  addToCollectionWithId: (card: Card) => void;
-  removeFromCollection: (id: string) => void;
-  clearCollection: () => void;
+  isLoading: boolean;
+  loadCollection: () => Promise<void>;
+  addToCollection: (card: Omit<Card, 'id'>) => Promise<void>;
+  addToCollectionWithId: (card: Card) => Promise<void>;
+  removeFromCollection: (id: string) => Promise<void>;
+  clearCollection: () => Promise<void>;
   addToDeck: (cardId: string, area?: CardArea) => void;
   removeFromDeck: (id: string) => void;
   updateCardPosition: (id: string, x: number, y: number) => void;
@@ -94,8 +96,10 @@ interface CardStore {
   canAddCardToDeck: (card: Card, targetArea?: CardArea) => CardValidationResult;
   getAvailablePoints: () => { buildPoints: number; crewPoints: number };
   resetDeck: () => void;
+  bulkUpdateCollection: (cards: Card[]) => Promise<void>;
 }
 
+// Set up localStorage only in browser
 const storage =
   typeof window !== 'undefined'
     ? createJSONStorage(() => localStorage)
@@ -110,6 +114,174 @@ export const useCardStore = create<CardStore>()(
     (set, get) => ({
       collectionCards: [],
       currentDeck: null,
+      isLoading: true,
+
+      // Load the global card collection from the API
+      loadCollection: async () => {
+        try {
+          set({ isLoading: true });
+          const response = await fetch('/api/cards');
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch cards');
+          }
+          
+          const cards = await response.json();
+          set({ collectionCards: cards, isLoading: false });
+        } catch (error) {
+          console.error('Error loading card collection:', error);
+          set({ isLoading: false });
+        }
+      },
+
+      // Add a new card to the collection via API
+      addToCollection: async (card: Omit<Card, 'id'>) => {
+        try {
+          const response = await fetch('/api/cards', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(card),
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to add card');
+          }
+          
+          const data = await response.json();
+          set({ collectionCards: data.cards || [] });
+        } catch (error) {
+          console.error('Error adding card to collection:', error);
+        }
+      },
+
+      // Add a card with a specific ID to the collection via API
+      addToCollectionWithId: async (card: Card) => {
+        try {
+          const response = await fetch('/api/cards', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(card),
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to add card');
+          }
+          
+          const data = await response.json();
+          set({ collectionCards: data.cards || [] });
+        } catch (error) {
+          console.error('Error adding card to collection:', error);
+        }
+      },
+      
+      // Remove a card from the collection via API
+      removeFromCollection: async (id: string) => {
+        try {
+          // First handle deck cleanup
+          set(state => {
+            if (!state.currentDeck) return state;
+            
+            const cardToRemove = state.collectionCards.find(c => c.id === id);
+            if (!cardToRemove) return state;
+            
+            const deckCardsToRemove = state.currentDeck.cards.filter(
+              c => c.id === id || c.imageUrl === cardToRemove.imageUrl
+            );
+            
+            if (deckCardsToRemove.length === 0) return state;
+            
+            // Calculate points to remove
+            let updatedPointsUsed = { ...state.currentDeck.pointsUsed };
+            
+            deckCardsToRemove.forEach(card => {
+              if (card.buildPointCost) {
+                updatedPointsUsed.buildPoints -= card.buildPointCost;
+              }
+              if (card.crewPointCost) {
+                updatedPointsUsed.crewPoints -= card.crewPointCost;
+              }
+            });
+            
+            return {
+              currentDeck: {
+                ...state.currentDeck,
+                cards: state.currentDeck.cards.filter(c => !deckCardsToRemove.some(dc => dc.id === c.id)),
+                pointsUsed: updatedPointsUsed
+              }
+            };
+          });
+            // Then remove from collection via API
+          const response = await fetch(`/api/cards/${id}`, {
+            method: 'DELETE',
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to delete card');
+          }
+          
+          const data = await response.json();
+          set({ collectionCards: data.cards || [] });
+        } catch (error) {
+          console.error('Error removing card from collection:', error);
+        }
+      },
+
+      // Clear the entire collection via API
+      clearCollection: async () => {
+        try {
+          // Reset the deck first
+          set(state => {
+            if (!state.currentDeck) return state;
+            
+            return {
+              currentDeck: {
+                ...state.currentDeck,
+                cards: [],
+                pointsUsed: { buildPoints: 0, crewPoints: 0 }
+              }
+            };
+          });
+          
+          // Clear the collection via API
+          const response = await fetch('/api/cards/clear', {
+            method: 'POST',
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to clear collection');
+          }
+          
+          set({ collectionCards: [] });
+        } catch (error) {
+          console.error('Error clearing collection:', error);
+        }
+      },
+
+      // Bulk update the entire collection
+      bulkUpdateCollection: async (cards: Card[]) => {
+        try {
+          const response = await fetch('/api/cards', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(cards),
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to update collection');
+          }
+          
+          const { cards: updatedCards } = await response.json();
+          set({ collectionCards: updatedCards });
+        } catch (error) {
+          console.error('Error updating collection:', error);
+        }
+      },
 
       getAvailablePoints: () => {
         const state = get();
@@ -122,7 +294,9 @@ export const useCardStore = create<CardStore>()(
           crewPoints:
             state.currentDeck.pointLimits.crewPoints - state.currentDeck.pointsUsed.crewPoints,
         };
-      },      canAddCardToDeck: (card: Card, targetArea?: CardArea) => {
+      },
+      
+      canAddCardToDeck: (card: Card, targetArea?: CardArea) => {
         // Check if we can add the card to the current deck
         const state = get();
         if (!state.currentDeck) {
@@ -182,251 +356,186 @@ export const useCardStore = create<CardStore>()(
         // All validations passed
         return { allowed: true };
       },
-      addToCollection: (card: Omit<Card, 'id'>) =>
-        set(state => {
-          // Create a new card with a unique ID
-          const newCard = { ...card, id: crypto.randomUUID() };
 
-          // Add to collection and sort
-          return { collectionCards: sortCards([...state.collectionCards, newCard]) };
-        }),
-
-      addToCollectionWithId: (card: Card) =>
-        set(state => {
-          // Add card with specific ID to collection and sort
-          return { collectionCards: sortCards([...state.collectionCards, card]) };
-        }),
-      removeFromCollection: (id: string) =>
-        set(state => {
-          // Also remove any instances from the deck
-          if (state.currentDeck) {
-            const deckCardInstances = state.currentDeck.cards.filter(
-              card => state.collectionCards.find(c => c.id === id)?.imageUrl === card.imageUrl
-            );
-
-            if (deckCardInstances.length > 0) {
-              // Remove points for each instance that's being removed
-              let updatedPointsUsed = { ...state.currentDeck.pointsUsed };
-              deckCardInstances.forEach(card => {
-                // Deduct both build points and crew points if applicable
-                if (card.buildPointCost > 0) {
-                  updatedPointsUsed.buildPoints -= card.buildPointCost;
-                }
-                if (card.crewPointCost > 0) {
-                  updatedPointsUsed.crewPoints -= card.crewPointCost;
-                }
-              });              return {
-                collectionCards: sortCards(state.collectionCards.filter(card => card.id !== id)),
-                currentDeck: {
-                  ...state.currentDeck,
-                  cards: state.currentDeck.cards.filter(
-                    card => !deckCardInstances.some(dc => dc.id === card.id)
-                  ),
-                  pointsUsed: updatedPointsUsed,
-                },
-              };
-            }
-          }          // Just remove from collection if no deck instances and ensure the result is sorted
-          return {
-            collectionCards: sortCards(state.collectionCards.filter(card => card.id !== id)),
-          };
-        }),      clearCollection: () =>
-        set(state => {
-          // First, reset the deck if it exists
-          if (state.currentDeck) {
-            // Start with an empty deck
-            return {
-              collectionCards: [],
-
-              currentDeck: {
-                ...state.currentDeck,
-                cards: [],
-                pointsUsed: { buildPoints: 0, crewPoints: 0 },
-              },
-            };
-          }
-
-          // If no deck, just clear the collection
-          return { collectionCards: [] };
-        }),addToDeck: (cardId: string, area?: CardArea) =>
+      // The following deck operations remain unchanged since decks are user-specific
+      addToDeck: (cardId: string, area?) => {
         set(state => {
           if (!state.currentDeck) return state;
 
-          // Find the card in the collection
-          const cardTemplate = state.collectionCards.find(card => card.id === cardId);
-          if (!cardTemplate) return state;
-            // First, check if we can add this card using the canAddCardToDeck function
-          // Pass the area to validate structure placement too
-          const validationResult = useCardStore.getState().canAddCardToDeck(cardTemplate, area);
+          const cardToAdd = state.collectionCards.find(c => c.id === cardId);
+          if (!cardToAdd) return state;
+
+          // Check if we can add this card
+          const validationResult = get().canAddCardToDeck(cardToAdd, area);
           if (!validationResult.allowed) {
-            // Don't add the card if validation fails
-            // Note: Error messages are handled by the components that call this function
+            console.warn('Cannot add card to deck:', validationResult.reason);
             return state;
-          }          // Determine default area based on card type
-          let defaultArea: CardArea | undefined = area;
-          if (!defaultArea) {
-            if (cardTemplate.type === 'Crew' || cardTemplate.type === 'Sidearm') {
-              defaultArea = CardArea.Crew;
-            } else if (cardTemplate.type === 'Gear' || cardTemplate.type === 'Upgrade') {
-              defaultArea = CardArea.GearUpgrade;
+          }
+
+          // Determine the area based on card type if not specified
+          const targetArea = area || (() => {
+            if (cardToAdd.type === 'Crew' || cardToAdd.type === 'Sidearm') {
+              return CardArea.Crew;
+            } else if (cardToAdd.type === 'Gear' || cardToAdd.type === 'Upgrade') {
+              return CardArea.GearUpgrade;
             } else {
-              // Default location for weapons, accessories, and structure
-              defaultArea = CardArea.Front;
+              return CardArea.Front; // Default for weapons, structures, etc.
             }
-          }
-          
-          // NOTE: All placement validations are now handled in canAddCardToDeck, 
-          // which has already been called with the same area parameter
+          })();
 
-          // Create a new instance with a different ID
-          const newCard = {
-            ...cardTemplate,
-            id: crypto.randomUUID(),
-            area: defaultArea,
+          // Clone the card for the deck and add area information
+          const deckCard = { 
+            ...cardToAdd, 
+            area: targetArea,
+            // Default positions based on area
+            x: 0, 
+            y: 0 
           };
 
-          // Update points used
-          const pointsUsed = { ...state.currentDeck.pointsUsed };
-
-          // Add both build points and crew points if applicable
-          if (newCard.buildPointCost > 0) {
-            pointsUsed.buildPoints += newCard.buildPointCost;
+          // Calculate new points used
+          const newPointsUsed = { ...state.currentDeck.pointsUsed };
+          if (deckCard.buildPointCost) {
+            newPointsUsed.buildPoints += deckCard.buildPointCost;
           }
-          if (newCard.crewPointCost > 0) {
-            pointsUsed.crewPoints += newCard.crewPointCost;
+          if (deckCard.crewPointCost) {
+            newPointsUsed.crewPoints += deckCard.crewPointCost;
           }
 
+          // Add to deck
           return {
             currentDeck: {
               ...state.currentDeck,
-              cards: [...state.currentDeck.cards, newCard],
-              pointsUsed,
-            },
-          };
-        }),
-
-      updateCardArea: (id: string, area: CardArea) =>
-        set(state => {
-          if (!state.currentDeck) return state;
-            // Find the card to update
-          const cardToUpdate = state.currentDeck.cards.find(card => card.id === id);
-          if (!cardToUpdate) return state;
-          
-          // Use the centralized validation function for card movements
-          const canMove = validateCardMovement(
-            cardToUpdate,
-            area,
-            state.currentDeck.cards
-          );
-          
-          if (!canMove) {
-            return state;
-          }
-          
-          return {
-            currentDeck: {
-              ...state.currentDeck,
-              cards: state.currentDeck.cards.map(card =>
-                card.id === id ? { ...card, area } : card
-              ),
+              cards: [...state.currentDeck.cards, deckCard],
+              pointsUsed: newPointsUsed
             }
           };
-        }),
-
-      removeFromDeck: (id: string) =>
-        set(state => {
-          if (!state.currentDeck) return state;
-
-          const cardToRemove = state.currentDeck.cards.find(card => card.id === id);
-          if (!cardToRemove) return state;
-          const pointsUsed = { ...state.currentDeck.pointsUsed };
-
-          // Deduct both build points and crew points if applicable
-          if (cardToRemove.buildPointCost > 0) {
-            pointsUsed.buildPoints -= cardToRemove.buildPointCost;
-          }
-          if (cardToRemove.crewPointCost > 0) {
-            pointsUsed.crewPoints -= cardToRemove.crewPointCost;
-          }
-
-          return {
-            currentDeck: {
-              ...state.currentDeck,
-              cards: state.currentDeck.cards.filter(card => card.id !== id),
-              pointsUsed,
-            },
-          };
-        }),
-
-      updateCardPosition: (id, x, y) =>
-        set(state => ({
-          currentDeck: state.currentDeck
-            ? {
-                ...state.currentDeck,
-                cards: state.currentDeck.cards.map(card =>
-                  card.id === id ? { ...card, position: { x, y } } : card
-                ),
-              }
-            : null,
-        })),      setDeck: deck => {
-        set(state => ({
-          ...state,
-          currentDeck: {
-            ...deck,
-            // Use the imported deck's cards, point limits, and points used
-            cards: deck.cards || [],
-            pointLimits: deck.pointLimits || { buildPoints: 200, crewPoints: 50 },
-            pointsUsed: deck.pointsUsed || { buildPoints: 0, crewPoints: 0 },
-          },
-        }));
+        });
       },
 
-      updateDeckBackground: imageUrl =>
-        set(state => ({
-          currentDeck: state.currentDeck
-            ? {
-                ...state.currentDeck,
-                backgroundImage: imageUrl,
-              }
-            : null,
-        })),
-      updatePointLimits: limits =>
-        set(state => ({
-          currentDeck: state.currentDeck
-            ? {
-                ...state.currentDeck,
-                pointLimits: limits,
-              }
-            : null,
-        })),
-
-      resetDeck: () =>
+      removeFromDeck: (id: string) => {
         set(state => {
           if (!state.currentDeck) return state;
+
+          const cardToRemove = state.currentDeck.cards.find(c => c.id === id);
+          if (!cardToRemove) return state;
+
+          // Adjust points used
+          const newPointsUsed = { ...state.currentDeck.pointsUsed };
+          if (cardToRemove.buildPointCost) {
+            newPointsUsed.buildPoints -= cardToRemove.buildPointCost;
+          }
+          if (cardToRemove.crewPointCost) {
+            newPointsUsed.crewPoints -= cardToRemove.crewPointCost;
+          }
 
           return {
             currentDeck: {
               ...state.currentDeck,
-              cards: [], // Remove all cards from deck
-              pointsUsed: { buildPoints: 0, crewPoints: 0 }, // Reset points used to zero
-            },
+              cards: state.currentDeck.cards.filter(c => c.id !== id),
+              pointsUsed: newPointsUsed
+            }
           };
-        }),
+        });
+      },
 
-      updateDeckName: name =>
-        set(state => ({
-          currentDeck: state.currentDeck
-            ? {
-                ...state.currentDeck,
-                name: name,
-              }
-            : null,
-        })),
+      updateCardPosition: (id: string, x: number, y: number) => {
+        set(state => {
+          if (!state.currentDeck) return state;
+
+          const cardIndex = state.currentDeck.cards.findIndex(c => c.id === id);
+          if (cardIndex === -1) return state;          const updatedCards = [...state.currentDeck.cards];
+          // Update with position as a nested object property
+          updatedCards[cardIndex] = { 
+            ...updatedCards[cardIndex], 
+            position: { x, y }
+          };
+
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              cards: updatedCards
+            }
+          };
+        });
+      },
+
+      updateCardArea: (id: string, area: CardArea) => {
+        set(state => {
+          if (!state.currentDeck) return state;
+
+          const cardIndex = state.currentDeck.cards.findIndex(c => c.id === id);
+          if (cardIndex === -1) return state;
+
+          const card = state.currentDeck.cards[cardIndex];
+          
+          // Validate card movement to new area
+          const isValidMove = validateCardMovement(card, area, state.currentDeck.cards);
+          if (!isValidMove) {
+            console.warn('Cannot move card to area');
+            return state;
+          }
+
+          const updatedCards = [...state.currentDeck.cards];
+          updatedCards[cardIndex] = { ...updatedCards[cardIndex], area };
+
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              cards: updatedCards
+            }
+          };
+        });
+      },
+
+      setDeck: (deck: DeckLayout) => {
+        set({ currentDeck: deck });
+      },
+
+      updateDeckName: (name: string) => {
+        set(state => {
+          if (!state.currentDeck) return state;
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              name
+            }
+          };
+        });
+      },
+
+      updateDeckBackground: (imageUrl: string) => {
+        set(state => {
+          if (!state.currentDeck) return state;
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              imageUrl
+            }
+          };
+        });
+      },
+
+      updatePointLimits: (limits: PointLimits) => {
+        set(state => {
+          if (!state.currentDeck) return state;
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              pointLimits: limits
+            }
+          };
+        });
+      },
+
+      resetDeck: () => {
+        set({ currentDeck: null });
+      }
     }),
     {
       name: 'car-wars-storage',
       storage,
-      skipHydration: true, // Let us control hydration timing
+      // Only persist the currentDeck in localStorage, collectionCards will come from the API
+      partialize: (state) => ({ currentDeck: state.currentDeck }),
     }
   )
 );

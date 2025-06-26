@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
@@ -17,7 +17,7 @@ function normalizeForComparison(name: string): string {
  * API route to check if a card image exists in the uploads directory
  * POST /api/check-card-image
  */
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { cardName } = await request.json();
     

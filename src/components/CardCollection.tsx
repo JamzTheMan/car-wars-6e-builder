@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useContext } from 'react';
+import { useState, useMemo, useContext, useEffect } from 'react';
 import { Card } from '@/components/Card';
 import { useCardStore } from '@/store/cardStore';
 import { CardType, CardTypeCategories } from '@/types/types';
@@ -14,6 +14,7 @@ import {
   faTrash,
   faUndo,
   faFilter,
+  faSync,
 } from '@fortawesome/free-solid-svg-icons';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -52,7 +53,17 @@ export function CardCollection() {
     resetDeck,
     currentDeck,
     clearCollection,
-  } = useCardStore(); // Get unique subtypes organized by their corresponding card type
+    loadCollection,
+    isLoading,
+    bulkUpdateCollection,
+  } = useCardStore();
+
+  // Load the global card collection when component mounts
+  useEffect(() => {
+    loadCollection();
+  }, [loadCollection]);
+
+  // Get unique subtypes organized by their corresponding card type
   const subtypesByCardType = useMemo(() => {
     // Create an object to map subtypes to their card type
     const subtypeToCardTypeMap: Record<string, CardType> = {};
@@ -296,11 +307,21 @@ export function CardCollection() {
 
         // Wait for the file to be read
         const csvContent = await csvContentPromise; // Process the CSV content using our utility
-        const newCards = await processCSVToCards(csvContent, cards);
-
-        // Add each new card to the collection
-        for (const newCard of newCards) {
-          addCard(newCard);
+        const newCards = await processCSVToCards(csvContent, cards); // Check if we need to add the cards to existing collection or
+        // create a completely new collection from CSV
+        if (
+          showToast &&
+          confirm(
+            'Do you want to replace the entire collection with these CSV cards?\n\nClick OK to replace all cards,\nCancel to add these to the existing collection'
+          )
+        ) {
+          // Replace the entire collection
+          await bulkUpdateCollection(newCards.map(card => ({ ...card, id: crypto.randomUUID() })));
+        } else {
+          // Add each new card to the collection individually
+          for (const newCard of newCards) {
+            await addCard(newCard);
+          }
         }
 
         console.log(`Successfully imported ${newCards.length} cards from ${file.name}`);
@@ -315,30 +336,50 @@ export function CardCollection() {
   // Reset functionality moved to DeckLayout menu
   return (
     <div className="h-full">
-      {/* Filter Controls */}
+      {/* Filter Controls */}{' '}
       <div className="px-2 mb-4">
         <div className="flex justify-between items-center mb-2">
-          <button
-            onClick={() => setFilterPanelOpen(!filterPanelOpen)}
-            className="flex items-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded"
-          >
-            <FontAwesomeIcon icon={filterPanelOpen ? faUndo : faFilter} className="mr-2 h-3 w-3" />
-            {filterPanelOpen ? 'Hide Filters' : 'Filter Cards'}
-            {(filterCardType || filterSubtype || filterCost !== null || filterSource) && (
-              <span className="ml-2 bg-blue-600 px-1.5 py-0.5 rounded-full text-xs">Active</span>
-            )}
-          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setFilterPanelOpen(!filterPanelOpen)}
+              className="flex items-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded"
+            >
+              <FontAwesomeIcon
+                icon={filterPanelOpen ? faUndo : faFilter}
+                className="mr-2 h-3 w-3"
+              />
+              {filterPanelOpen ? 'Hide Filters' : 'Filter Cards'}
+              {(filterCardType || filterSubtype || filterCost !== null || filterSource) && (
+                <span className="ml-2 bg-blue-600 px-1.5 py-0.5 rounded-full text-xs">Active</span>
+              )}
+            </button>
 
-          {(filterCardType || filterSubtype || filterCost !== null || filterSource) && (
-            <div className="flex items-center">
-              <span className="text-xs text-gray-400 mr-2">
-                {filteredCards.length} of {cards.length} cards
-              </span>
-              <button onClick={resetFilters} className="text-xs text-gray-400 hover:text-white">
-                Reset
-              </button>
-            </div>
-          )}
+            <button
+              onClick={() => loadCollection()}
+              className="flex items-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded"
+              title="Refresh card collection from server"
+            >
+              <FontAwesomeIcon
+                icon={faSync}
+                className={`mr-1 h-3 w-3 ${isLoading ? 'animate-spin' : ''}`}
+              />
+              {isLoading ? 'Loading...' : 'Refresh'}
+            </button>
+          </div>
+
+          <div className="flex items-center">
+            {(filterCardType || filterSubtype || filterCost !== null || filterSource) && (
+              <>
+                <span className="text-xs text-gray-400 mr-2">
+                  {filteredCards.length} of {cards.length} cards
+                </span>
+                <button onClick={resetFilters} className="text-xs text-gray-400 hover:text-white">
+                  Reset
+                </button>
+              </>
+            )}{' '}
+            {!isLoading && <span className="text-xs text-gray-400 mx-2">{cards.length} cards</span>}
+          </div>
         </div>
 
         {/* Filter Panel */}
@@ -455,7 +496,6 @@ export function CardCollection() {
           </div>
         )}
       </div>
-
       {/* Card collection area with drag and drop */}
       <div ref={drop} className="relative p-2">
         {isOver && (

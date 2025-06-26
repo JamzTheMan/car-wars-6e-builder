@@ -133,9 +133,9 @@ Racing Slicks,Upgrade,Wheels,1,,,1,,,Gonzo Gear
 Advanced Targeting Computer,Upgrade,,1,,,1,,,Gonzo Gear
 Defibrillator,Upgrade,,1,,,1,,,Gonzo Gear
 Gyroscopic Stabilizer,Upgrade,,1,,,1,,,Miniatures Set 4
-Stability Controller,Upgrade,,1,,,1,,,Crew
+Stability Controller,Upgrade,,1,-1,,1,,,Crew
 Wheel Guards,Upgrade,,1,,,1,,,Miniatures Set 4
-Active Camoflage,Upgrade,Coating,2,,,1,,,Uncle Al's Upgrade
+Active Camouflage,Upgrade,Coating,2,,,1,,,Uncle Al's Upgrade
 Safety Cage,Upgrade,Frame,2,,,1,,,Core
 Strengthened Undercarriage,Upgrade,Frame,2,,,1,,,Core
 High Density Radials,Upgrade,Wheels,2,,,1,,,Core
