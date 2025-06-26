@@ -3081,7 +3081,7 @@
   },
   {
     "name": "Pulse Laser",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Pulse_Laser.webp",
     "type": "Weapon",
     "subtype": "Laser",
     "buildPointCost": 5,
@@ -3095,7 +3095,7 @@
   },
   {
     "name": "Twin Laser",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Twin_Laser.webp",
     "type": "Weapon",
     "subtype": "Laser",
     "buildPointCost": 5,
@@ -3123,7 +3123,7 @@
   },
   {
     "name": "Betatron",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Betatron.webp",
     "type": "Weapon",
     "subtype": "Shock",
     "buildPointCost": 5,
@@ -3137,7 +3137,7 @@
   },
   {
     "name": "Linked Disruptors",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Linked_Disruptors.webp",
     "type": "Weapon",
     "subtype": "Shock",
     "buildPointCost": 5,
@@ -3151,7 +3151,7 @@
   },
   {
     "name": "Heavy Machine Gun Incendiary Rounds",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Heavy_Machine_Gun_Incendiary_Rounds.webp",
     "type": "Weapon",
     "subtype": "Shred",
     "buildPointCost": 5,
@@ -3165,7 +3165,7 @@
   },
   {
     "name": "Longbow",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Longbow.webp",
     "type": "Weapon",
     "subtype": "Shred",
     "buildPointCost": 5,
@@ -3179,7 +3179,7 @@
   },
   {
     "name": "Ravager",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Ravager.webp",
     "type": "Weapon",
     "subtype": "Shred",
     "buildPointCost": 5,
@@ -3193,7 +3193,7 @@
   },
   {
     "name": "Thresher",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Thresher.webp",
     "type": "Weapon",
     "subtype": "Shred",
     "buildPointCost": 5,
@@ -3207,7 +3207,7 @@
   },
   {
     "name": "Gator",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Gator.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 5,
@@ -3221,7 +3221,7 @@
   },
   {
     "name": "Gauss Cannon",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Gauss_Cannon.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 5,
