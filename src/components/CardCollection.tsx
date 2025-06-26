@@ -167,10 +167,10 @@ export function CardCollection() {
   // Create a multi-drop target that accepts both files and cards
   const [{ isOver, isCardOver }, drop] = useDrop({
     accept: ['CARD', NativeTypes.FILE],
-    drop: (item: any, monitor: any) => {
+    drop: async (item: any, monitor: any) => {
       // Handle file drops
       if (monitor.getItemType() === NativeTypes.FILE) {
-        handleFileDrop(item);
+        await handleFileDrop(item);
       }
       // Handle card drops from Builder
       else if (monitor.getItemType() === 'CARD' && item.id) {
@@ -253,8 +253,8 @@ export function CardCollection() {
               ...existingCard,
               imageUrl: uploadResult.imageUrl,
             };
-            removeFromCollection(existingCard.id);
-            addToCollectionWithId(updatedCard);
+            await removeFromCollection(existingCard.id);
+            await addToCollectionWithId(updatedCard);
             continue; // Skip to next file
           } // For new cards, add normally
           // If the file had a Name_Subtype format, use the parsedName as the card name
@@ -273,7 +273,7 @@ export function CardCollection() {
           };
 
           // Add to collection
-          addCard(newCard);
+          await addCard(newCard);
         } catch (error) {
           console.error(`Error uploading ${file.name}:`, error);
           alert(`Failed to upload ${file.name}. Please try again.`);
@@ -315,12 +315,18 @@ export function CardCollection() {
             'Do you want to replace the entire collection with these CSV cards?\n\nClick OK to replace all cards,\nCancel to add these to the existing collection'
           )
         ) {
-          // Replace the entire collection
-          await bulkUpdateCollection(newCards.map(card => ({ ...card, id: crypto.randomUUID() })));
+          // Replace the entire collection - always generate new unique IDs
+          const cardsWithUniqueIds = newCards.map(card => ({ 
+            ...card, 
+            id: crypto.randomUUID() 
+          }));
+          await bulkUpdateCollection(cardsWithUniqueIds);
         } else {
-          // Add each new card to the collection individually
+          // Add each new card to the collection individually - the API will handle unique IDs
           for (const newCard of newCards) {
-            await addCard(newCard);
+            // Create a new card object without the id property
+            const { id, ...cardWithoutId } = newCard as any;
+            await addCard(cardWithoutId);
           }
         }
 

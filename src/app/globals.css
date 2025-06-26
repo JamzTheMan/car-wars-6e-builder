@@ -317,8 +317,13 @@ body {
   transition: transform 0.3s ease-in-out;
 }
 
-/* Print styles */
+/* Print styles - completely simplified */
 @media print {
+  @page {
+    size: portrait;
+    margin: 0.2cm;
+  }
+  
   body * {
     visibility: hidden;
   }
@@ -327,45 +332,74 @@ body {
     visibility: visible;
   }
   
+  /* Reset all margins and paddings */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: white !important;
+  }
+  
+  /* Ensure print view takes full width */
   .print-view {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: white;
-    color: black;
-    height: auto;
+    position: static !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.2cm !important;
+    background-color: white !important;
+    color: black !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    box-sizing: border-box !important;
   }
   
   /* Hide no cards messages in print */
   .print-section li:only-child:not(.card-list-item) {
-    display: none;
+    display: none !important;
   }
   
-  /* Ensure page breaks don't happen within cards */
-  .card-list-item {
-    page-break-inside: avoid;
+  /* Avoid page breaks after headings */
+  h1, h2 {
+    page-break-after: avoid !important;
+  }
+  
+  /* Ensure no unnecessary padding or margins */
+  * {
+    box-sizing: border-box !important;
+    max-width: none !important;
+  }
+  
+  /* Extremely compact text for print */
+  .print-simple * {
+    font-size: 9pt !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .print-simple h1 {
+    font-size: 14pt !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .print-simple h2 {
+    font-size: 12pt !important;
+    margin: 5px 0 3px 0 !important;
   }
 }
 
-/* Page orientation styles - handled in the component */
-
+/* Print view styles */
 .print-view {
   background: white;
   color: black;
-  padding: 20px;
-  width: 100vw;
-  box-sizing: border-box;
-}
-
-/* Full layout print styles */
-.print-full-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 10px;
 }
 
 .print-header {
@@ -427,104 +461,10 @@ body {
   object-fit: cover;
 }
 
-/* Simple layout print styles */
-.print-simple-layout {
-  font-family: Arial, sans-serif;
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0 20px;
-  box-sizing: border-box;
-}
+/* Simple layout print styles - simplified */
+/* All print styles are now handled inline in PrintView.tsx component */
 
-.print-simple-layout h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.print-simple-layout .print-points-summary {
-  margin-bottom: 20px;
-  font-size: 16px;
-  line-height: 1.5;
-  text-align: center;
-  font-weight: bold;
-}
-
-.print-section {
-  margin-bottom: 25px;
-  page-break-inside: avoid;
-}
-
-.print-section h2 {
-  font-size: 18px;
-  padding: 5px 0;
-  margin-bottom: 12px;
-  text-align: center;
-  color: #900;
-  font-weight: bold;
-}
-
-.print-section ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.print-section li {
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.card-list-item {
-  display: flex;
-  position: relative;
-  margin-bottom: 12px;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-}
-
-.card-info {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-right: 10px;
-  flex-shrink: 0;
-  max-width: 70%;
-}
-
-/* Dotted leader line */
-.card-list-item:after {
-  content: '';
-  flex-grow: 1;
-  height: 1px;
-  border-bottom: 1px dotted #999;
-  margin: 0 8px;
-  order: 1;
-  min-width: 20px; /* Ensure there's at least some dotted line */
-  display: block; /* Ensure it shows in all browsers */
-}
-
-.card-name {
-  font-weight: bold;
-  margin-right: 5px;
-  text-transform: uppercase;
-  font-size: 1.05em; /* Slightly larger for emphasis */
-}
-
-.card-type {
-  color: #444;
-  font-style: italic;
-}
-
-.card-points {
-  font-weight: bold;
-  text-align: right;
-  min-width: 40px; /* Give more space for larger numbers */
-  order: 2;
-  flex-shrink: 0; /* Prevent shrinking */
-  font-size: 1.05em; /* Slightly larger for emphasis */
-}
+/* All card list styles are now handled inline in PrintView.tsx */
 
 /* Hide print view by default but show when printing */
 .print-view {

@@ -40,32 +40,60 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
   const armorPoints = division;
 
   // Consolidated points breakdown
-  const pointsSummary = `DIVISION ${division} [${totalCrewPoints} CP, ${totalBuildPoints} BP, ${armorPoints} AP]`;
+  const pointsSummary = `DIVISION ${division} [${totalCrewPoints}CP, ${totalBuildPoints}BP, ${armorPoints}AP]`;
 
   useEffect(() => {
     if (hasPrinted.current) {
       return;
     }
 
-    // Set page orientation based on print mode
+    // Set page orientation and maximize space usage
     const style = document.createElement('style');
     style.textContent = `
       @page {
         size: ${printMode === 'full' ? 'landscape' : 'portrait'};
-        margin: 0.5cm;
+        margin: 0.2cm;
+      }
+      
+      @media print {
+        * {
+          box-sizing: border-box !important;
+        }
+        
+        html, body {
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        
+        .print-view {
+          width: 100% !important;
+          position: static !important;
+          left: 0 !important;
+          padding: 0.1cm !important;
+          margin: 0 !important;
+          font-size: 8pt !important;
+        }
+        
+        /* Maximum compact view - no wasted space */
+        li, div, span {
+          margin: 0 !important;
+          padding: 0 !important;
+          line-height: 1 !important;
+        }
       }
     `;
     document.head.appendChild(style);
 
-    // We need to wait for the component to fully render before printing
+    // Print
     const printTimeout = setTimeout(() => {
       hasPrinted.current = true;
+      window.scrollTo(0, 0);
       window.print();
 
-      // After printing, close the view (with a delay to ensure dialog is properly closed)
-      setTimeout(() => {
-        onClose();
-      }, 100);
+      // Close after printing
+      setTimeout(onClose, 200);
     }, 300);
 
     return () => {
@@ -74,15 +102,10 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
     };
   }, [onClose, printMode]);
 
-  if (!currentDeck) return null;
-
-  // Handle beforeprint and afterprint events to better manage closing
+  // Handle afterprint event
   useEffect(() => {
     const handleAfterPrint = () => {
-      // Small delay to ensure smooth transition
-      setTimeout(() => {
-        onClose();
-      }, 100);
+      onClose();
     };
 
     window.addEventListener('afterprint', handleAfterPrint);
@@ -92,226 +115,434 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
     };
   }, [onClose]);
 
-  return (
-    <div
-      ref={printRef}
-      className={`print-view ${printMode === 'full' ? 'print-full' : 'print-simple'}`}
-    >
-      {printMode === 'full' ? (
-        <div className="print-full-layout">
-          <div className="print-header">
-            <h1>{currentDeck.name}</h1>
-            <div className="print-points-summary">
-              <p>{pointsSummary}</p>
-            </div>
-          </div>
+  if (!currentDeck) return null;
 
-          <div className="print-layout-grid">
-            {/* Front Area */}
-            <div className="print-area print-area-front">
-              <h2>FRONT</h2>
-              <div className="print-cards">
-                {cardsByArea[CardArea.Front]?.map(card => (
-                  <div key={card.id} className="print-card">
-                    <img src={card.imageUrl} alt={card.name} />
-                  </div>
-                ))}
-              </div>
-            </div>
+  // Full layout view with images
+  if (printMode === 'full') {
+    return (
+      <div className="print-view print-full" ref={printRef}>
+        <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>{currentDeck.name}</h1>
+        <p style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '15px' }}>
+          {pointsSummary}
+        </p>
 
-            {/* Crew Area */}
-            <div className="print-area print-area-crew">
-              <h2>CREW</h2>
-              <div className="print-cards">
-                {cardsByArea[CardArea.Crew]?.map(card => (
-                  <div key={card.id} className="print-card">
-                    <img src={card.imageUrl} alt={card.name} />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Gear/Upgrade Area */}
-            <div className="print-area print-area-gearupgrade">
-              <h2>GEAR / UPGRADES</h2>
-              <div className="print-cards">
-                {cardsByArea[CardArea.GearUpgrade]?.map(card => (
-                  <div key={card.id} className="print-card">
-                    <img src={card.imageUrl} alt={card.name} />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Left Area */}
-            <div className="print-area print-area-left">
-              <h2>LEFT</h2>
-              <div className="print-cards">
-                {cardsByArea[CardArea.Left]?.map(card => (
-                  <div key={card.id} className="print-card">
-                    <img src={card.imageUrl} alt={card.name} />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Area */}
-            <div className="print-area print-area-right">
-              <h2>RIGHT</h2>
-              <div className="print-cards">
-                {cardsByArea[CardArea.Right]?.map(card => (
-                  <div key={card.id} className="print-card">
-                    <img src={card.imageUrl} alt={card.name} />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Back Area */}
-            <div className="print-area print-area-back">
-              <h2>BACK</h2>
-              <div className="print-cards">
-                {cardsByArea[CardArea.Back]?.map(card => (
-                  <div key={card.id} className="print-card">
-                    <img src={card.imageUrl} alt={card.name} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="print-simple-layout">
-          <div className="print-header">
-            <h1>{currentDeck.name}</h1>
-            <div className="print-points-summary">
-              <p>{pointsSummary}</p>
-            </div>
-          </div>
-
-          {/* Crew Section */}
-          <div className="print-section">
-            <h2>CREW</h2>
-            <ul>
-              {cardsByArea[CardArea.Crew]?.map(card => (
-                <li key={card.id} className="card-list-item">
-                  <div className="card-info">
-                    <span className="card-name">{card.name}</span>
-                    <span className="card-type">
-                      ({card.type}
-                      {card.subtype ? ` - ${card.subtype}` : ''})
-                    </span>
-                  </div>
-                  <span className="card-points">{card.crewPointCost}</span>
-                </li>
-              ))}
-              {!cardsByArea[CardArea.Crew]?.length && <li>No crew cards</li>}
-            </ul>
-          </div>
-
-          {/* Gear/Upgrade Section */}
-          <div className="print-section">
-            <h2>GEAR / UPGRADES</h2>
-            <ul>
-              {cardsByArea[CardArea.GearUpgrade]?.map(card => (
-                <li key={card.id} className="card-list-item">
-                  <div className="card-info">
-                    <span className="card-name">{card.name}</span>
-                    <span className="card-type">
-                      ({card.type}
-                      {card.subtype ? ` - ${card.subtype}` : ''})
-                    </span>
-                  </div>
-                  <span className="card-points">
-                    {card.type === 'Gear' ? card.crewPointCost : card.buildPointCost}
-                  </span>
-                </li>
-              ))}
-              {!cardsByArea[CardArea.GearUpgrade]?.length && <li>No gear/upgrade cards</li>}
-            </ul>
-          </div>
-
-          {/* Front Section */}
-          <div className="print-section">
-            <h2>FRONT</h2>
-            <ul>
-              {cardsByArea[CardArea.Front]?.map(card => (
-                <li key={card.id} className="card-list-item">
-                  <div className="card-info">
-                    <span className="card-name">{card.name}</span>
-                    <span className="card-type">
-                      ({card.type}
-                      {card.subtype ? ` - ${card.subtype}` : ''})
-                    </span>
-                  </div>
-                  <span className="card-points">{card.buildPointCost}</span>
-                </li>
-              ))}
-              {!cardsByArea[CardArea.Front]?.length && <li>No front cards</li>}
-            </ul>
-          </div>
-
-          {/* Back Section */}
-          <div className="print-section">
-            <h2>BACK</h2>
-            <ul>
-              {cardsByArea[CardArea.Back]?.map(card => (
-                <li key={card.id} className="card-list-item">
-                  <div className="card-info">
-                    <span className="card-name">{card.name}</span>
-                    <span className="card-type">
-                      ({card.type}
-                      {card.subtype ? ` - ${card.subtype}` : ''})
-                    </span>
-                  </div>
-                  <span className="card-points">{card.buildPointCost}</span>
-                </li>
-              ))}
-              {!cardsByArea[CardArea.Back]?.length && <li>No back cards</li>}
-            </ul>
-          </div>
-
-          {/* Left Section */}
-          <div className="print-section">
-            <h2>LEFT</h2>
-            <ul>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '10px' }}>
+          {/* Left side */}
+          <div style={{ border: '1px solid #ccc', padding: '5px' }}>
+            <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 5px 0' }}>LEFT</h2>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
               {cardsByArea[CardArea.Left]?.map(card => (
-                <li key={card.id} className="card-list-item">
-                  <div className="card-info">
-                    <span className="card-name">{card.name}</span>
-                    <span className="card-type">
-                      ({card.type}
-                      {card.subtype ? ` - ${card.subtype}` : ''})
-                    </span>
-                  </div>
-                  <span className="card-points">{card.buildPointCost}</span>
-                </li>
+                <div key={card.id} style={{ width: '100%', marginBottom: '5px' }}>
+                  <img src={card.imageUrl} alt={card.name} style={{ width: '100%' }} />
+                </div>
               ))}
-              {!cardsByArea[CardArea.Left]?.length && <li>No left cards</li>}
-            </ul>
+            </div>
           </div>
 
-          {/* Right Section */}
-          <div className="print-section">
-            <h2>RIGHT</h2>
-            <ul>
-              {cardsByArea[CardArea.Right]?.map(card => (
-                <li key={card.id} className="card-list-item">
-                  <div className="card-info">
-                    <span className="card-name">{card.name}</span>
-                    <span className="card-type">
-                      ({card.type}
-                      {card.subtype ? ` - ${card.subtype}` : ''})
-                    </span>
+          {/* Center */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ border: '1px solid #ccc', padding: '5px' }}>
+              <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 5px 0' }}>FRONT</h2>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {cardsByArea[CardArea.Front]?.map(card => (
+                  <div key={card.id} style={{ width: '48%', marginBottom: '5px' }}>
+                    <img src={card.imageUrl} alt={card.name} style={{ width: '100%' }} />
                   </div>
-                  <span className="card-points">{card.buildPointCost}</span>
-                </li>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ border: '1px solid #ccc', padding: '5px' }}>
+              <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 5px 0' }}>CREW</h2>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {cardsByArea[CardArea.Crew]?.map(card => (
+                  <div key={card.id} style={{ width: '48%', marginBottom: '5px' }}>
+                    <img src={card.imageUrl} alt={card.name} style={{ width: '100%' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ border: '1px solid #ccc', padding: '5px' }}>
+              <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 5px 0' }}>
+                GEAR / UPGRADES
+              </h2>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {cardsByArea[CardArea.GearUpgrade]?.map(card => (
+                  <div key={card.id} style={{ width: '48%', marginBottom: '5px' }}>
+                    <img src={card.imageUrl} alt={card.name} style={{ width: '100%' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ border: '1px solid #ccc', padding: '5px' }}>
+              <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 5px 0' }}>BACK</h2>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {cardsByArea[CardArea.Back]?.map(card => (
+                  <div key={card.id} style={{ width: '48%', marginBottom: '5px' }}>
+                    <img src={card.imageUrl} alt={card.name} style={{ width: '100%' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right side */}
+          <div style={{ border: '1px solid #ccc', padding: '5px' }}>
+            <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 5px 0' }}>RIGHT</h2>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+              {cardsByArea[CardArea.Right]?.map(card => (
+                <div key={card.id} style={{ width: '100%', marginBottom: '5px' }}>
+                  <img src={card.imageUrl} alt={card.name} style={{ width: '100%' }} />
+                </div>
               ))}
-              {!cardsByArea[CardArea.Right]?.length && <li>No right cards</li>}
-            </ul>
+            </div>
           </div>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  // Simple text-only layout
+  return (
+    <div className="print-view print-simple" ref={printRef} style={{ padding: '5px' }}>
+      <h1 style={{ textAlign: 'center', margin: '0 0 5px 0', fontSize: '14pt' }}>
+        {currentDeck.name}
+      </h1>
+      <p style={{ textAlign: 'center', fontWeight: 'bold', margin: '0 0 5px 0', fontSize: '10pt' }}>
+        {pointsSummary}
+      </p>
+
+      {/* Crew Section */}
+      <div style={{ marginBottom: '7px' }}>
+        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+          CREW
+        </h2>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {cardsByArea[CardArea.Crew]?.map(card => (
+            <li
+              key={card.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: '0 0 1px 0',
+              }}
+            >
+              <div style={{ maxWidth: '60%' }}>
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    marginRight: '2px',
+                    fontSize: '8pt',
+                  }}
+                >
+                  {card.name}
+                </span>
+                <span style={{ color: '#444', fontStyle: 'italic', fontSize: '7pt' }}>
+                  ({card.type}
+                  {card.subtype ? ` - ${card.subtype}` : ''})
+                </span>
+              </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  height: '1px',
+                  borderBottom: '1px dotted #999',
+                  margin: '0 2px',
+                }}
+              ></div>
+              <span
+                style={{
+                  fontWeight: 'bold',
+                  textAlign: 'right',
+                  minWidth: '20px',
+                  fontSize: '8pt',
+                }}
+              >
+                {card.crewPointCost}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Gear/Upgrade Section */}
+      <div style={{ marginBottom: '7px' }}>
+        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+          GEAR / UPGRADES
+        </h2>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {cardsByArea[CardArea.GearUpgrade]?.map(card => (
+            <li
+              key={card.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: '0 0 1px 0',
+              }}
+            >
+              <div style={{ maxWidth: '60%' }}>
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    marginRight: '2px',
+                    fontSize: '8pt',
+                  }}
+                >
+                  {card.name}
+                </span>
+                <span style={{ color: '#444', fontStyle: 'italic', fontSize: '7pt' }}>
+                  ({card.type}
+                  {card.subtype ? ` - ${card.subtype}` : ''})
+                </span>
+              </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  height: '1px',
+                  borderBottom: '1px dotted #999',
+                  margin: '0 2px',
+                }}
+              ></div>
+              <span
+                style={{
+                  fontWeight: 'bold',
+                  textAlign: 'right',
+                  minWidth: '20px',
+                  fontSize: '8pt',
+                }}
+              >
+                {card.type === 'Gear' ? card.crewPointCost : card.buildPointCost}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Front Section */}
+      <div style={{ marginBottom: '7px' }}>
+        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+          FRONT
+        </h2>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {cardsByArea[CardArea.Front]?.map(card => (
+            <li
+              key={card.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: '0 0 1px 0',
+              }}
+            >
+              <div style={{ maxWidth: '60%' }}>
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    marginRight: '2px',
+                    fontSize: '8pt',
+                  }}
+                >
+                  {card.name}
+                </span>
+                <span style={{ color: '#444', fontStyle: 'italic', fontSize: '7pt' }}>
+                  ({card.type}
+                  {card.subtype ? ` - ${card.subtype}` : ''})
+                </span>
+              </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  height: '1px',
+                  borderBottom: '1px dotted #999',
+                  margin: '0 2px',
+                }}
+              ></div>
+              <span
+                style={{
+                  fontWeight: 'bold',
+                  textAlign: 'right',
+                  minWidth: '20px',
+                  fontSize: '8pt',
+                }}
+              >
+                {card.buildPointCost}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Back Section */}
+      <div style={{ marginBottom: '7px' }}>
+        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+          BACK
+        </h2>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {cardsByArea[CardArea.Back]?.map(card => (
+            <li
+              key={card.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: '0 0 1px 0',
+              }}
+            >
+              <div style={{ maxWidth: '60%' }}>
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    marginRight: '2px',
+                    fontSize: '8pt',
+                  }}
+                >
+                  {card.name}
+                </span>
+                <span style={{ color: '#444', fontStyle: 'italic', fontSize: '7pt' }}>
+                  ({card.type}
+                  {card.subtype ? ` - ${card.subtype}` : ''})
+                </span>
+              </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  height: '1px',
+                  borderBottom: '1px dotted #999',
+                  margin: '0 2px',
+                }}
+              ></div>
+              <span
+                style={{
+                  fontWeight: 'bold',
+                  textAlign: 'right',
+                  minWidth: '20px',
+                  fontSize: '8pt',
+                }}
+              >
+                {card.buildPointCost}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Left Section */}
+      <div style={{ marginBottom: '7px' }}>
+        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+          LEFT
+        </h2>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {cardsByArea[CardArea.Left]?.map(card => (
+            <li
+              key={card.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: '0 0 1px 0',
+              }}
+            >
+              <div style={{ maxWidth: '60%' }}>
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    marginRight: '2px',
+                    fontSize: '8pt',
+                  }}
+                >
+                  {card.name}
+                </span>
+                <span style={{ color: '#444', fontStyle: 'italic', fontSize: '7pt' }}>
+                  ({card.type}
+                  {card.subtype ? ` - ${card.subtype}` : ''})
+                </span>
+              </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  height: '1px',
+                  borderBottom: '1px dotted #999',
+                  margin: '0 2px',
+                }}
+              ></div>
+              <span
+                style={{
+                  fontWeight: 'bold',
+                  textAlign: 'right',
+                  minWidth: '20px',
+                  fontSize: '8pt',
+                }}
+              >
+                {card.buildPointCost}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Right Section */}
+      <div style={{ marginBottom: '7px' }}>
+        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+          RIGHT
+        </h2>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {cardsByArea[CardArea.Right]?.map(card => (
+            <li
+              key={card.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: '0 0 1px 0',
+              }}
+            >
+              <div style={{ maxWidth: '60%' }}>
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    marginRight: '2px',
+                    fontSize: '8pt',
+                  }}
+                >
+                  {card.name}
+                </span>
+                <span style={{ color: '#444', fontStyle: 'italic', fontSize: '7pt' }}>
+                  ({card.type}
+                  {card.subtype ? ` - ${card.subtype}` : ''})
+                </span>
+              </div>
+              <div
+                style={{
+                  flexGrow: 1,
+                  height: '1px',
+                  borderBottom: '1px dotted #999',
+                  margin: '0 2px',
+                }}
+              ></div>
+              <span
+                style={{
+                  fontWeight: 'bold',
+                  textAlign: 'right',
+                  minWidth: '20px',
+                  fontSize: '8pt',
+                }}
+              >
+                {card.buildPointCost}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

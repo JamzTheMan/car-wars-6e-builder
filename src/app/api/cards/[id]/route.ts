@@ -49,7 +49,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const id = params.id;
+  // Await params before accessing its properties
+  const { id } = await params;
   
   try {
     const cards = readCards();
@@ -71,7 +72,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const id = params.id;
+  // Await params before accessing its properties
+  const { id } = await params;
   
   try {
     const cards = readCards();
@@ -95,7 +97,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {  
-  const id = params.id;
+  // Await params before accessing its properties
+  const { id } = await params;
   
   try {
     const updatedCardData = await request.json();

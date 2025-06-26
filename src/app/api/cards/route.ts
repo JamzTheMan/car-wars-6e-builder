@@ -133,9 +133,21 @@ export async function POST(request: NextRequest) {
     const cards = readCards();
     const newCard = await request.json();
     
-    // Add ID if not provided
-    if (!newCard.id) {
-      newCard.id = crypto.randomUUID();
+    // Generate a new UUID regardless of whether an ID was provided
+    const newId = crypto.randomUUID();
+    
+    // If ID was provided, check for duplicates
+    if (newCard.id) {
+      // Check if this ID already exists in the collection
+      const existingCardIndex = cards.findIndex(card => card.id === newCard.id);
+      
+      if (existingCardIndex >= 0) {
+        console.warn(`Found duplicate ID ${newCard.id}, generating new ID ${newId} instead`);
+        newCard.id = newId;
+      }
+    } else {
+      // No ID provided, assign a new one
+      newCard.id = newId;
     }
     
     cards.push(newCard);
