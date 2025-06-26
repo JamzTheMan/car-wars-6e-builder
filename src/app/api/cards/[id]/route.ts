@@ -48,9 +48,10 @@ function writeCards(cards: Card[]) {
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
-){
+) {
+  const id = params.id;
+  
   try {
-    const id = await params.id;
     const cards = readCards();
     const card = cards.find(card => card.id === id);
     
@@ -69,9 +70,10 @@ export async function GET(
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
-){
+) {
+  const id = params.id;
+  
   try {
-    const id = await params.id;
     const cards = readCards();
     const filteredCards = cards.filter(card => card.id !== id);
     
@@ -92,10 +94,12 @@ export async function DELETE(
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
-){  try {
-    const id = await params.id;
-    const cards = readCards();
+) {  
+  const id = params.id;
+  
+  try {
     const updatedCardData = await request.json();
+    const cards = readCards();
     
     const cardIndex = cards.findIndex(card => card.id === id);
     

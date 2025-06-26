@@ -6,7 +6,7 @@ import path from 'path';
 const cardsFilePath = path.join(process.cwd(), 'src', 'data', 'cards.json');
 
 // POST /api/cards/clear - Clear the entire card collection
-export function POST() {
+export async function POST() {
   try {
     // Ensure directory exists
     const dirPath = path.dirname(cardsFilePath);

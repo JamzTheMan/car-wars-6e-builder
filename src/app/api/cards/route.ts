@@ -117,7 +117,7 @@ function sortCards(cards: Card[]): Card[] {
 }
 
 // GET /api/cards - Get all cards
-export function GET() {
+export async function GET() {
   try {
     const cards = readCards();
     return NextResponse.json(cards);
