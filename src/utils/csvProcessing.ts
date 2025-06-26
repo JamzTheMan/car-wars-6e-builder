@@ -51,9 +51,15 @@ export function parseNameWithSubtype(name: string): { name: string; subtype?: st
  * Check if an uploaded image exists for a given card name
  * This is a client-compatible version that uses the check-card-image API
  * @param cardName Name of the card to check for image
+ * @param cardType Optional card type for more precise matching
+ * @param cardSubtype Optional card subtype for more precise matching
  * @returns URL to the image if found, or undefined if not found
  */
-async function findExistingCardImage(cardName: string): Promise<string | undefined> {
+async function findExistingCardImage(
+  cardName: string, 
+  cardType?: CardType, 
+  cardSubtype?: string
+): Promise<string | undefined> {
   try {
     // Skip API call in SSR mode
     if (typeof window === 'undefined') {
@@ -65,7 +71,11 @@ async function findExistingCardImage(cardName: string): Promise<string | undefin
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ cardName }),
+      body: JSON.stringify({ 
+        cardName,
+        cardType,
+        cardSubtype 
+      }),
     });
 
     if (!response.ok) {
@@ -116,12 +126,21 @@ export async function processCSVToCards(
     const defaultImageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
     
     // Check for existing card images in the uploads directory
-    const existingImageUrl = await findExistingCardImage(parsedNameResult.name);
+    // Pass card type and subtype for more accurate matching
+    const existingImageUrl = await findExistingCardImage(parsedNameResult.name, cardType, subtype);
     
     // Also check if a card with the same name already exists in the collection
-    const existingCard = collectionCards.find(card => 
-      card.name.toLowerCase() === parsedNameResult.name.toLowerCase()
-    );
+    const existingCard = collectionCards.find(card => {
+      // Basic name match
+      const nameMatch = card.name.toLowerCase() === parsedNameResult.name.toLowerCase();
+      
+      // For Crew cards, make sure we match the correct subtype (Driver vs Gunner)
+      if (cardType === CardType.Crew && subtype) {
+        return nameMatch && card.subtype.toLowerCase() === subtype.toLowerCase();
+      }
+      
+      return nameMatch;
+    });
     
     // Priority: 1. Existing uploaded image, 2. Existing card in collection, 3. Default placeholder
     const finalImageUrl = existingImageUrl || (existingCard ? existingCard.imageUrl : defaultImageUrl);

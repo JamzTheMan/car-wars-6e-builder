@@ -232,8 +232,17 @@ export function CardCollection() {
           const existingCard = cards.find(card => {
             const nameMatch = card.name.trim().toLowerCase() === cardName.trim().toLowerCase();
 
-            // If we have a subtype from the filename, also check if that matches
+            // If we have a subtype from the filename, make sure it matches BOTH name AND subtype
             if (cardSubtypeFromName) {
+              // For Crew cards, ensure we're matching exactly the right subtype (Driver vs Gunner)
+              if (card.type === CardType.Crew) {
+                return (
+                  nameMatch &&
+                  card.subtype.trim().toLowerCase() === cardSubtypeFromName.trim().toLowerCase()
+                );
+              }
+
+              // For non-Crew cards, do a general subtype match check
               return (
                 nameMatch &&
                 card.subtype.trim().toLowerCase() === cardSubtypeFromName.trim().toLowerCase()

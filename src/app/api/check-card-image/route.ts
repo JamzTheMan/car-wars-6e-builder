@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { CardType } from '@/types/types';
 
 /**
  * Normalize a filename for comparison by removing spaces, underscores, and other special characters
@@ -19,7 +20,7 @@ function normalizeForComparison(name: string): string {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { cardName } = await request.json();
+    const { cardName, cardType, cardSubtype } = await request.json();
     
     if (!cardName) {
       return NextResponse.json({ exists: false });
@@ -61,6 +62,25 @@ export async function POST(request: NextRequest) {
       });
     }
     
+    // Special handling for Crew cards with Driver/Gunner subtypes
+    if (cardType === 'Crew' && cardSubtype) {
+      // Look for Name_Subtype.ext format specifically matching the subtype
+      const crewSubtypeMatch = files.find(file => {
+        const fileName = path.basename(file, path.extname(file)).toLowerCase();
+        // Make sure we match both the name AND the correct subtype
+        return (fileName === `${cardNameLower}_${cardSubtype.toLowerCase()}` || 
+               fileName === `${cardNameWithUnderscores}_${cardSubtype.toLowerCase()}` ||
+               fileName === `${cardNameWithSpaces}_${cardSubtype.toLowerCase()}`);
+      });
+      
+      if (crewSubtypeMatch) {
+        return NextResponse.json({ 
+          exists: true, 
+          imageUrl: `/uploads/cards/${crewSubtypeMatch}` 
+        });
+      }
+    }
+    
     // If no exact match, try normalized matching for better fuzzy matching
     const normalizedMatch = files.find(file => {
       const fileName = path.basename(file, path.extname(file));
@@ -75,10 +95,18 @@ export async function POST(request: NextRequest) {
     }
     
     // Also check for files that start with the card name (like Name_Subtype.webp)
+    // But for Crew cards, we need to be more careful to ensure we get the right subtype
     const partialMatch = files.find(file => {
       const fileName = path.basename(file, path.extname(file)).toLowerCase();
-      // Check if starts with name and followed by underscore
-      // Try all possible space/underscore variations
+      
+      // For Crew cards, only match if the subtype is correct
+      if (cardType === 'Crew' && cardSubtype) {
+        return fileName === `${cardNameLower}_${cardSubtype.toLowerCase()}` || 
+               fileName === `${cardNameWithUnderscores}_${cardSubtype.toLowerCase()}` || 
+               fileName === `${cardNameWithSpaces}_${cardSubtype.toLowerCase()}`;
+      }
+      
+      // For non-Crew cards, match any subtype
       return fileName.startsWith(`${cardNameLower}_`) || 
              fileName.startsWith(`${cardNameWithUnderscores}_`) || 
              fileName.startsWith(`${cardNameWithSpaces}_`);
