@@ -14,7 +14,6 @@ import {
   faTrash,
   faUndo,
   faFilter,
-  faSync,
 } from '@fortawesome/free-solid-svg-icons';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -373,18 +372,6 @@ export function CardCollection() {
               {(filterCardType || filterSubtype || filterCost !== null || filterSource) && (
                 <span className="ml-2 bg-blue-600 px-1.5 py-0.5 rounded-full text-xs">Active</span>
               )}
-            </button>
-
-            <button
-              onClick={() => loadCollection()}
-              className="flex items-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded"
-              title="Refresh card collection from server"
-            >
-              <FontAwesomeIcon
-                icon={faSync}
-                className={`mr-1 h-3 w-3 ${isLoading ? 'animate-spin' : ''}`}
-              />
-              {isLoading ? 'Loading...' : 'Refresh'}
             </button>
           </div>
 
