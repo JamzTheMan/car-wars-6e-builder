@@ -9,7 +9,7 @@ import type { Card as CardType, DeckLayout as DeckLayoutType } from '@/types/typ
 import { CardArea, canCardTypeGoInArea } from '@/types/types';
 import { VehicleName } from './VehicleName';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave, faTrashAlt, faUpload, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faTrashAlt, faGear, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import { useToast } from './Toast';
 import {
   useCardValidationErrors,
@@ -22,16 +22,9 @@ import { PrintButton } from './PrintButton';
 export { VehicleName };
 
 export function DeckLayoutMenu() {
-  const {
-    currentDeck,
-    updateDeckBackground,
-    updatePointLimits,
-    collectionCards,
-    addToCollection,
-    setDeck,
-  } = useCardStore();
+  const { currentDeck, updatePointLimits, collectionCards, addToCollection, setDeck } =
+    useCardStore();
   const { showToast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const exportInputRef = useRef<HTMLAnchorElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
   const [isEditingPoints, setIsEditingPoints] = useState(false);
@@ -57,33 +50,6 @@ export function DeckLayoutMenu() {
       }
     }
   }, [currentDeck]);
-
-  const handleBackgroundUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      // Upload the file
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'backgrounds');
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-
-      const { path: imageUrl } = await response.json();
-      updateDeckBackground(imageUrl);
-    } catch (error) {
-      console.error('Upload error:', error);
-      alert('Failed to upload background image. Please try again.');
-    }
-  };
 
   const handlePointsUpdate = () => {
     updatePointLimits({ buildPoints, crewPoints });
@@ -298,7 +264,7 @@ export function DeckLayoutMenu() {
           title="Import Car"
           aria-label="Import Car"
         >
-          <FontAwesomeIcon icon={faUpload} className="h-5 w-5" />
+          <FontAwesomeIcon icon={faFileImport} className="h-5 w-5" />
         </button>
 
         {/* Print button */}
@@ -323,15 +289,6 @@ export function DeckLayoutMenu() {
         className="hidden"
         aria-label="Import car from JSON file"
         title="Import car from JSON file"
-      />
-      {/* Background image input */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        accept="image/*"
-        onChange={handleBackgroundUpload}
-        className="hidden"
-        title="Upload background image"
       />
       {isEditingPoints && (
         <div className="absolute right-0 mt-2 w-64 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50">
@@ -419,21 +376,6 @@ export function DeckLayoutMenu() {
             >
               <FontAwesomeIcon icon={faSave} className="mr-2" /> Save Build Points
             </button>
-            {/* Action Buttons - Moved to the bottom */}{' '}
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full bg-blue-700 hover:bg-blue-900 text-white px-4 py-2 rounded text-sm"
-            >
-              <FontAwesomeIcon icon={faUpload} className="mr-2" /> Upload Background
-            </button>
-            {currentDeck?.backgroundImage && (
-              <button
-                onClick={() => updateDeckBackground('')}
-                className="w-full bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded text-sm"
-              >
-                Reset to Default Background
-              </button>
-            )}
             <button
               onClick={() => {
                 if (
