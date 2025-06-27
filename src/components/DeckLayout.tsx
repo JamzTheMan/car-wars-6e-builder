@@ -521,14 +521,16 @@ export function DeckLayout() {
         ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
         className={`${className} ${getAreaColor()} rounded-md overflow-y-auto p-3 border-2 relative
           ${isOver ? 'border-yellow-400 shadow-lg shadow-yellow-400/30' : 'border-gray-600 hover:border-gray-500'} 
-          transition-all duration-200 backdrop-blur-sm pt-6`}
+          transition-all duration-200 ${area !== CardArea.Turret ? 'backdrop-blur-sm' : ''} pt-6`}
       >
         {/* Area label as an overlay that doesn't take up space */}
         <div className="absolute top-0 left-0 right-0 text-gray-300 text-sm font-medium text-center opacity-70 pointer-events-none">
           {label}
         </div>{' '}
-        {/* Cards flow layout without gaps */}
-        <div className="flex flex-wrap gap-2">
+        {/* Cards layout - special centering for Turret area */}
+        <div
+          className={`${area === CardArea.Turret ? 'flex justify-center items-center h-full' : 'flex flex-wrap gap-2'}`}
+        >
           {areaCards.map(card => (
             <Card
               key={card.id}
@@ -604,14 +606,18 @@ export function DeckLayout() {
           <AreaDropTarget area={CardArea.GearUpgrade} label="Gear & Upgrades" className="h-full" />
           {/* Middle and bottom rows - full height columns for Left and Right */}
           <AreaDropTarget area={CardArea.Left} label="Left Side" className="row-span-2 h-full" />
-          {/* Center row is for the dashboard image */}
-          <div className="row-span-1 flex items-center justify-center">
-            <img
-              src="/assets/Dashboard-yellow.webp"
-              alt="Dashboard"
-              className="max-w-full max-h-full object-contain drop-shadow-lg"
-              style={{ width: '100%', height: '100%', maxWidth: '260px', maxHeight: '340px' }}
-            />
+          {/* Center row is for the turret location */}
+          <div className="row-span-1 relative">
+            <div className="absolute inset-0 bg-red-950 bg-opacity-60 rounded"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img
+                src="/assets/car_with_logo.webp"
+                alt="Car with Logo"
+                className="w-[90%] h-[90%] object-contain"
+                style={{ maxWidth: '90%', maxHeight: '90%' }}
+              />
+            </div>
+            <AreaDropTarget area={CardArea.Turret} label="Turret" className="h-full z-10" />
           </div>
           <AreaDropTarget area={CardArea.Right} label="Right Side" className="row-span-2 h-full" />
           {/* Bottom center has the Back area */}

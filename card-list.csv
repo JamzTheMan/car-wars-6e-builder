@@ -183,30 +183,30 @@ Standard Recoilless Rifle,Weapon,Slug,2,,,2,,,Core
 Whistler,Weapon,Sonic,2,,,2,,,Sonic Strike
 Anti-Power Plant Rocket,Weapon,Blast,3,,,1,y,,Uncle Al's Upgrade
 Standard Rocket,Weapon,Blast,3,,2,2,,,Core
-Turreted Light Rocket,Weapon,Blast,3,,,1,y,,Linked Weapons
-Turreted Micro-Missile,Weapon,Blast,3,,,1,y,,Uncle Al's Upgrade
+Turreted Light Rocket,Weapon,Blast,3,,,1,y,t,Linked Weapons
+Turreted Micro-Missile,Weapon,Blast,3,,,1,y,t,Uncle Al's Upgrade
 Armored Firebolt,Weapon,Fire,3,,,2,,,Sonic Strike
 Linked Flamethrowers,Weapon,Fire,3,,,2,,,Linked Weapons
 Standard Incendiary Rocket,Weapon,Fire,3,,,2,,,Sonic Strike
-Turreted Flamethrower,Weapon,Fire,3,,,1,y,,Armory
+Turreted Flamethrower,Weapon,Fire,3,,,1,y,t,Armory
 Armored Particle Beam,Weapon,Laser,3,,,2,,,Gonzo Gear
 Particle Beam,Weapon,Laser,3,,,2,,,Miniatures Set 4
-Turreted Particle Beam,Weapon,Laser,3,,,1,y,,Linked Weapons
+Turreted Particle Beam,Weapon,Laser,3,,,1,y,t,Linked Weapons
 Bonesaw,Weapon,Melee,3,,,2,,,Miniatures Set 1
 Armored Disruptor,Weapon,Shock,3,,,2,,,Sonic Strike
 Disruptor,Weapon,Shock,3,,,2,,,Miniatures Set 2
-Turreted Arc Rifle,Weapon,Shock,3,,,1,y,,Linked Weapons
+Turreted Arc Rifle,Weapon,Shock,3,,,1,y,t,Linked Weapons
 Heavy Machine Gun,Weapon,Shred,3,,,2,,,Core
 Light Machine Gun Incendiary Rounds,Weapon,Shred,3,,,2,,,Miniatures Set 3
 Scatter Gun,Weapon,Shred,3,,,2,,,Miniatures Set 1
 Spike Gun,Weapon,Shred,3,,,2,,,Uncle Al's Upgrade
 Standard Machine Gun Tracer Rounds,Weapon,Shred,3,,,2,,,Uncle Al's Upgrade
-Turreted Machine Gun,Weapon,Shred,3,,,1,y,,Armory
-Turreted Shotgun,Weapon,Shred,3,,,1,y,,Linked Weapons
+Turreted Machine Gun,Weapon,Shred,3,,,1,y,t,Armory
+Turreted Shotgun,Weapon,Shred,3,,,1,y,t,Linked Weapons
 Heavy Recoilless Rifle,Weapon,Slug,3,,,2,,,Armory
 Jackhammer,Weapon,Slug,3,,,2,,,Miniatures Set 3
 Standard Recoilless Rifle Explosive Rounds,Weapon,Slug,3,,,2,,,Uncle Al's Upgrade
-Turreted Recoilless Rifle,Weapon,Slug,3,,,1,y,,Armory
+Turreted Recoilless Rifle,Weapon,Slug,3,,,1,y,t,Armory
 Ol' Yeller,Weapon,Sonic,3,,,2,,,Sonic Strike
 Mako,Weapon,Blast,4,,,2,,,Gonzo Gear
 Fire Lance,Weapon,Fire,4,,,2,,,Miniatures Set 2
@@ -251,7 +251,7 @@ The Anvil,Weapon,Slug,7,,,2,,fb,Miniatures Set 1
 Banshee,Weapon,Sonic,7,,,2,,,Sonic Strike
 Heavy Rocket,Weapon,Blast,8,,2,2,,fb,Core
 Linked Hammerheads,Weapon,Blast,8,,,2,,fb,Linked Weapons
-Turreted Heavy Rocket,Weapon,Blast,8,,,1,y,,Uncle Al's Upgrade
+Turreted Heavy Rocket,Weapon,Blast,8,,,1,y,t,Uncle Al's Upgrade
 Plasma Cannon,Weapon,Fire,8,,,2,,fb,Miniatures Set 4
 Solid-State Laser,Weapon,Laser,8,,,2,,fb,Miniatures Set 2
 Shockwave Cannon,Weapon,Shock,8,,,2,,fb,Miniatures Set 3

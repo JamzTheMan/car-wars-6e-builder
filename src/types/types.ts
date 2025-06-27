@@ -32,6 +32,7 @@ export enum CardArea {
   Back = 'back',
   Left = 'left',
   Right = 'right',
+  Turret = 'turret',
 }
 
 export interface Card {
@@ -86,6 +87,8 @@ export function canCardTypeGoInArea(type: CardType, area: CardArea): boolean {
     case CardArea.Left:
     case CardArea.Right:
       return type === CardType.Weapon || type === CardType.Accessory || type === CardType.Structure;
+    case CardArea.Turret:
+      return type === CardType.Weapon; // Turret area only accepts weapons
     default:
       return false;
   }

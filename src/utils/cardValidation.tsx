@@ -473,6 +473,19 @@ export function validateCardMovement(
   deckCards: Card[],
   showToast?: (message: string, type: 'success' | 'error' | 'info') => void
 ): boolean {
+  // Turret validation - only cards with names starting with "Turreted" can go in the turret area
+  if (targetArea === CardArea.Turret) {
+    if (!card.name.startsWith('Turreted')) {
+      if (showToast) {
+        showToast(
+          `Only weapons with "Turreted" in the name can be placed in the Turret position.`,
+          'error'
+        );
+      }
+      return false;
+    }
+  }
+
   // Structure card validation - check if there's already a structure in the target area
   if (card.type === 'Structure') {
     const hasStructureInArea = deckCards.some(
@@ -498,6 +511,7 @@ export function validateCardMovement(
       CardArea.Back,
       CardArea.Left,
       CardArea.Right,
+      // We exclude Turret from side restrictions since it's validated separately
     ].includes(targetArea);
 
     if (isVehicleLocation) {
