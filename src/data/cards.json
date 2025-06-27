@@ -3249,7 +3249,7 @@
   },
   {
     "name": "Hammerhead",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Hammerhead.webp",
     "type": "Weapon",
     "subtype": "Blast",
     "buildPointCost": 6,
@@ -3263,7 +3263,7 @@
   },
   {
     "name": "Heat Saber",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Heat_Saber.webp",
     "type": "Weapon",
     "subtype": "Fire",
     "buildPointCost": 6,
@@ -3277,7 +3277,7 @@
   },
   {
     "name": "Supercooled Laser",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Supercooled_Laser.webp",
     "type": "Weapon",
     "subtype": "Laser",
     "buildPointCost": 6,
@@ -3305,7 +3305,7 @@
   },
   {
     "name": "Thundergun",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Thundergun.webp",
     "type": "Weapon",
     "subtype": "Shock",
     "buildPointCost": 6,
@@ -3319,7 +3319,7 @@
   },
   {
     "name": "Autocannon",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Autocannon.webp",
     "type": "Weapon",
     "subtype": "Shred",
     "buildPointCost": 6,
@@ -3333,7 +3333,7 @@
   },
   {
     "name": "Buffalo Gun",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Buffalo_Gun.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 6,
@@ -3347,7 +3347,7 @@
   },
   {
     "name": "Linked Jackhammers",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Linked_Jackhammers.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 6,
@@ -3361,7 +3361,7 @@
   },
   {
     "name": "Mass Driver",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Mass_Driver.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 6,
@@ -3403,7 +3403,7 @@
   },
   {
     "name": "Quad Laser",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Quad_Laser.webp",
     "type": "Weapon",
     "subtype": "Laser",
     "buildPointCost": 7,
@@ -3417,7 +3417,7 @@
   },
   {
     "name": "Lightning Scythe",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Lightning_Scythe.webp",
     "type": "Weapon",
     "subtype": "Shock",
     "buildPointCost": 7,
@@ -3431,7 +3431,7 @@
   },
   {
     "name": "Grapeshot Cannon",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Grapeshot_Cannon.webp",
     "type": "Weapon",
     "subtype": "Shred",
     "buildPointCost": 7,
@@ -3445,7 +3445,7 @@
   },
   {
     "name": "Hellfire",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Hellfire.webp",
     "type": "Weapon",
     "subtype": "Shred",
     "buildPointCost": 7,
@@ -3459,7 +3459,7 @@
   },
   {
     "name": "Railgun",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Railgun.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 7,
@@ -3473,7 +3473,7 @@
   },
   {
     "name": "The Anvil",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/The_Anvil.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 7,
@@ -3501,7 +3501,7 @@
   },
   {
     "name": "Heavy Rocket",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Heavy_Rocket.webp",
     "type": "Weapon",
     "subtype": "Blast",
     "buildPointCost": 8,
@@ -3529,7 +3529,7 @@
   },
   {
     "name": "Turreted Heavy Rocket",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Turreted_Heavy_Rocket.webp",
     "type": "Weapon",
     "subtype": "Blast",
     "buildPointCost": 8,
@@ -3543,7 +3543,7 @@
   },
   {
     "name": "Plasma Cannon",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Plasma_Cannon.webp",
     "type": "Weapon",
     "subtype": "Fire",
     "buildPointCost": 8,
@@ -3557,7 +3557,7 @@
   },
   {
     "name": "Solid-State Laser",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Solid_State_Laser.webp",
     "type": "Weapon",
     "subtype": "Laser",
     "buildPointCost": 8,
@@ -3571,7 +3571,7 @@
   },
   {
     "name": "Shockwave Cannon",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Shockwave_Cannon.webp",
     "type": "Weapon",
     "subtype": "Shock",
     "buildPointCost": 8,
@@ -3585,7 +3585,7 @@
   },
   {
     "name": "Minigun",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Minigun.webp",
     "type": "Weapon",
     "subtype": "Shred",
     "buildPointCost": 8,
@@ -3599,7 +3599,7 @@
   },
   {
     "name": "Devastator",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Devastator.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 8,
@@ -3613,7 +3613,7 @@
   },
   {
     "name": "Dreadnaught",
-    "imageUrl": "/assets/placeholders/Blank_Weapon.webp",
+    "imageUrl": "/uploads/cards/Dreadnaught.webp",
     "type": "Weapon",
     "subtype": "Slug",
     "buildPointCost": 8,
