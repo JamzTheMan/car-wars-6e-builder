@@ -131,16 +131,25 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
           {vehicles.length === 0 ? (
             <p className="text-gray-400 text-center py-4">No saved vehicles found</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2" role="list">
               {vehicles.map(vehicle => (
-                <button
+                <div
                   key={vehicle.storageKey}
-                  onClick={() => handleLoadVehicle(vehicle.storageKey)}
-                  disabled={isLoading}
-                  className="w-full text-left bg-gray-700 hover:bg-gray-600 rounded-lg p-4 flex items-center justify-between group relative transition-colors cursor-pointer"
-                  aria-label={`Load vehicle ${vehicle.name}`}
+                  className="w-full text-left bg-gray-700 hover:bg-gray-600 rounded-lg p-4 flex items-center justify-between group relative transition-colors"
+                  role="listitem"
                 >
-                  <div className="flex-1">
+                  <div
+                    className="flex-1"
+                    onClick={() => handleLoadVehicle(vehicle.storageKey)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyPress={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        handleLoadVehicle(vehicle.storageKey);
+                      }
+                    }}
+                    aria-label={`Load vehicle ${vehicle.name}`}
+                  >
                     <h3 className="text-gray-100 font-medium">{vehicle.name}</h3>
                     <div className="text-sm text-gray-400 space-x-2">
                       <span>Division: {vehicle.division}</span>
@@ -166,7 +175,7 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                       <FontAwesomeIcon icon={faTrash} className="h-4 w-4" />
                     </button>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}
