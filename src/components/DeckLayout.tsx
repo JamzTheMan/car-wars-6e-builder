@@ -39,9 +39,13 @@ export function DeckLayoutMenu() {
   const [buildPoints, setBuildPoints] = useState(currentDeck?.pointLimits.buildPoints ?? 0);
   const [crewPoints, setCrewPoints] = useState(currentDeck?.pointLimits.crewPoints ?? 0);
   const [division, setDivision] = useState<number | 'custom'>(
-    Math.ceil((currentDeck?.pointLimits.crewPoints ?? 0) / 4)
+    currentDeck?.division === 'custom'
+      ? 'custom'
+      : currentDeck?.division
+        ? parseInt(currentDeck.division)
+        : Math.ceil((currentDeck?.pointLimits.crewPoints ?? 0) / 4)
   );
-  const [isCustom, setIsCustom] = useState(false);
+  const [isCustom, setIsCustom] = useState(currentDeck?.division === 'custom');
 
   useEffect(() => {
     if (currentDeck) {
@@ -60,9 +64,16 @@ export function DeckLayoutMenu() {
   }, [currentDeck]);
 
   const handlePointsUpdate = () => {
+    const newDivisionValue = isCustom ? 'custom' : crewPoints > 0 ? crewPoints : 1;
     updatePointLimits({ buildPoints, crewPoints });
-    // Update division to match the current point values if manually changed
-    setDivision(crewPoints > 0 ? crewPoints : 1);
+    if (currentDeck) {
+      setDeck({
+        ...currentDeck,
+        division:
+          typeof newDivisionValue === 'number' ? String(newDivisionValue) : newDivisionValue,
+      });
+    }
+    setDivision(newDivisionValue);
     setIsEditingPoints(false);
   };
 
@@ -71,12 +82,24 @@ export function DeckLayoutMenu() {
     if (value === 'custom') {
       setDivision('custom');
       setIsCustom(true);
+      if (currentDeck) {
+        setDeck({
+          ...currentDeck,
+          division: 'custom',
+        });
+      }
     } else {
       const numValue = parseInt(value);
       setDivision(numValue);
       setIsCustom(false);
       setBuildPoints(numValue * 4);
       setCrewPoints(numValue);
+      if (currentDeck) {
+        setDeck({
+          ...currentDeck,
+          division: String(numValue), // Store as string to match type definition
+        });
+      }
     }
   };
 
@@ -138,6 +161,8 @@ export function DeckLayoutMenu() {
     // Check required properties
     if (!deck.id || typeof deck.id !== 'string') return false;
     if (!deck.name || typeof deck.name !== 'string') return false;
+    if (!deck.division || (typeof deck.division !== 'string' && typeof deck.division !== 'number'))
+      return false;
     if (typeof deck.backgroundImage !== 'string') return false;
     if (!Array.isArray(deck.cards)) return false;
     if (!deck.pointLimits || typeof deck.pointLimits !== 'object') return false;
@@ -156,6 +181,15 @@ export function DeckLayoutMenu() {
       typeof deck.pointsUsed.crewPoints !== 'number'
     )
       return false;
+
+    // Validate division value
+    if (
+      deck.division !== 'custom' &&
+      typeof deck.division === 'number' &&
+      (deck.division < 1 || deck.division > 12)
+    ) {
+      return false;
+    }
 
     // Validate each card
     return deck.cards.every((card: any) => {
