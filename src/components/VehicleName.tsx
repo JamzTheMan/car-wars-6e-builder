@@ -4,15 +4,30 @@ import { useEffect, useRef, useState } from 'react';
 import { useCardStore } from '@/store/cardStore';
 import { generateVehicleNames } from '@/utils/vehicleNameGenerator';
 import { useToast } from '@/components/Toast';
-import { saveVehicleToStorage, loadVehicleFromStorage } from '@/utils/userPreferences';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFloppyDisk, faFolderOpen, faGear, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faFloppyDisk, faFolderOpen, faGear } from '@fortawesome/free-solid-svg-icons';
+import { saveVehicle } from '@/utils/savedVehicles';
+import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
+
+const divisions = [
+  'Unknown',
+  'Division 5',
+  'Division 10',
+  'Division 15',
+  'Division 20',
+  'Division 25',
+  'Division 30',
+  'Division 40',
+  'Division 50',
+];
 
 export function VehicleName() {
-  const { currentDeck, updateDeckName, setName, setDeck } = useCardStore();
+  const { currentDeck, updateDeckName, setDeck, setDivision } = useCardStore();
   const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [isSavedVehiclesOpen, setIsSavedVehiclesOpen] = useState(false);
   const [vehicleName, setVehicleName] = useState(currentDeck?.name || 'Car Wars 6e Car Builder');
+  const [selectedDivision, setSelectedDivision] = useState(currentDeck?.division || 'Unknown');
   const [nameOptions, setNameOptions] = useState<string[]>([]);
   const randomButtonRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,6 +38,13 @@ export function VehicleName() {
       setVehicleName(currentDeck.name);
     }
   }, [currentDeck?.name]);
+
+  // Update division state when deck changes
+  useEffect(() => {
+    if (currentDeck?.division) {
+      setSelectedDivision(currentDeck.division);
+    }
+  }, [currentDeck?.division]);
 
   // Generate random names when isEditing is set to true
   useEffect(() => {
@@ -50,6 +72,7 @@ export function VehicleName() {
 
   const handleSaveName = () => {
     updateDeckName(vehicleName);
+    setDivision(selectedDivision);
     setIsEditing(false);
     setNameOptions([]);
   };
@@ -61,7 +84,8 @@ export function VehicleName() {
 
   const handleSaveToStorage = () => {
     if (!currentDeck) return;
-    if (saveVehicleToStorage(currentDeck)) {
+
+    if (saveVehicle(currentDeck)) {
       showToast('Vehicle saved to local storage', 'success');
     } else {
       showToast('Failed to save vehicle to local storage', 'error');
@@ -69,47 +93,51 @@ export function VehicleName() {
   };
 
   const handleLoadFromStorage = () => {
-    const vehicle = loadVehicleFromStorage();
-    if (vehicle) {
-      if (
-        !confirm('This will overwrite your current vehicle. Are you sure you want to continue?')
-      ) {
-        return;
-      }
-      setDeck(vehicle);
-      showToast('Vehicle loaded from local storage', 'success');
-    } else {
-      showToast('No vehicle found in local storage', 'info');
-    }
+    setIsSavedVehiclesOpen(true);
   };
 
   if (isEditing) {
     return (
       <div className="flex flex-col">
         <div className="flex items-center space-x-2">
-          <label htmlFor="vehicle-name" className="sr-only">
-            Vehicle Name
-          </label>
-          <input
-            id="vehicle-name"
-            type="text"
-            value={vehicleName}
-            onChange={e => setVehicleName(e.target.value)}
-            className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-2 py-1 text-sm"
-            autoFocus
-            placeholder="Enter vehicle name"
-            title="Enter vehicle name"
-            ref={inputRef}
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                handleSaveName();
-              } else if (e.key === 'Escape') {
-                setIsEditing(false);
-                setVehicleName(currentDeck?.name || 'Car Wars 6e Car Builder');
-                setNameOptions([]);
-              }
-            }}
-          />
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="vehicle-name" className="sr-only">
+              Vehicle Name
+            </label>
+            <input
+              id="vehicle-name"
+              type="text"
+              value={vehicleName}
+              onChange={e => setVehicleName(e.target.value)}
+              className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-2 py-1 text-sm"
+              autoFocus
+              placeholder="Enter vehicle name"
+              title="Enter vehicle name"
+              ref={inputRef}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  handleSaveName();
+                } else if (e.key === 'Escape') {
+                  setIsEditing(false);
+                  setVehicleName(currentDeck?.name || 'Car Wars 6e Car Builder');
+                  setNameOptions([]);
+                }
+              }}
+            />
+            <select
+              value={selectedDivision}
+              onChange={e => setSelectedDivision(e.target.value)}
+              className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-2 py-1 text-sm"
+              aria-label="Select division"
+              title="Select division"
+            >
+              {divisions.map(div => (
+                <option key={div} value={div}>
+                  {div}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex space-x-1">
             <button
               onClick={handleSaveName}
@@ -215,6 +243,10 @@ export function VehicleName() {
       >
         <FontAwesomeIcon icon={faFolderOpen} className="h-4 w-4" />
       </button>
+      <SavedVehiclesDialog
+        isOpen={isSavedVehiclesOpen}
+        onClose={() => setIsSavedVehiclesOpen(false)}
+      />
     </div>
   );
 }

@@ -69,6 +69,7 @@ export interface PointsUsed {
 export interface DeckLayout {
   id: string;
   name: string;
+  division: string;  // Add this field
   backgroundImage: string;
   cards: Card[];
   pointLimits: PointLimits;

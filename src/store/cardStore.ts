@@ -98,6 +98,7 @@ interface CardStore {
   resetDeck: () => void;
   bulkUpdateCollection: (cards: Card[]) => Promise<void>;
   setName: (name: string) => void;
+  setDivision: (division: string) => void;
 }
 
 // Set up localStorage only in browser
@@ -537,15 +538,22 @@ export const useCardStore = create<CardStore>()(
       },
 
       setName: (name: string) => {
-        const currentDeck = get().currentDeck;
-        if (currentDeck) {
-          set(state => ({
-            currentDeck: {
-              ...currentDeck,
-              name
-            }
-          }));
-        }
+        set((state) => ({
+          ...state,
+          currentDeck: state.currentDeck
+            ? { ...state.currentDeck, name, division: state.currentDeck.division || 'Unknown' }
+            : null,
+        }));
+      },
+      
+      // Add new action to update division
+      setDivision: (division: string) => {
+        set((state) => ({
+          ...state,
+          currentDeck: state.currentDeck
+            ? { ...state.currentDeck, division }
+            : null,
+        }));
       },
     }),
     {
