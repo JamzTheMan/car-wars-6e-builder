@@ -97,6 +97,7 @@ interface CardStore {
   getAvailablePoints: () => { buildPoints: number; crewPoints: number };
   resetDeck: () => void;
   bulkUpdateCollection: (cards: Card[]) => Promise<void>;
+  setName: (name: string) => void;
 }
 
 // Set up localStorage only in browser
@@ -533,7 +534,19 @@ export const useCardStore = create<CardStore>()(
 
       resetDeck: () => {
         set({ currentDeck: null });
-      }
+      },
+
+      setName: (name: string) => {
+        const currentDeck = get().currentDeck;
+        if (currentDeck) {
+          set(state => ({
+            currentDeck: {
+              ...currentDeck,
+              name
+            }
+          }));
+        }
+      },
     }),
     {
       name: 'car-wars-storage',

@@ -9,7 +9,14 @@ import type { Card as CardType, DeckLayout as DeckLayoutType } from '@/types/typ
 import { CardArea, canCardTypeGoInArea } from '@/types/types';
 import { VehicleName } from './VehicleName';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave, faTrashAlt, faGear, faFileImport } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSave,
+  faTrashAlt,
+  faGear,
+  faFileImport,
+  faFloppyDisk,
+  faFolderOpen,
+} from '@fortawesome/free-solid-svg-icons';
 import { useToast } from './Toast';
 import {
   useCardValidationErrors,
@@ -17,6 +24,7 @@ import {
   validateCardMovement,
 } from '@/utils/cardValidation';
 import { PrintButton } from './PrintButton';
+import { saveVehicleToStorage, loadVehicleFromStorage } from '@/utils/userPreferences';
 
 // Re-export VehicleName for compatibility
 export { VehicleName };

@@ -1,7 +1,11 @@
 // Utility for managing user preferences in localStorage
+import type { DeckLayout } from '@/types/types';
 
 // Storage key for user preferences
 const USER_PREFS_KEY = 'car-wars-6e-builder:userPreferences';
+
+// Vehicle storage key
+const VEHICLE_STORAGE_KEY = 'car-wars-6e-builder:vehicle';
 
 // Define the types for our preferences
 export interface UserPreferences {
@@ -176,3 +180,28 @@ export function debugPrintUserPreferences(): void {
     }
   }
 }
+
+// Vehicle storage functions
+export const saveVehicleToStorage = (vehicle: DeckLayout): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    localStorage.setItem(VEHICLE_STORAGE_KEY, JSON.stringify(vehicle));
+    return true;
+  } catch (error) {
+    console.error('Error saving vehicle to local storage:', error);
+    return false;
+  }
+};
+
+export const loadVehicleFromStorage = (): DeckLayout | null => {
+  if (typeof window === 'undefined') return null;
+  
+  try {
+    const stored = localStorage.getItem(VEHICLE_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch (error) {
+    console.error('Error loading vehicle from local storage:', error);
+    return null;
+  }
+};

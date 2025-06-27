@@ -3,13 +3,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCardStore } from '@/store/cardStore';
 import { generateVehicleNames } from '@/utils/vehicleNameGenerator';
+import { useToast } from '@/components/Toast';
+import { saveVehicleToStorage, loadVehicleFromStorage } from '@/utils/userPreferences';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFloppyDisk, faFolderOpen, faGear, faSave } from '@fortawesome/free-solid-svg-icons';
 
 export function VehicleName() {
-  const { currentDeck, updateDeckName } = useCardStore();
+  const { currentDeck, updateDeckName, setName, setDeck } = useCardStore();
+  const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [vehicleName, setVehicleName] = useState(currentDeck?.name || 'Car Wars 6e Car Builder');
   const [nameOptions, setNameOptions] = useState<string[]>([]);
   const randomButtonRef = useRef<HTMLButtonElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Update component state when deck name changes
   useEffect(() => {
@@ -48,11 +54,42 @@ export function VehicleName() {
     setNameOptions([]);
   };
 
+  const handleSave = () => {
+    setName(vehicleName);
+    setIsEditing(false);
+  };
+
+  const handleSaveToStorage = () => {
+    if (!currentDeck) return;
+    if (saveVehicleToStorage(currentDeck)) {
+      showToast('Vehicle saved to local storage', 'success');
+    } else {
+      showToast('Failed to save vehicle to local storage', 'error');
+    }
+  };
+
+  const handleLoadFromStorage = () => {
+    const vehicle = loadVehicleFromStorage();
+    if (vehicle) {
+      if (
+        !confirm('This will overwrite your current vehicle. Are you sure you want to continue?')
+      ) {
+        return;
+      }
+      setDeck(vehicle);
+      showToast('Vehicle loaded from local storage', 'success');
+    } else {
+      showToast('No vehicle found in local storage', 'info');
+    }
+  };
+
   if (isEditing) {
     return (
       <div className="flex flex-col">
         <div className="flex items-center space-x-2">
-          <label htmlFor="vehicle-name" className="sr-only">Vehicle Name</label>
+          <label htmlFor="vehicle-name" className="sr-only">
+            Vehicle Name
+          </label>
           <input
             id="vehicle-name"
             type="text"
@@ -62,6 +99,7 @@ export function VehicleName() {
             autoFocus
             placeholder="Enter vehicle name"
             title="Enter vehicle name"
+            ref={inputRef}
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleSaveName();
@@ -152,23 +190,30 @@ export function VehicleName() {
   }
 
   return (
-    <div className="flex items-center relative">
-      <h2 className="text-xl font-semibold truncate max-w-[300px]" title={vehicleName}>
-        {vehicleName}
+    <div className="flex items-center gap-2">
+      <h2 className="text-gray-100 text-lg font-medium">
+        {currentDeck?.name || 'Unnamed Vehicle'}
       </h2>
       <button
         onClick={() => setIsEditing(true)}
-        className="ml-2 text-gray-400 hover:text-gray-200"
+        className="text-gray-400 hover:text-gray-200"
         title="Edit vehicle name"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-        </svg>
+        <FontAwesomeIcon icon={faGear} className="h-4 w-4" />
+      </button>
+      <button
+        onClick={handleSaveToStorage}
+        className="text-gray-400 hover:text-gray-200"
+        title="Save vehicle to local storage"
+      >
+        <FontAwesomeIcon icon={faFloppyDisk} className="h-4 w-4" />
+      </button>
+      <button
+        onClick={handleLoadFromStorage}
+        className="text-gray-400 hover:text-gray-200"
+        title="Load vehicle from local storage"
+      >
+        <FontAwesomeIcon icon={faFolderOpen} className="h-4 w-4" />
       </button>
     </div>
   );
