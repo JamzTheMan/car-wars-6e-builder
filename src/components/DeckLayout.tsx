@@ -73,21 +73,55 @@ export function DeckLayoutMenu() {
   };
 
   // Handle exporting deck to JSON file
-  const handleExportDeck = () => {
+  const handleExportDeck = async () => {
     if (!currentDeck) return;
 
+    // Prepare the file name
+    const divisionText = division === 'custom' ? 'Custom' : `Division ${division}`;
+    const suggestedName = `${currentDeck.name || 'deck'} - ${divisionText}.json`;
     const deckData = JSON.stringify(currentDeck, null, 2);
-    const blob = new Blob([deckData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
 
-    if (exportInputRef.current) {
-      exportInputRef.current.href = url;
-      exportInputRef.current.download = `${currentDeck.name || 'deck'}.json`;
-      exportInputRef.current.click();
+    try {
+      if ('showSaveFilePicker' in window) {
+        // Modern browsers - Use File System Access API
+        const fileHandle = await window.showSaveFilePicker({
+          suggestedName,
+          types: [
+            {
+              description: 'JSON Files',
+              accept: {
+                'application/json': ['.json'],
+              },
+            },
+          ],
+        });
+
+        // Create a writable stream and write the file
+        const writable = await fileHandle.createWritable();
+        await writable.write(deckData);
+        await writable.close();
+      } else {
+        // Legacy browsers - Use download attribute
+        const blob = new Blob([deckData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        if (exportInputRef.current) {
+          exportInputRef.current.href = url;
+          exportInputRef.current.download = suggestedName;
+          exportInputRef.current.click();
+        }
+
+        URL.revokeObjectURL(url);
+      }
+
+      showToast('Vehicle exported successfully!', 'success');
+    } catch (err) {
+      // Don't show error if user just cancelled the save dialog
+      if (err.name !== 'AbortError') {
+        console.error('Export error:', err);
+        showToast('Failed to export vehicle', 'error');
+      }
     }
-
-    URL.revokeObjectURL(url);
-    showToast('Deck exported successfully!', 'success');
   };
   // Validate imported deck structure
   const validateImportedDeck = (deck: any): deck is DeckLayoutType => {
@@ -251,8 +285,8 @@ export function DeckLayoutMenu() {
         <button
           onClick={handleExportDeck}
           className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
-          title="Export Car"
-          aria-label="Export Car"
+          title="Export Vehicle"
+          aria-label="Export Vehicle"
         >
           <FontAwesomeIcon icon={faSave} className="h-5 w-5" />
         </button>
@@ -261,8 +295,8 @@ export function DeckLayoutMenu() {
         <button
           onClick={() => importInputRef.current?.click()}
           className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
-          title="Import Car"
-          aria-label="Import Car"
+          title="Import Vehicle"
+          aria-label="Import Vehicle"
         >
           <FontAwesomeIcon icon={faFileImport} className="h-5 w-5" />
         </button>
@@ -287,8 +321,8 @@ export function DeckLayoutMenu() {
         accept=".json"
         onChange={handleImportDeck}
         className="hidden"
-        aria-label="Import car from JSON file"
-        title="Import car from JSON file"
+        aria-label="Import vehicle from JSON file"
+        title="Import vehicle from JSON file"
       />
       {isEditingPoints && (
         <div className="absolute right-0 mt-2 w-64 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50">
