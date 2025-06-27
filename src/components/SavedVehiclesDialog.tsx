@@ -99,9 +99,12 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
           ) : (
             <div className="space-y-2">
               {vehicles.map(vehicle => (
-                <div
+                <button
                   key={vehicle.storageKey}
-                  className="bg-gray-700 rounded-lg p-4 flex items-center justify-between group"
+                  onClick={() => handleLoadVehicle(vehicle.storageKey)}
+                  disabled={isLoading}
+                  className="w-full text-left bg-gray-700 hover:bg-gray-600 rounded-lg p-4 flex items-center justify-between group relative transition-colors cursor-pointer"
+                  aria-label={`Load vehicle ${vehicle.name}`}
                 >
                   <div className="flex-1">
                     <h3 className="text-gray-100 font-medium">{vehicle.name}</h3>
@@ -111,27 +114,25 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                       <span>Last saved: {new Date(vehicle.lastSaved).toLocaleString()}</span>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center">
+                    {isLoading ? (
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="h-4 w-4 animate-spin mr-2 text-blue-400"
+                      />
+                    ) : null}
                     <button
-                      onClick={() => handleLoadVehicle(vehicle.storageKey)}
-                      disabled={isLoading}
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors"
-                    >
-                      {isLoading ? (
-                        <FontAwesomeIcon icon={faSpinner} className="h-4 w-4 animate-spin" />
-                      ) : (
-                        'Load'
-                      )}
-                    </button>
-                    <button
-                      onClick={() => handleDeleteVehicle(vehicle.storageKey, vehicle.name)}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleDeleteVehicle(vehicle.storageKey, vehicle.name);
+                      }}
                       className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
                       title="Delete vehicle"
                     >
                       <FontAwesomeIcon icon={faTrash} className="h-4 w-4" />
                     </button>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           )}
