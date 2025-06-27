@@ -8,7 +8,7 @@ import {
 import { useCardStore } from '@/store/cardStore';
 import { useToast } from '@/components/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faSpinner, faSort } from '@fortawesome/free-solid-svg-icons';
 
 interface SavedVehiclesDialogProps {
   isOpen: boolean;
@@ -18,6 +18,7 @@ interface SavedVehiclesDialogProps {
 export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProps) {
   const [vehicles, setVehicles] = useState<SavedVehicleInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [sortByDivisionFirst, setSortByDivisionFirst] = useState(false);
   const { setDeck } = useCardStore();
   const { showToast } = useToast();
 
@@ -31,15 +32,29 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
     const savedVehicles = getSavedVehicles();
     setVehicles(
       savedVehicles.sort((a, b) => {
-        // First sort by name
-        const nameCompare = a.name.localeCompare(b.name);
-        if (nameCompare !== 0) return nameCompare;
+        if (sortByDivisionFirst) {
+          // First sort by division
+          const divisionCompare = a.division.localeCompare(b.division);
+          if (divisionCompare !== 0) return divisionCompare;
 
-        // Then by division
-        return a.division.localeCompare(b.division);
+          // Then by name
+          return a.name.localeCompare(b.name);
+        } else {
+          // First sort by name
+          const nameCompare = a.name.localeCompare(b.name);
+          if (nameCompare !== 0) return nameCompare;
+
+          // Then by division
+          return a.division.localeCompare(b.division);
+        }
       })
     );
   };
+
+  // Refresh the list when sort order changes
+  useEffect(() => {
+    refreshVehicleList();
+  }, [sortByDivisionFirst]);
 
   const handleLoadVehicle = (storageKey: string) => {
     setIsLoading(true);
@@ -80,21 +95,35 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
         <div className="p-4 border-b border-gray-700">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold text-gray-100">Saved Vehicles</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-200"
-              title="Close dialog"
-              aria-label="Close dialog"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSortByDivisionFirst(prev => !prev)}
+                className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
+                title={
+                  sortByDivisionFirst
+                    ? 'Sorting by Division then Name'
+                    : 'Sorting by Name then Division'
+                }
+              >
+                <FontAwesomeIcon icon={faSort} className="h-4 w-4" />
+                <span className="text-sm">{sortByDivisionFirst ? 'Division' : 'Name'}</span>
+              </button>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-200"
+                title="Close dialog"
+                aria-label="Close dialog"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -144,12 +173,14 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
         </div>
 
         <div className="p-4 border-t border-gray-700">
-          <button
-            onClick={onClose}
-            className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
-          >
-            Close
-          </button>
+          <div className="flex justify-between items-center mb-2">
+            <button
+              onClick={onClose}
+              className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
