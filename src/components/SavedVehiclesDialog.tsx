@@ -30,9 +30,14 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
   const refreshVehicleList = () => {
     const savedVehicles = getSavedVehicles();
     setVehicles(
-      savedVehicles.sort(
-        (a, b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime()
-      )
+      savedVehicles.sort((a, b) => {
+        // First sort by name
+        const nameCompare = a.name.localeCompare(b.name);
+        if (nameCompare !== 0) return nameCompare;
+
+        // Then by division
+        return a.division.localeCompare(b.division);
+      })
     );
   };
 
