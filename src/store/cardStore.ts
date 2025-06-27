@@ -111,6 +111,24 @@ const storage =
         removeItem: () => Promise.resolve(),
       }));
 
+const generateId = () => Math.random().toString(36).substring(2, 15);
+
+const createEmptyDeck = (): DeckLayout => ({
+  id: generateId(),
+  name: 'New Vehicle',
+  division: 'Unknown',
+  backgroundImage: '',
+  cards: [],
+  pointLimits: {
+    buildPoints: 25,
+    crewPoints: 5,
+  },
+  pointsUsed: {
+    buildPoints: 0,
+    crewPoints: 0,
+  }
+});
+
 export const useCardStore = create<CardStore>()(
   persist(
     (set, get) => ({
@@ -494,7 +512,12 @@ export const useCardStore = create<CardStore>()(
       },
 
       setDeck: (deck: DeckLayout) => {
-        set({ currentDeck: deck });
+        set({
+          currentDeck: {
+            ...deck,
+            division: deck.division || 'Unknown',
+          },
+        });
       },
 
       updateDeckName: (name: string) => {

@@ -108,7 +108,7 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                     <div className="text-sm text-gray-400 space-x-2">
                       <span>Division: {vehicle.division}</span>
                       <span>•</span>
-                      <span>Last saved: {new Date(vehicle.lastSaved).toLocaleDateString()}</span>
+                      <span>Last saved: {new Date(vehicle.lastSaved).toLocaleString()}</span>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">

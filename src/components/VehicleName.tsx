@@ -77,11 +77,6 @@ export function VehicleName() {
     setNameOptions([]);
   };
 
-  const handleSave = () => {
-    setName(vehicleName);
-    setIsEditing(false);
-  };
-
   const handleSaveToStorage = () => {
     if (!currentDeck) return;
 

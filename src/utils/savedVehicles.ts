@@ -6,7 +6,7 @@ const VEHICLE_STORAGE_KEY_PREFIX = 'car-wars-6e:vehicle:';
 export interface SavedVehicleInfo {
   name: string;
   division: string;
-  lastSaved: Date;
+  lastSaved: string;  // ISO date string
   storageKey: string;
 }
 
@@ -28,7 +28,7 @@ export function saveVehicle(deck: DeckLayout): boolean {
     const vehicleEntry: SavedVehicleEntry = {
       name: deck.name,
       division: deck.division || 'unknown',
-      lastSaved: new Date(),
+      lastSaved: new Date().toISOString(),
       storageKey,
       deck
     };
