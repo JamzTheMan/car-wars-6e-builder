@@ -7,10 +7,8 @@ import { CardCollection } from '@/components/CardCollection';
 import { CardCollectionHeader } from '@/components/CardCollectionHeader';
 import { DeckLayout, DeckLayoutMenu, VehicleName } from '@/components/DeckLayout';
 import { useCardStore } from '@/store/cardStore';
-import { useCardUpload } from '@/context/CardUploadContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { uploadCardImage } from '@/utils/cardUpload';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { ToastContext } from '@/components/Toast';
 
 function PointsSummary() {
@@ -36,120 +34,12 @@ function PointsSummary() {
 }
 
 function CardCollectionTitleUpload() {
-  const [uploadingCard, setUploadingCard] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
   const { showToast } = useContext(ToastContext) || {};
-  const {
-    newCardType,
-    newCardSubtype,
-    newBuildPointCost,
-    newCrewPointCost,
-    newNumberAllowed,
-    newSource,
-  } = useCardUpload();
-  const {
-    addToCollection,
-    removeFromCollection,
-    addToCollectionWithId,
-    collectionCards,
-    clearCollection,
-  } = useCardStore();
+  const { collectionCards, clearCollection } = useCardStore();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-
-  // Handle clicking outside to close the menu
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [menuRef]);
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files.length === 0) return;
-    const file = event.target.files[0];
-    setMenuOpen(false); // Close menu after selecting file
-
-    try {
-      setUploadingCard(true);
-      console.log('Starting file upload'); // Debug log
-
-      const uploadResult = await uploadCardImage(
-        file,
-        newCardType,
-        newCardSubtype,
-        newBuildPointCost,
-        newCrewPointCost,
-        newNumberAllowed,
-        newSource,
-        showToast
-      );
-
-      const baseName = file.name.split('.')[0];
-
-      if (uploadResult.isExistingFile) {
-        const existingCard = collectionCards.find(card => {
-          const cardBaseName = card.name.toLowerCase();
-          return cardBaseName === baseName.toLowerCase();
-        });
-        if (existingCard) {
-          const updatedCard = {
-            id: existingCard.id,
-            name: baseName,
-            imageUrl: uploadResult.imageUrl,
-            type: uploadResult.cardType,
-            subtype: uploadResult.cardSubtype,
-            buildPointCost: uploadResult.buildPointCost,
-            crewPointCost: uploadResult.crewPointCost,
-            numberAllowed: uploadResult.numberAllowed,
-            source: uploadResult.source,
-            copies: uploadResult.copies || 1,
-            exclusive: uploadResult.exclusive || false,
-            sides: uploadResult.sides || '',
-          };
-
-          removeFromCollection(existingCard.id);
-          addToCollectionWithId(updatedCard);
-          showToast?.('Card updated successfully', 'success');
-          return;
-        }
-      }
-      const newCard = {
-        name: baseName,
-        imageUrl: uploadResult.imageUrl,
-        type: uploadResult.cardType,
-        subtype: uploadResult.cardSubtype,
-        buildPointCost: uploadResult.buildPointCost,
-        crewPointCost: uploadResult.crewPointCost,
-        numberAllowed: uploadResult.numberAllowed,
-        source: uploadResult.source,
-        copies: 1,
-        exclusive: false,
-        sides: '',
-      };
-
-      addToCollection(newCard);
-      showToast?.(`Card "${baseName}" added to collection`, 'success');
-    } catch (error) {
-      console.error('Upload error:', error);
-      showToast?.('Failed to upload image. Please try again.', 'error');
-    } finally {
-      setUploadingCard(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
 
   const handleClearAllClick = () => {
     setShowClearConfirm(true);
-    setMenuOpen(false);
   };
 
   const handleConfirmClear = () => {
@@ -163,56 +53,17 @@ function CardCollectionTitleUpload() {
   };
 
   return (
-    <div className="relative" ref={menuRef}>
-      <input
-        type="file"
-        ref={fileInputRef}
-        accept="image/*"
-        onChange={handleFileChange}
-        disabled={uploadingCard}
-        className="hidden"
-        aria-label="Upload card image"
-      />
-
-      {/* Hamburger menu button */}
-      <button
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
-        aria-label="Menu"
-      >
-        <div className="flex flex-col gap-1 items-center justify-center w-4">
-          <div className="w-full h-0.5 bg-white"></div>
-          <div className="w-full h-0.5 bg-white"></div>
-          <div className="w-full h-0.5 bg-white"></div>
-        </div>
-      </button>
-
-      {/* Dropdown menu */}
-      {menuOpen && (
-        <div className="absolute right-0 mt-1 bg-gray-800 border border-gray-700 rounded shadow-lg z-10 w-48">
-          <ul className="py-1">
-            <li>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
-              >
-                <FontAwesomeIcon icon={faUpload} className="w-4 h-4" />
-                Upload Card
-              </button>
-            </li>
-            {collectionCards.length > 0 && (
-              <li>
-                <button
-                  onClick={handleClearAllClick}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
-                >
-                  <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-                  Clear All Cards
-                </button>
-              </li>
-            )}
-          </ul>
-        </div>
+    <div className="relative">
+      {/* Clear All Cards button */}
+      {collectionCards.length > 0 && (
+        <button
+          onClick={handleClearAllClick}
+          className="p-2 hover:bg-red-700 rounded-full text-gray-400 hover:text-white"
+          title="Clear All Cards"
+          aria-label="Clear All Cards"
+        >
+          <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+        </button>
       )}
 
       {/* Clear All confirmation dialog */}
