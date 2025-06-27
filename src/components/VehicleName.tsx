@@ -5,29 +5,16 @@ import { useCardStore } from '@/store/cardStore';
 import { generateVehicleNames } from '@/utils/vehicleNameGenerator';
 import { useToast } from '@/components/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFloppyDisk, faFolderOpen, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faFloppyDisk, faFolderOpen, faPencil } from '@fortawesome/free-solid-svg-icons';
 import { saveVehicle } from '@/utils/savedVehicles';
 import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
 
-const divisions = [
-  'Unknown',
-  'Division 5',
-  'Division 10',
-  'Division 15',
-  'Division 20',
-  'Division 25',
-  'Division 30',
-  'Division 40',
-  'Division 50',
-];
-
 export function VehicleName() {
-  const { currentDeck, updateDeckName, setDeck, setDivision } = useCardStore();
+  const { currentDeck, updateDeckName, setDeck } = useCardStore();
   const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [isSavedVehiclesOpen, setIsSavedVehiclesOpen] = useState(false);
   const [vehicleName, setVehicleName] = useState(currentDeck?.name || 'Car Wars 6e Car Builder');
-  const [selectedDivision, setSelectedDivision] = useState(currentDeck?.division || 'Unknown');
   const [nameOptions, setNameOptions] = useState<string[]>([]);
   const randomButtonRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,13 +25,6 @@ export function VehicleName() {
       setVehicleName(currentDeck.name);
     }
   }, [currentDeck?.name]);
-
-  // Update division state when deck changes
-  useEffect(() => {
-    if (currentDeck?.division) {
-      setSelectedDivision(currentDeck.division);
-    }
-  }, [currentDeck?.division]);
 
   // Generate random names when isEditing is set to true
   useEffect(() => {
@@ -72,7 +52,6 @@ export function VehicleName() {
 
   const handleSaveName = () => {
     updateDeckName(vehicleName);
-    setDivision(selectedDivision);
     setIsEditing(false);
     setNameOptions([]);
   };
@@ -119,19 +98,6 @@ export function VehicleName() {
                 }
               }}
             />
-            <select
-              value={selectedDivision}
-              onChange={e => setSelectedDivision(e.target.value)}
-              className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-2 py-1 text-sm"
-              aria-label="Select division"
-              title="Select division"
-            >
-              {divisions.map(div => (
-                <option key={div} value={div}>
-                  {div}
-                </option>
-              ))}
-            </select>
           </div>
           <div className="flex space-x-1">
             <button
@@ -222,7 +188,7 @@ export function VehicleName() {
         className="text-gray-400 hover:text-gray-200"
         title="Edit vehicle name"
       >
-        <FontAwesomeIcon icon={faGear} className="h-4 w-4" />
+        <FontAwesomeIcon icon={faPencil} className="h-4 w-4" />
       </button>
       <button
         onClick={handleSaveToStorage}
