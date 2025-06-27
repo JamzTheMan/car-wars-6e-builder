@@ -43,6 +43,20 @@ function canBePlacedOnSides(cardType: CardTypeEnum): boolean {
   return cardType === 'Weapon' || cardType === 'Accessory' || cardType === 'Structure';
 }
 
+// Function to check if a card can be placed in turret (has 't' in sides field)
+function canBePlacedInTurret(card: CardType): boolean {
+  return card.type === 'Weapon' && card.sides && card.sides.toLowerCase().includes('t');
+}
+
+// Function to determine if the card should show side buttons or just a simple "Add to Deck" button
+function shouldShowSideButtons(card: CardType): boolean {
+  // If it's a turret-only weapon, don't show side buttons
+  if (canBePlacedInTurret(card) && card.sides.length === 1) {
+    return false;
+  }
+  return canBePlacedOnSides(card.type);
+}
+
 export function Card({
   card,
   isDraggable = true,
@@ -171,7 +185,29 @@ export function Card({
   };
 
   const renderQuickAddButtons = () => {
-    if (!isInCollection || !canBePlacedOnSides(card.type)) return null;
+    if (!isInCollection) return null;
+
+    // For turret-only cards, show a simple "Add to Turret" button
+    if (canBePlacedInTurret(card) && (!card.sides || card.sides.length === 1)) {
+      return (
+        <div
+          className={`quick-add-overlay ${showQuickAdd ? 'opacity-100' : 'opacity-0'} flex items-center justify-center`}
+          onMouseEnter={() => setShowQuickAdd(true)}
+          onMouseLeave={() => setShowQuickAdd(false)}
+        >
+          <button
+            onClick={() => handleQuickAdd(CardArea.Turret)}
+            className="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded text-sm"
+            title="Add to Turret"
+          >
+            Add to Turret
+          </button>
+        </div>
+      );
+    }
+
+    // For regular cards that can be placed on sides
+    if (!canBePlacedOnSides(card.type)) return null;
 
     return (
       <div
@@ -249,60 +285,82 @@ export function Card({
         onMouseLeave={onMouseLeave}
         style={zoomed ? { pointerEvents: 'auto' } : {}}
       >
-        {isInCollection && canBePlacedOnSides(card.type) && (
-          <div className={`quick-add-overlay z-20 ${showQuickAdd ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="quick-add-container">
-              {/* Front */}
+        {/* For turret-only cards */}
+        {isInCollection &&
+          canBePlacedInTurret(card) &&
+          (!card.sides || card.sides.length === 1) && (
+            <div
+              className={`quick-add-overlay z-20 ${showQuickAdd ? 'opacity-100' : 'opacity-0'} flex items-center justify-center`}
+            >
               <button
                 onClick={e => {
                   e.stopPropagation();
-                  handleQuickAdd(CardArea.Front);
+                  handleQuickAdd(CardArea.Turret);
                 }}
-                className="quick-add-button front"
-                title="Add to Front"
+                className="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded text-sm"
+                title="Add to Turret"
               >
-                {' '}
-                <FontAwesomeIcon icon={faCaretUp} className="quick-add-icon" />
-              </button>
-
-              {/* Left */}
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  handleQuickAdd(CardArea.Left);
-                }}
-                className="quick-add-button left"
-                title="Add to Left"
-              >
-                <FontAwesomeIcon icon={faCaretLeft} className="quick-add-icon" />
-              </button>
-
-              {/* Right */}
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  handleQuickAdd(CardArea.Right);
-                }}
-                className="quick-add-button right"
-                title="Add to Right"
-              >
-                <FontAwesomeIcon icon={faCaretRight} className="quick-add-icon" />
-              </button>
-
-              {/* Back */}
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  handleQuickAdd(CardArea.Back);
-                }}
-                className="quick-add-button rear"
-                title="Add to Rear"
-              >
-                <FontAwesomeIcon icon={faCaretDown} className="quick-add-icon" />
+                Add to Turret
               </button>
             </div>
-          </div>
-        )}
+          )}
+        {/* For regular side-placement cards */}
+        {isInCollection &&
+          canBePlacedOnSides(card.type) &&
+          (!canBePlacedInTurret(card) || card.sides.length > 1) && (
+            <div className={`quick-add-overlay z-20 ${showQuickAdd ? 'opacity-100' : 'opacity-0'}`}>
+              <div className="quick-add-container">
+                {/* Front */}
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleQuickAdd(CardArea.Front);
+                  }}
+                  className="quick-add-button front"
+                  title="Add to Front"
+                >
+                  {' '}
+                  <FontAwesomeIcon icon={faCaretUp} className="quick-add-icon" />
+                </button>
+
+                {/* Left */}
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleQuickAdd(CardArea.Left);
+                  }}
+                  className="quick-add-button left"
+                  title="Add to Left"
+                >
+                  <FontAwesomeIcon icon={faCaretLeft} className="quick-add-icon" />
+                </button>
+
+                {/* Right */}
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleQuickAdd(CardArea.Right);
+                  }}
+                  className="quick-add-button right"
+                  title="Add to Right"
+                >
+                  <FontAwesomeIcon icon={faCaretRight} className="quick-add-icon" />
+                </button>
+
+                {/* Back */}
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleQuickAdd(CardArea.Back);
+                  }}
+                  className="quick-add-button rear"
+                  title="Add to Rear"
+                >
+                  <FontAwesomeIcon icon={faCaretDown} className="quick-add-icon" />
+                </button>
+              </div>
+            </div>
+          )}
         {/* Cost badge: only show when using placeholder image */}
         {(!card.imageUrl || card.imageUrl.includes('Blank_')) &&
           (['Sidearm', 'Crew', 'Gear'].includes(card.type) ? (
@@ -348,12 +406,27 @@ export function Card({
         >
           <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
         </button>{' '}
-        {/* Add to Deck button - Only shown in collection view for cards that don't have quick-add buttons */}
+        {/* Add to Deck button for cards that don't have side placement options */}
         {isInCollection && !canBePlacedOnSides(card.type) && (
           <button onClick={handleAddToDeck} className="card-add-button" title="Add to deck">
             <FontAwesomeIcon icon={faClone} className="w-6 h-6" />
           </button>
         )}
+        {/* Add to Turret button for turret-only cards */}
+        {isInCollection &&
+          canBePlacedInTurret(card) &&
+          (!card.sides || card.sides.length === 1) && (
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                handleQuickAdd(CardArea.Turret);
+              }}
+              className="card-add-button"
+              title="Add to turret"
+            >
+              <FontAwesomeIcon icon={faClone} className="w-6 h-6" />
+            </button>
+          )}
       </div>{' '}
       {/* Card Preview Modal */}
       {isPreviewOpen && (
@@ -419,7 +492,8 @@ export function Card({
                         {card.sides.includes('F') ? 'Front ' : ''}
                         {card.sides.includes('B') ? 'Back ' : ''}
                         {card.sides.includes('L') ? 'Left ' : ''}
-                        {card.sides.includes('R') ? 'Right' : ''}
+                        {card.sides.includes('R') ? 'Right ' : ''}
+                        {card.sides.includes('t') || card.sides.includes('T') ? 'Turret' : ''}
                       </p>
                     )}
                     {/* Conditionally show description if available */}

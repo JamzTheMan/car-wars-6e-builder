@@ -88,7 +88,7 @@ export function canCardTypeGoInArea(type: CardType, area: CardArea): boolean {
     case CardArea.Right:
       return type === CardType.Weapon || type === CardType.Accessory || type === CardType.Structure;
     case CardArea.Turret:
-      return type === CardType.Weapon; // Turret area only accepts weapons
+      return type === CardType.Weapon; // Turret area only accepts weapons with 't' in sides (checked in validation)
     default:
       return false;
   }

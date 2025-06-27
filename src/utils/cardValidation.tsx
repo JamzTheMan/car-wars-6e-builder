@@ -19,6 +19,8 @@ function formatSideNames(sidesCodes: string): string {
           return 'Left';
         case 'R':
           return 'Right';
+        case 'T':
+          return 'Turret';
         default:
           return side;
       }
@@ -269,18 +271,31 @@ export function validateCardForDeck(
  * @returns Validation result
  */
 export function validateCardSidePlacement(card: Card, targetArea: CardArea): CardValidationResult {
+  // Special validation for Turret area: ONLY cards with 't' in sides field can go there
+  if (targetArea === CardArea.Turret) {
+    // If card doesn't have sides or doesn't include 't', it can't go in the turret
+    if (!card.sides || !card.sides.toLowerCase().includes('t')) {
+      return {
+        allowed: false,
+        reason: 'invalid_side',
+        invalidSide: card.sides ? card.sides.toUpperCase() : '',
+      };
+    }
+  }
+
   // Check if the target area is allowed based on the card's sides field
   if (card.sides && card.sides.trim() !== '') {
-    // Only validate vehicle area locations (front, back, left, right)
+    // Validate all vehicle area locations
     const isVehicleLocation = [
       CardArea.Front,
       CardArea.Back,
       CardArea.Left,
       CardArea.Right,
+      CardArea.Turret,
     ].includes(targetArea);
 
     if (isVehicleLocation) {
-      // Convert area to a single character for comparison (F, B, L, R)
+      // Convert area to a single character for comparison (F, B, L, R, T)
       let areaChar = '';
 
       switch (targetArea) {
@@ -295,6 +310,9 @@ export function validateCardSidePlacement(card: Card, targetArea: CardArea): Car
           break;
         case CardArea.Right:
           areaChar = 'R';
+          break;
+        case CardArea.Turret:
+          areaChar = 'T';
           break;
       }
 
@@ -435,6 +453,19 @@ export function validateAndAddCard(
     cardSubtype?: string
   ) => void
 ): boolean {
+  // Extra validation for Turret area - only cards with 't' in sides can go there
+  if (targetArea === CardArea.Turret) {
+    if (!card.sides || !card.sides.toLowerCase().includes('t')) {
+      if (showToast) {
+        showToast(
+          `Only weapons marked for Turret mounting can be placed in the Turret position.`,
+          'error'
+        );
+      }
+      return false;
+    }
+  }
+
   // Use the central validation function - pass the target area to ensure structure limits are checked
   const validationResult = canAddCardToDeck(card, targetArea);
 
@@ -473,12 +504,12 @@ export function validateCardMovement(
   deckCards: Card[],
   showToast?: (message: string, type: 'success' | 'error' | 'info') => void
 ): boolean {
-  // Turret validation - only cards with names starting with "Turreted" can go in the turret area
+  // Turret validation - only cards with 't' in the sides field can go in the turret area
   if (targetArea === CardArea.Turret) {
-    if (!card.name.startsWith('Turreted')) {
+    if (!card.sides || !card.sides.toLowerCase().includes('t')) {
       if (showToast) {
         showToast(
-          `Only weapons with "Turreted" in the name can be placed in the Turret position.`,
+          `Only weapons marked for Turret mounting can be placed in the Turret position.`,
           'error'
         );
       }
@@ -505,17 +536,17 @@ export function validateCardMovement(
 
   // Side placement validation
   if (card.sides && card.sides.trim() !== '') {
-    // Only validate vehicle area locations (front, back, left, right)
+    // Validate vehicle area locations (front, back, left, right, turret)
     const isVehicleLocation = [
       CardArea.Front,
       CardArea.Back,
       CardArea.Left,
       CardArea.Right,
-      // We exclude Turret from side restrictions since it's validated separately
+      CardArea.Turret,
     ].includes(targetArea);
 
     if (isVehicleLocation) {
-      // Convert area to a single character for comparison (F, B, L, R)
+      // Convert area to a single character for comparison (F, B, L, R, T)
       let areaChar = '';
 
       switch (targetArea) {
@@ -530,6 +561,9 @@ export function validateCardMovement(
           break;
         case CardArea.Right:
           areaChar = 'R';
+          break;
+        case CardArea.Turret:
+          areaChar = 'T';
           break;
       }
 
