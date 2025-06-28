@@ -4,6 +4,7 @@ import {
   getSavedVehicles,
   deleteVehicle,
   loadVehicle,
+  saveVehicle,
 } from '@/utils/savedVehicles';
 import { useCardStore } from '@/store/cardStore';
 import { useToast } from '@/components/Toast';
@@ -103,7 +104,14 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
       try {
         const importedDeck = JSON.parse(e.target?.result as string) as DeckLayout;
         setDeck(importedDeck);
-        showToast('Vehicle imported successfully!', 'success');
+
+        // Save the imported vehicle to localStorage
+        if (saveVehicle(importedDeck)) {
+          showToast('Vehicle imported and saved successfully!', 'success');
+        } else {
+          showToast('Vehicle imported but could not be saved', 'info');
+        }
+
         onClose();
       } catch (error) {
         console.error('Import error:', error);
