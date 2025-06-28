@@ -8,7 +8,7 @@ import { CardCollectionHeader } from '@/components/CardCollectionHeader';
 import { DeckLayout, VehicleName } from '@/components/DeckLayout';
 import { useCardStore } from '@/store/cardStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faSquareCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { ToastContext } from '@/components/Toast';
 import { PrintButton } from '@/components/PrintButton';
 
@@ -57,7 +57,7 @@ function PointsSummary() {
         <select
           value={localDivision}
           onChange={handleDivisionChange}
-          className="font-bold bg-transparent text-white-200 focus:outline-none pr-3 appearance-none"
+          className="font-bold bg-transparent text-white-200 focus:outline-none pr-3.5 appearance-none text-center"
           aria-label="AADA Division"
           title="AADA Division"
         >
@@ -68,7 +68,7 @@ function PointsSummary() {
           ))}
         </select>
         <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-white-300 text-xs">
-          ▼
+          <FontAwesomeIcon icon={faSquareCaretDown} />
         </span>
       </span>
       <span className="bg-blue-900 border border-blue-700 rounded px-2 py-0.5">
