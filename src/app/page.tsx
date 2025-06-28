@@ -17,7 +17,7 @@ function PointsSummary() {
   if (!currentDeck) return null;
   const { pointsUsed, pointLimits, division } = currentDeck;
   return (
-    <div className="flex items-center space-x-2 text-xs text-gray-300">
+    <div className="flex space-x-2 text-xs text-gray-300 scale-150 origin-left ml-0">
       <span className="bg-yellow-950 border border-yellow-900 rounded px-2 py-0.5">
         AADA Division:{' '}
         <span className="font-bold text-white-200">
@@ -307,8 +307,9 @@ export default function Home() {
 
               <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
                 <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0">
-                  <VehicleName />
+                 
                   <div className="flex items-center space-x-2 w-full">
+                     <VehicleName />
                     <div className="flex-1 flex justify-center items-center gap-2">
                       <DivisionSelector />
                       <PointsSummary />
