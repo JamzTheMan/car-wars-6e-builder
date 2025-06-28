@@ -5,11 +5,12 @@ import { DndWrapper } from '@/components/DndWrapper';
 import { CardUploadProvider } from '@/context/CardUploadContext';
 import { CardCollection } from '@/components/CardCollection';
 import { CardCollectionHeader } from '@/components/CardCollectionHeader';
-import { DeckLayout, DeckLayoutMenu, VehicleName } from '@/components/DeckLayout';
+import { DeckLayout, VehicleName } from '@/components/DeckLayout';
 import { useCardStore } from '@/store/cardStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { ToastContext } from '@/components/Toast';
+import { PrintButton } from '@/components/PrintButton';
 
 function PointsSummary() {
   const { currentDeck } = useCardStore();
@@ -93,6 +94,80 @@ function CardCollectionTitleUpload() {
         </div>
       )}
     </div>
+  );
+}
+
+function DivisionSelector() {
+  const { currentDeck, setDeck, updatePointLimits } = useCardStore();
+  const [division, setDivision] = useState<number>(
+    currentDeck?.division && currentDeck.division !== 'custom'
+      ? parseInt(currentDeck.division)
+      : Math.ceil((currentDeck?.pointLimits.crewPoints ?? 0) / 4)
+  );
+
+  useEffect(() => {
+    if (currentDeck) {
+      const crewValue = currentDeck.pointLimits.crewPoints;
+      setDivision(crewValue > 0 ? crewValue : 1);
+    }
+  }, [currentDeck]);
+
+  const handleDivisionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    const numValue = parseInt(value);
+    setDivision(numValue);
+    if (currentDeck) {
+      setDeck({
+        ...currentDeck,
+        division: String(numValue),
+        pointLimits: {
+          ...currentDeck.pointLimits,
+          buildPoints: numValue * 4,
+          crewPoints: numValue,
+        },
+        // Optionally reset pointsUsed if you want to clear spent points on division change:
+        // pointsUsed: { buildPoints: 0, crewPoints: 0 },
+      });
+    }
+    updatePointLimits({ buildPoints: numValue * 4, crewPoints: numValue });
+  };
+
+  return (
+    <select
+      value={division}
+      onChange={handleDivisionChange}
+      className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-2 py-1 text-xs mr-2"
+      aria-label="AADA Division"
+      title="AADA Division"
+      style={{ width: 48 }}
+    >
+      {[...Array(12).keys()].map(i => (
+        <option key={i + 1} value={i + 1}>
+          {i + 1}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function ResetCarButton() {
+  return (
+    <button
+      onClick={() => {
+        if (
+          confirm(
+            'Are you sure you want to reset the car? This will remove all cards and reset point costs to zero.'
+          )
+        ) {
+          useCardStore.getState().resetDeck();
+        }
+      }}
+      className="p-2 hover:bg-red-700 rounded-full text-gray-400 hover:text-white ml-2"
+      title="Reset Car"
+      aria-label="Reset Car"
+    >
+      <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+    </button>
   );
 }
 
@@ -233,9 +308,15 @@ export default function Home() {
               <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
                 <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0">
                   <VehicleName />
-                  <div className="flex items-center space-x-3">
-                    <PointsSummary />
-                    <DeckLayoutMenu />
+                  <div className="flex items-center space-x-2 w-full">
+                    <div className="flex-1 flex justify-center items-center gap-2">
+                      <DivisionSelector />
+                      <PointsSummary />
+                    </div>
+                    <div className="flex items-center space-x-0">
+                      <PrintButton />
+                      <ResetCarButton />
+                    </div>
                   </div>
                 </div>
                 <div className="flex-1 overflow-auto">
