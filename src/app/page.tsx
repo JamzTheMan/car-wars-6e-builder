@@ -21,7 +21,7 @@ function PointsSummary() {
       <span className="bg-yellow-950 border border-yellow-900 rounded px-2 py-0.5">
         AADA Division:{' '}
         <span className="font-bold text-white-200">
-          {division === 'custom' ? 'Custom' : division}
+          {division}
         </span>
       </span>
       <span className="bg-blue-900 border border-blue-700 rounded px-2 py-0.5">
@@ -306,18 +306,17 @@ export default function Home() {
               <div className="resize-handle" onMouseDown={handleMouseDown} />
 
               <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
-                <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0">
-                 
-                  <div className="flex items-center space-x-2 w-full">
-                     <VehicleName />
-                    <div className="flex-1 flex justify-center items-center gap-2">
-                      <DivisionSelector />
-                      <PointsSummary />
-                    </div>
-                    <div className="flex items-center space-x-0">
-                      <PrintButton />
-                      <ResetCarButton />
-                    </div>
+                <div className="relative border-b border-gray-700 flex-shrink-0 flex items-center p-2 min-h-12">
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2">
+                    <VehicleName />
+                  </div>
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center space-x-0">
+                    <PrintButton />
+                    <ResetCarButton />
+                  </div>
+                  <div className="mx-auto flex items-center gap-2">
+                    <DivisionSelector />
+                    <PointsSummary />
                   </div>
                 </div>
                 <div className="flex-1 overflow-auto">
