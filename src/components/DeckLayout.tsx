@@ -333,16 +333,6 @@ export function DeckLayoutMenu() {
           <FontAwesomeIcon icon={faSave} className="h-5 w-5" />
         </button>
 
-        {/* Import button */}
-        <button
-          onClick={() => importInputRef.current?.click()}
-          className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
-          title="Import Vehicle"
-          aria-label="Import Vehicle"
-        >
-          <FontAwesomeIcon icon={faFileImport} className="h-5 w-5" />
-        </button>
-
         {/* Print button */}
         <PrintButton />
 

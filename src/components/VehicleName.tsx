@@ -180,6 +180,20 @@ export function VehicleName() {
 
   return (
     <div className="flex items-center gap-2">
+      <button
+        onClick={handleLoadFromStorage}
+        className="text-gray-400 hover:text-gray-200"
+        title="Load vehicle from local storage"
+      >
+        <FontAwesomeIcon icon={faFolderOpen} className="h-4 w-4" />
+      </button>
+      <button
+        onClick={handleSaveToStorage}
+        className="text-gray-400 hover:text-gray-200"
+        title="Save vehicle to local storage"
+      >
+        <FontAwesomeIcon icon={faFloppyDisk} className="h-4 w-4" />
+      </button>
       <h2 className="text-gray-100 text-lg font-medium">
         {currentDeck?.name || 'Unnamed Vehicle'}
       </h2>
@@ -189,20 +203,6 @@ export function VehicleName() {
         title="Edit vehicle name"
       >
         <FontAwesomeIcon icon={faPencil} className="h-4 w-4" />
-      </button>
-      <button
-        onClick={handleSaveToStorage}
-        className="text-gray-400 hover:text-gray-200"
-        title="Save vehicle to local storage"
-      >
-        <FontAwesomeIcon icon={faFloppyDisk} className="h-4 w-4" />
-      </button>
-      <button
-        onClick={handleLoadFromStorage}
-        className="text-gray-400 hover:text-gray-200"
-        title="Load vehicle from local storage"
-      >
-        <FontAwesomeIcon icon={faFolderOpen} className="h-4 w-4" />
       </button>
       <SavedVehiclesDialog
         isOpen={isSavedVehiclesOpen}

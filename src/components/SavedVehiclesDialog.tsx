@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   SavedVehicleInfo,
   getSavedVehicles,
@@ -8,7 +8,8 @@ import {
 import { useCardStore } from '@/store/cardStore';
 import { useToast } from '@/components/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faSpinner, faSort } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faSpinner, faSort, faFileImport } from '@fortawesome/free-solid-svg-icons';
+import type { DeckLayout } from '@/types/types';
 
 interface SavedVehiclesDialogProps {
   isOpen: boolean;
@@ -21,6 +22,8 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
   const [sortByDivisionFirst, setSortByDivisionFirst] = useState(false);
   const { setDeck } = useCardStore();
   const { showToast } = useToast();
+  const importInputRef = useRef<HTMLInputElement>(null);
+  const exportInputRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -87,6 +90,34 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
     }
   };
 
+  const handleImportClick = () => {
+    importInputRef.current?.click();
+  };
+
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async e => {
+      try {
+        const importedDeck = JSON.parse(e.target?.result as string) as DeckLayout;
+        setDeck(importedDeck);
+        showToast('Vehicle imported successfully!', 'success');
+        onClose();
+      } catch (error) {
+        console.error('Import error:', error);
+        showToast(
+          `Failed to import vehicle: ${error instanceof Error ? error.message : 'Invalid file format'}`,
+          'error'
+        );
+      }
+    };
+    reader.readAsText(file);
+    // Clear the input so the same file can be imported again if needed
+    e.target.value = '';
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -96,6 +127,22 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold text-gray-100">Saved Vehicles</h2>
             <div className="flex items-center gap-2">
+              <button
+                onClick={handleImportClick}
+                className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
+                title="Import vehicle from file"
+              >
+                <FontAwesomeIcon icon={faFileImport} className="h-4 w-4" />
+                <span className="text-sm">Import</span>
+              </button>
+              <input
+                ref={importInputRef}
+                type="file"
+                accept=".json"
+                onChange={handleImportFile}
+                className="hidden"
+                aria-label="Import vehicle from JSON file"
+              />
               <button
                 onClick={() => setSortByDivisionFirst(prev => !prev)}
                 className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"

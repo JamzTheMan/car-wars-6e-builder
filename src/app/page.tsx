@@ -14,18 +14,24 @@ import { ToastContext } from '@/components/Toast';
 function PointsSummary() {
   const { currentDeck } = useCardStore();
   if (!currentDeck) return null;
-  const { pointsUsed, pointLimits } = currentDeck;
+  const { pointsUsed, pointLimits, division } = currentDeck;
   return (
     <div className="flex items-center space-x-2 text-xs text-gray-300">
+      <span className="bg-yellow-950 border border-yellow-900 rounded px-2 py-0.5">
+        AADA Division:{' '}
+        <span className="font-bold text-white-200">
+          {division === 'custom' ? 'Custom' : division}
+        </span>
+      </span>
       <span className="bg-blue-900 border border-blue-700 rounded px-2 py-0.5">
         CP:{' '}
-        <span className="font-bold text-green-200">
+        <span className="font-bold text-white-200">
           {pointsUsed.crewPoints} / {pointLimits.crewPoints}
         </span>
       </span>
       <span className="bg-red-900 border border-red-700 rounded px-2 py-0.5">
         BP:{' '}
-        <span className="font-bold text-blue-200">
+        <span className="font-bold text-white-200">
           {pointsUsed.buildPoints} / {pointLimits.buildPoints}
         </span>
       </span>
@@ -181,6 +187,7 @@ export default function Home() {
         setDeck({
           id: newId,
           name: randomName,
+          division: '4', // Default to Division 4
           backgroundImage: '', // We're still initializing with empty string, the DeckLayout will handle the default
           cards: [],
           pointLimits: {
