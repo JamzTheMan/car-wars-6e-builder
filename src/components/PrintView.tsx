@@ -40,7 +40,7 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
   const armorPoints = division;
 
   // Consolidated points breakdown
-  const pointsSummary = `DIVISION ${division} [${totalCrewPoints}CP, ${totalBuildPoints}BP, ${armorPoints}AP]`;
+  const pointsSummary = `DIVISION ${division} [${totalCrewPoints} CP, ${totalBuildPoints} BP, ${armorPoints} AP]`;
 
   useEffect(() => {
     if (hasPrinted.current) {
@@ -52,30 +52,30 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
     style.textContent = `
       @page {
         size: ${printMode === 'full' ? 'landscape' : 'portrait'};
-        margin: 0.2cm;
+        margin: 0.4cm 3cm;
       }
       
       @media print {
-        * {
-          box-sizing: border-box !important;
-        }
-        
         html, body {
           margin: 0 !important;
           padding: 0 !important;
-          width: 100% !important;
-          max-width: 100% !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          max-width: 100vw !important;
+          max-height: 100vh !important;
+          box-sizing: border-box !important;
         }
-        
         .print-view {
-          width: 100% !important;
-          position: static !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          position: fixed !important;
+          top: 0 !important;
           left: 0 !important;
           padding: 0.1cm !important;
           margin: 0 !important;
           font-size: 8pt !important;
+          background: white !important;
         }
-        
         /* Maximum compact view - no wasted space */
         li, div, span {
           margin: 0 !important;
@@ -120,16 +120,28 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
   // Full layout view with images
   if (printMode === 'full') {
     return (
-      <div className="print-view print-full" ref={printRef}>
-        <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>{currentDeck.name}</h1>
-        <p style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '15px' }}>
+      <div
+        className="print-view print-full"
+        ref={printRef}
+        style={{
+          width: '100vw',
+          height: '100vh',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          padding: '0.1cm',
+          margin: 0,
+          background: 'white',
+        }}
+      >
+        <h1 style={{ textAlign: 'center', margin: 0, marginBottom: '10px' }}>{currentDeck.name}</h1>
+        <p style={{ textAlign: 'center', fontWeight: 'bold', margin: 0, marginBottom: '15px' }}>
           {pointsSummary}
         </p>
-
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '10px' }}>
           {/* Left side */}
           <div style={{ border: '1px solid #ccc', padding: '5px' }}>
-            <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 5px 0' }}>LEFT</h2>
+            <h2 style={{ textAlign: 'left', color: '#900', margin: '0 0 5px 0' }}>LEFT</h2>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
               {cardsByArea[CardArea.Left]?.map(card => (
                 <div key={card.id} style={{ width: '100%', marginBottom: '5px' }}>
@@ -206,11 +218,22 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
 
   // Simple text-only layout
   return (
-    <div className="print-view print-simple" ref={printRef} style={{ padding: '5px' }}>
-      <h1 style={{ textAlign: 'center', margin: '0 0 5px 0', fontSize: '14pt' }}>
-        {currentDeck.name}
-      </h1>
-      <p style={{ textAlign: 'center', fontWeight: 'bold', margin: '0 0 5px 0', fontSize: '10pt' }}>
+    <div
+      className="print-view print-simple"
+      ref={printRef}
+      style={{
+        width: '100vw',
+        height: '100vh',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        padding: '0.1cm',
+        margin: 0,
+        background: 'white',
+      }}
+    >
+      <h1 style={{ textAlign: 'center', margin: 0, fontSize: '14pt' }}>{currentDeck.name}</h1>
+      <p style={{ textAlign: 'center', fontWeight: 'bold', margin: 0, fontSize: '10pt' }}>
         {pointsSummary}
       </p>
 
@@ -257,9 +280,11 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
               <span
                 style={{
                   fontWeight: 'bold',
-                  textAlign: 'right',
+                  textAlign: 'center',
                   minWidth: '20px',
                   fontSize: '8pt',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
                 {card.crewPointCost}
@@ -312,9 +337,11 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
               <span
                 style={{
                   fontWeight: 'bold',
-                  textAlign: 'right',
+                  textAlign: 'center',
                   minWidth: '20px',
                   fontSize: '8pt',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
                 {card.type === 'Gear' ? card.crewPointCost : card.buildPointCost}
@@ -367,9 +394,11 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
               <span
                 style={{
                   fontWeight: 'bold',
-                  textAlign: 'right',
+                  textAlign: 'center',
                   minWidth: '20px',
                   fontSize: '8pt',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
                 {card.buildPointCost}
@@ -422,9 +451,11 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
               <span
                 style={{
                   fontWeight: 'bold',
-                  textAlign: 'right',
+                  textAlign: 'center',
                   minWidth: '20px',
                   fontSize: '8pt',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
                 {card.buildPointCost}
@@ -477,9 +508,11 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
               <span
                 style={{
                   fontWeight: 'bold',
-                  textAlign: 'right',
+                  textAlign: 'center',
                   minWidth: '20px',
                   fontSize: '8pt',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
                 {card.buildPointCost}
@@ -532,9 +565,11 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
               <span
                 style={{
                   fontWeight: 'bold',
-                  textAlign: 'right',
+                  textAlign: 'center',
                   minWidth: '20px',
                   fontSize: '8pt',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               >
                 {card.buildPointCost}

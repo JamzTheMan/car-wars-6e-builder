@@ -375,20 +375,22 @@ body {
   
   /* Extremely compact text for print */
   .print-simple * {
-    font-size: 9pt !important;
+    font-size: 12pt !important;
     line-height: 1 !important;
-    margin: 0 !important;
+    margin: 3 !important;
     padding: 0 !important;
   }
   
   .print-simple h1 {
-    font-size: 14pt !important;
-    margin-bottom: 5px !important;
+    font-size: 20pt !important;
+    margin-bottom: 10px !important;
+    font-weight: bold !important;
   }
   
   .print-simple h2 {
     font-size: 12pt !important;
-    margin: 5px 0 3px 0 !important;
+    margin: 25px 0 5px 0 !important;
+    font-weight: bold !important;
   }
 }
 
