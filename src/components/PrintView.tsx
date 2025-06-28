@@ -43,6 +43,12 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
   const pointsSummary = `DIVISION ${division} [${totalCrewPoints} CP, ${totalBuildPoints} BP, ${armorPoints} AP]`;
 
   useEffect(() => {
+    // Inject Orbitron font for print and screen
+    const fontLink = document.createElement('link');
+    fontLink.rel = 'stylesheet';
+    fontLink.href = 'https://fonts.googleapis.com/css?family=Orbitron:700&display=swap';
+    document.head.appendChild(fontLink);
+
     if (hasPrinted.current) {
       return;
     }
@@ -97,6 +103,7 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
     }, 300);
 
     return () => {
+      document.head.removeChild(fontLink);
       document.head.removeChild(style);
       clearTimeout(printTimeout);
     };
@@ -134,7 +141,19 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
           background: 'white',
         }}
       >
-        <h1 style={{ textAlign: 'center', margin: 0, marginBottom: '10px' }}>{currentDeck.name}</h1>
+        <h1
+          style={{
+            textAlign: 'center',
+            margin: 0,
+            marginBottom: '10px',
+            fontSize: '14pt',
+            fontFamily: "'Orbitron', 'Audiowide', 'Exo', 'Segoe UI', 'Arial', sans-serif",
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+          }}
+        >
+          {currentDeck.name}
+        </h1>
         <p style={{ textAlign: 'center', fontWeight: 'bold', margin: 0, marginBottom: '15px' }}>
           {pointsSummary}
         </p>
@@ -232,14 +251,35 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
         background: 'white',
       }}
     >
-      <h1 style={{ textAlign: 'center', margin: 0, fontSize: '14pt' }}>{currentDeck.name}</h1>
+      <h1
+        style={{
+          textAlign: 'center',
+          margin: 0,
+          fontSize: '14pt',
+          fontFamily: "'Orbitron', 'Audiowide', 'Exo', 'Segoe UI', 'Arial', sans-serif",
+          letterSpacing: '1.5px',
+        }}
+      >
+        {currentDeck.name}
+      </h1>
       <p style={{ textAlign: 'center', fontWeight: 'bold', margin: 0, fontSize: '10pt' }}>
         {pointsSummary}
       </p>
 
       {/* Crew Section */}
       <div style={{ marginBottom: '7px' }}>
-        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+        <h2
+          style={{
+            textAlign: 'center',
+            color: '#900',
+            margin: '0 0 3px 0',
+            fontSize: '12pt',
+            fontWeight: 'bold',
+            fontFamily: "'Orbitron', 'Audiowide', 'Exo', 'Segoe UI', 'Arial', sans-serif",
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+          }}
+        >
           CREW
         </h2>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -296,7 +336,18 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
 
       {/* Gear/Upgrade Section */}
       <div style={{ marginBottom: '7px' }}>
-        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+        <h2
+          style={{
+            textAlign: 'center',
+            color: '#900',
+            margin: '0 0 3px 0',
+            fontSize: '12pt',
+            fontWeight: 'bold',
+            fontFamily: "'Orbitron', 'Audiowide', 'Exo', 'Segoe UI', 'Arial', sans-serif",
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+          }}
+        >
           GEAR / UPGRADES
         </h2>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -353,7 +404,18 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
 
       {/* Front Section */}
       <div style={{ marginBottom: '7px' }}>
-        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+        <h2
+          style={{
+            textAlign: 'center',
+            color: '#900',
+            margin: '0 0 3px 0',
+            fontSize: '12pt',
+            fontWeight: 'bold',
+            fontFamily: "'Orbitron', 'Audiowide', 'Exo', 'Segoe UI', 'Arial', sans-serif",
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+          }}
+        >
           FRONT
         </h2>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -410,7 +472,18 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
 
       {/* Back Section */}
       <div style={{ marginBottom: '7px' }}>
-        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+        <h2
+          style={{
+            textAlign: 'center',
+            color: '#900',
+            margin: '0 0 3px 0',
+            fontSize: '12pt',
+            fontWeight: 'bold',
+            fontFamily: "'Orbitron', 'Audiowide', 'Exo', 'Segoe UI', 'Arial', sans-serif",
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+          }}
+        >
           BACK
         </h2>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -467,7 +540,18 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
 
       {/* Left Section */}
       <div style={{ marginBottom: '7px' }}>
-        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+        <h2
+          style={{
+            textAlign: 'center',
+            color: '#900',
+            margin: '0 0 3px 0',
+            fontSize: '12pt',
+            fontWeight: 'bold',
+            fontFamily: "'Orbitron', 'Audiowide', 'Exo', 'Segoe UI', 'Arial', sans-serif",
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+          }}
+        >
           LEFT
         </h2>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -524,7 +608,18 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
 
       {/* Right Section */}
       <div style={{ marginBottom: '7px' }}>
-        <h2 style={{ textAlign: 'center', color: '#900', margin: '0 0 3px 0', fontSize: '12pt' }}>
+        <h2
+          style={{
+            textAlign: 'center',
+            color: '#900',
+            margin: '0 0 3px 0',
+            fontSize: '12pt',
+            fontWeight: 'bold',
+            fontFamily: "'Orbitron', 'Audiowide', 'Exo', 'Segoe UI', 'Arial', sans-serif",
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+          }}
+        >
           RIGHT
         </h2>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
