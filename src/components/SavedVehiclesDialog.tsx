@@ -13,8 +13,8 @@ import {
   faTrash,
   faSpinner,
   faSort,
-  faFileImport,
-  faSave,
+  faUpload,
+  faDownload
 } from '@fortawesome/free-solid-svg-icons';
 import type { DeckLayout } from '@/types/types';
 
@@ -208,7 +208,7 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                 className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
                 title="Import vehicle from file"
               >
-                <FontAwesomeIcon icon={faFileImport} className="h-4 w-4" />
+                <FontAwesomeIcon icon={faUpload} className="h-4 w-4" />
                 <span className="text-sm">Import</span>
               </button>
               <input
@@ -296,7 +296,7 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                         className="text-gray-400 hover:text-green-500 p-1 rounded transition-colors"
                         title="Export vehicle"
                       >
-                        <FontAwesomeIcon icon={faSave} className="h-4 w-4" />
+                        <FontAwesomeIcon icon={faDownload} className="h-4 w-4" />
                       </button>
                       <button
                         onClick={e => {
