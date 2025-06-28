@@ -9,7 +9,13 @@ import {
 import { useCardStore } from '@/store/cardStore';
 import { useToast } from '@/components/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faSpinner, faSort, faFileImport } from '@fortawesome/free-solid-svg-icons';
+import {
+  faTrash,
+  faSpinner,
+  faSort,
+  faFileImport,
+  faSave,
+} from '@fortawesome/free-solid-svg-icons';
 import type { DeckLayout } from '@/types/types';
 
 interface SavedVehiclesDialogProps {
@@ -126,6 +132,68 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
     e.target.value = '';
   };
 
+  // Handle exporting deck to JSON file
+  const handleExportVehicle = async (vehicle: SavedVehicleInfo) => {
+    try {
+      const loadedVehicle = loadVehicle(vehicle.storageKey);
+      if (!loadedVehicle) {
+        showToast('Failed to load vehicle for export', 'error');
+        return;
+      }
+
+      // Prepare the file name
+      const divisionText =
+        vehicle.division === 'custom' ? 'Custom' : `Division ${vehicle.division}`;
+      const suggestedName = `${vehicle.name} - ${divisionText}.json`;
+      const deckData = JSON.stringify(loadedVehicle, null, 2);
+
+      try {
+        if ('showSaveFilePicker' in window) {
+          // Modern browsers - Use File System Access API
+          const fileHandle = await window.showSaveFilePicker({
+            suggestedName,
+            types: [
+              {
+                description: 'JSON Files',
+                accept: {
+                  'application/json': ['.json'],
+                },
+              },
+            ],
+          });
+
+          // Create a writable stream and write the file
+          const writable = await fileHandle.createWritable();
+          await writable.write(deckData);
+          await writable.close();
+        } else {
+          // Legacy browsers - Use download attribute
+          const blob = new Blob([deckData], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+
+          if (exportInputRef.current) {
+            exportInputRef.current.href = url;
+            exportInputRef.current.download = suggestedName;
+            exportInputRef.current.click();
+          }
+
+          URL.revokeObjectURL(url);
+        }
+
+        showToast('Vehicle exported successfully!', 'success');
+      } catch (err) {
+        // Don't show error if user just cancelled the save dialog
+        if (err.name !== 'AbortError') {
+          console.error('Export error:', err);
+          showToast('Failed to export vehicle', 'error');
+        }
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      showToast('Failed to export vehicle', 'error');
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -219,16 +287,28 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                         className="h-4 w-4 animate-spin mr-2 text-blue-400"
                       />
                     ) : null}
-                    <button
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleDeleteVehicle(vehicle.storageKey, vehicle.name);
-                      }}
-                      className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
-                      title="Delete vehicle"
-                    >
-                      <FontAwesomeIcon icon={faTrash} className="h-4 w-4" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleExportVehicle(vehicle);
+                        }}
+                        className="text-gray-400 hover:text-green-500 p-1 rounded transition-colors"
+                        title="Export vehicle"
+                      >
+                        <FontAwesomeIcon icon={faSave} className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleDeleteVehicle(vehicle.storageKey, vehicle.name);
+                        }}
+                        className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
+                        title="Delete vehicle"
+                      >
+                        <FontAwesomeIcon icon={faTrash} className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

@@ -9,14 +9,7 @@ import type { Card as CardType, DeckLayout as DeckLayoutType } from '@/types/typ
 import { CardArea, canCardTypeGoInArea } from '@/types/types';
 import { VehicleName } from './VehicleName';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSave,
-  faTrashAlt,
-  faGear,
-  faFileImport,
-  faFloppyDisk,
-  faFolderOpen,
-} from '@fortawesome/free-solid-svg-icons';
+import { faSave, faTrashAlt, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useToast } from './Toast';
 import {
   useCardValidationErrors,
@@ -323,16 +316,6 @@ export function DeckLayoutMenu() {
   return (
     <div className="relative">
       <div className="flex items-center gap-2">
-        {/* Export button */}
-        <button
-          onClick={handleExportDeck}
-          className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
-          title="Export Vehicle"
-          aria-label="Export Vehicle"
-        >
-          <FontAwesomeIcon icon={faSave} className="h-5 w-5" />
-        </button>
-
         {/* Print button */}
         <PrintButton />
 
