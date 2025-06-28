@@ -13,15 +13,62 @@ import { ToastContext } from '@/components/Toast';
 import { PrintButton } from '@/components/PrintButton';
 
 function PointsSummary() {
-  const { currentDeck } = useCardStore();
+  const { currentDeck, setDeck, updatePointLimits } = useCardStore();
   if (!currentDeck) return null;
   const { pointsUsed, pointLimits, division } = currentDeck;
+  // Inline division select logic
+  const [localDivision, setLocalDivision] = useState<number>(
+    division && division !== 'custom'
+      ? parseInt(division)
+      : Math.ceil((pointLimits.crewPoints ?? 0) / 4)
+  );
+
+  useEffect(() => {
+    if (currentDeck) {
+      const crewValue = currentDeck.pointLimits.crewPoints;
+      setLocalDivision(crewValue > 0 ? crewValue : 1);
+    }
+  }, [currentDeck]);
+
+  const handleDivisionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    const numValue = parseInt(value);
+    setLocalDivision(numValue);
+    if (currentDeck) {
+      setDeck({
+        ...currentDeck,
+        division: String(numValue),
+        pointLimits: {
+          ...currentDeck.pointLimits,
+          buildPoints: numValue * 4,
+          crewPoints: numValue,
+        },
+        // Optionally reset pointsUsed if you want to clear spent points on division change:
+        // pointsUsed: { buildPoints: 0, crewPoints: 0 },
+      });
+    }
+    updatePointLimits({ buildPoints: numValue * 4, crewPoints: numValue });
+  };
+
   return (
     <div className="flex space-x-2 text-xs text-gray-300 scale-150 origin-left ml-0">
-      <span className="bg-yellow-950 border border-yellow-900 rounded px-2 py-0.5">
+      <span className="bg-yellow-950 border border-yellow-900 rounded px-2 py-0.5 relative">
         AADA Division:{' '}
-        <span className="font-bold text-white-200">
-          {division}
+        <select
+          value={localDivision}
+          onChange={handleDivisionChange}
+          className="font-bold bg-transparent text-white-200 focus:outline-none pr-3 appearance-none"
+          aria-label="AADA Division"
+          title="AADA Division"
+        >
+          {[...Array(12).keys()].map(i => (
+            <option key={i + 1} value={i + 1} className="text-black">
+              {i + 1}
+            </option>
+          ))}
+        </select>
+        <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-white-300 text-xs">
+          ▼
         </span>
       </span>
       <span className="bg-blue-900 border border-blue-700 rounded px-2 py-0.5">
@@ -94,59 +141,6 @@ function CardCollectionTitleUpload() {
         </div>
       )}
     </div>
-  );
-}
-
-function DivisionSelector() {
-  const { currentDeck, setDeck, updatePointLimits } = useCardStore();
-  const [division, setDivision] = useState<number>(
-    currentDeck?.division && currentDeck.division !== 'custom'
-      ? parseInt(currentDeck.division)
-      : Math.ceil((currentDeck?.pointLimits.crewPoints ?? 0) / 4)
-  );
-
-  useEffect(() => {
-    if (currentDeck) {
-      const crewValue = currentDeck.pointLimits.crewPoints;
-      setDivision(crewValue > 0 ? crewValue : 1);
-    }
-  }, [currentDeck]);
-
-  const handleDivisionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    const numValue = parseInt(value);
-    setDivision(numValue);
-    if (currentDeck) {
-      setDeck({
-        ...currentDeck,
-        division: String(numValue),
-        pointLimits: {
-          ...currentDeck.pointLimits,
-          buildPoints: numValue * 4,
-          crewPoints: numValue,
-        },
-        // Optionally reset pointsUsed if you want to clear spent points on division change:
-        // pointsUsed: { buildPoints: 0, crewPoints: 0 },
-      });
-    }
-    updatePointLimits({ buildPoints: numValue * 4, crewPoints: numValue });
-  };
-
-  return (
-    <select
-      value={division}
-      onChange={handleDivisionChange}
-      className="bg-gray-700 border-gray-600 text-gray-100 border rounded px-2 py-1 text-xs mr-2"
-      aria-label="AADA Division"
-      title="AADA Division"
-      style={{ width: 48 }}
-    >
-      {[...Array(12).keys()].map(i => (
-        <option key={i + 1} value={i + 1}>
-          {i + 1}
-        </option>
-      ))}
-    </select>
   );
 }
 
@@ -315,7 +309,7 @@ export default function Home() {
                     <ResetCarButton />
                   </div>
                   <div className="mx-auto flex items-center gap-2">
-                    <DivisionSelector />
+                    {/* <DivisionSelector /> */}
                     <PointsSummary />
                   </div>
                 </div>
