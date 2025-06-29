@@ -599,7 +599,7 @@ export function CardCollection() {
                 {/* Cost Filter (Build or Crew Point Cost) - Dual Range Slider */}
                 <div className="flex-1 w-full md:w-1/2">
                   <div className="flex items-center justify-between">
-                    <label className="font-medium text-sm">Cost Range (BP or CP)</label>
+                    <label className="font-medium text-sm">Cost Range</label>
                     <div className="flex items-center">
                       <input
                         type="checkbox"
