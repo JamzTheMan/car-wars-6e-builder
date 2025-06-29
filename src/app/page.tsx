@@ -306,17 +306,22 @@ export default function Home() {
                 <div className="resize-handle" onMouseDown={handleMouseDown} />
 
                 <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
-                  <div className="relative border-b border-gray-700 flex items-center min-h-14">
+                  <div className="relative border-b border-gray-700 flex items-center min-h-14 px-2">
+                    {/* Left: VehicleName absolute */}
                     <div className="absolute left-2 top-1/2 -translate-y-1/2">
                       <VehicleName onOpenSavedVehicles={() => setIsSavedVehiclesOpen(true)} />
                     </div>
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center -space-x-2">
+                    {/* Center: PointsSummary absolutely centered */}
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -ml-17 -translate-y-1/2 flex items-center">
+                      <PointsSummary />
+                    </div>
+                    {/* Right: Print & Reset absolute */}
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
                       <PrintButton onOpenPrintDialog={() => setShowPrintOptions(true)} />
                       <ResetCarButton />
                     </div>
-                    <div className="mx-auto flex items-center gap-2">
-                      <PointsSummary />
-                    </div>
+                    {/* Spacer for min height */}
+                    <div className="invisible h-0">&nbsp;</div>
                   </div>
                   <div className="flex-1 overflow-auto">
                     <DeckLayout />
