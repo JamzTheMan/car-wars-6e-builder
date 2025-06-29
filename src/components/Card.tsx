@@ -184,78 +184,69 @@ export function Card({
     return baseClasses;
   };
 
-  const renderQuickAddButtons = () => {
-    if (!isInCollection) return null;
+  // const renderQuickAddButtons = () => {
+  //   if (!isInCollection) return null;
 
-    // For turret-only cards, show a simple "Add to Turret" button
-    if (canBePlacedInTurret(card) && (!card.sides || card.sides.length === 1)) {
-      return (
-        <div
-          className={`quick-add-overlay ${showQuickAdd ? 'opacity-100' : 'opacity-0'} flex items-center justify-center`}
-          onMouseEnter={() => setShowQuickAdd(true)}
-          onMouseLeave={() => setShowQuickAdd(false)}
-        >
-          <button
-            onClick={() => handleQuickAdd(CardArea.Turret)}
-            className="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded text-sm"
-            title="Add to Turret"
-          >
-            Add to Turret
-          </button>
-        </div>
-      );
-    }
 
-    // For regular cards that can be placed on sides
-    if (!canBePlacedOnSides(card.type)) return null;
+  //   // For regular cards that can be placed on sides
+  //   if (!canBePlacedOnSides(card.type)) return null;
 
-    return (
-      <div
-        className={`quick-add-overlay ${showQuickAdd ? 'opacity-100' : 'opacity-0'}`}
-        onMouseEnter={() => setShowQuickAdd(true)}
-        onMouseLeave={() => setShowQuickAdd(false)}
-      >
-        <div className="quick-add-container">
-          {/* Front */}
-          <button
-            onClick={() => handleQuickAdd(CardArea.Front)}
-            className="quick-add-button front"
-            title="Add to Front"
-          >
-            {' '}
-            <FontAwesomeIcon icon={faCaretUp} className="quick-add-icon" />
-          </button>
+  //   return (
+  //     <div
+  //       className={`quick-add-overlay ${showQuickAdd ? 'opacity-100' : 'opacity-0'}`}
+  //       onMouseEnter={() => setShowQuickAdd(true)}
+  //       onMouseLeave={() => setShowQuickAdd(false)}
+  //     >
+  //       <div className="quick-add-container">
+  //         {/* Front */}
+  //         <button
+  //           onClick={() => handleQuickAdd(CardArea.Front)}
+  //           className="quick-add-button front"
+  //           title="Add to Front"
+  //         >
+  //           {' '}
+  //           <FontAwesomeIcon icon={faCaretUp} className="quick-add-icon" />
+  //         </button>
 
-          {/* Left */}
-          <button
-            onClick={() => handleQuickAdd(CardArea.Left)}
-            className="quick-add-button left"
-            title="Add to Left"
-          >
-            <FontAwesomeIcon icon={faCaretLeft} className="quick-add-icon" />
-          </button>
+  //         {/* Left */}
+  //         <button
+  //           onClick={() => handleQuickAdd(CardArea.Left)}
+  //           className="quick-add-button left"
+  //           title="Add to Left"
+  //         >
+  //           <FontAwesomeIcon icon={faCaretLeft} className="quick-add-icon" />
+  //         </button>
 
-          {/* Right */}
-          <button
-            onClick={() => handleQuickAdd(CardArea.Right)}
-            className="quick-add-button right"
-            title="Add to Right"
-          >
-            <FontAwesomeIcon icon={faCaretRight} className="quick-add-icon" />
-          </button>
+  //         {/* Right */}
+  //         <button
+  //           onClick={() => handleQuickAdd(CardArea.Right)}
+  //           className="quick-add-button right"
+  //           title="Add to Right"
+  //         >
+  //           <FontAwesomeIcon icon={faCaretRight} className="quick-add-icon" />
+  //         </button>
 
-          {/* Back */}
-          <button
-            onClick={() => handleQuickAdd(CardArea.Back)}
-            className="quick-add-button rear"
-            title="Add to Rear"
-          >
-            <FontAwesomeIcon icon={faCaretDown} className="quick-add-icon" />
-          </button>
-        </div>
-      </div>
-    );
-  };
+  //         {/* Back */}
+  //         <button
+  //           onClick={() => handleQuickAdd(CardArea.Back)}
+  //           className="quick-add-button rear"
+  //           title="Add to Rear"
+  //         >
+  //           <FontAwesomeIcon icon={faCaretDown} className="quick-add-icon" />
+  //         </button>
+
+  //          {/* Turret */}
+  //         <button
+  //           onClick={() => handleQuickAdd(CardArea.Turret)}
+  //           className="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded text-sm"
+  //           title="Add to Turret"
+  //         >
+  //           Add to Turret
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   return (
     <>
@@ -285,25 +276,6 @@ export function Card({
         onMouseLeave={onMouseLeave}
         style={zoomed ? { pointerEvents: 'auto' } : {}}
       >
-        {/* For turret-only cards */}
-        {isInCollection &&
-          canBePlacedInTurret(card) &&
-          (!card.sides || card.sides.length === 1) && (
-            <div
-              className={`quick-add-overlay z-20 ${showQuickAdd ? 'opacity-100' : 'opacity-0'} flex items-center justify-center`}
-            >
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  handleQuickAdd(CardArea.Turret);
-                }}
-                className="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded text-sm"
-                title="Add to Turret"
-              >
-                Add to Turret
-              </button>
-            </div>
-          )}
         {/* For regular side-placement cards */}
         {isInCollection &&
           canBePlacedOnSides(card.type) &&
