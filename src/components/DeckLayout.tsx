@@ -139,7 +139,31 @@ export function DeckLayout() {
     );
 
     // Get all cards for this area
-    const areaCards = currentDeck.cards.filter(card => card.area === area);
+    let areaCards = currentDeck.cards.filter(card => card.area === area);
+
+    // Custom sort for Crew & Sidearms area
+    if (area === CardArea.Crew) {
+      areaCards = [...areaCards].sort((a, b) => {
+        // Driver first
+        if (a.type === 'Crew' && a.subtype?.toLowerCase() === 'driver') return -1;
+        if (b.type === 'Crew' && b.subtype?.toLowerCase() === 'driver') return 1;
+        // Gunner second
+        if (a.type === 'Crew' && a.subtype?.toLowerCase() === 'gunner') return -1;
+        if (b.type === 'Crew' && b.subtype?.toLowerCase() === 'gunner') return 1;
+        // Hand Cannon third
+        if (a.type === 'Sidearm' && a.name === 'Hand Cannon') return -1;
+        if (b.type === 'Sidearm' && b.name === 'Hand Cannon') return 1;
+        // Other sidearms alphabetically
+        if (a.type === 'Sidearm' && b.type === 'Sidearm') {
+          return a.name.localeCompare(b.name);
+        }
+        // Crew before sidearms
+        if (a.type === 'Crew' && b.type === 'Sidearm') return -1;
+        if (a.type === 'Sidearm' && b.type === 'Crew') return 1;
+        // Otherwise, keep order
+        return 0;
+      });
+    }
 
     return (
       <div
