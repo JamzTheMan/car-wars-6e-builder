@@ -306,7 +306,7 @@ export default function Home() {
                 <div className="resize-handle" onMouseDown={handleMouseDown} />
 
                 <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
-                  <div className="relative border-b border-gray-700 flex-shrink-0 flex items-center p-2 min-h-12">
+                  <div className="relative border-b border-gray-700 flex items-center min-h-14">
                     <div className="absolute left-2 top-1/2 -translate-y-1/2">
                       <VehicleName onOpenSavedVehicles={() => setIsSavedVehiclesOpen(true)} />
                     </div>
