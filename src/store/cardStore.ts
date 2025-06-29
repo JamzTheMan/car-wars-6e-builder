@@ -114,21 +114,37 @@ const storage =
 
 const generateId = () => Math.random().toString(36).substring(2, 15);
 
-const createEmptyDeck = (): DeckLayout => ({
-  id: generateId(),
-  name: generateVehicleName(),
-  division: '4',
-  backgroundImage: '',
-  cards: [],
-  pointLimits: {
-    buildPoints: 16,
-    crewPoints: 4,
-  },
-  pointsUsed: {
-    buildPoints: 0,
-    crewPoints: 0,
+const createEmptyDeck = (collectionCards: Card[] = []): DeckLayout => {
+  const handCannon = collectionCards.find((c: Card) => c.name === 'Hand Cannon');
+  let cards: Card[] = [];
+  let pointsUsed = { buildPoints: 0, crewPoints: 0 };
+  if (handCannon) {
+    const deckCard = {
+      ...handCannon,
+      id: `${handCannon.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      area: CardArea.Crew,
+      x: 0,
+      y: 0
+    };
+    cards = [deckCard];
+    pointsUsed = {
+      buildPoints: deckCard.buildPointCost || 0,
+      crewPoints: deckCard.crewPointCost || 0
+    };
   }
-});
+  return {
+    id: generateId(),
+    name: generateVehicleName(),
+    division: '4',
+    backgroundImage: '',
+    cards,
+    pointLimits: {
+      buildPoints: 16,
+      crewPoints: 4,
+    },
+    pointsUsed,
+  };
+};
 
 export const useCardStore = create<CardStore>()(
   persist(
@@ -426,7 +442,6 @@ export const useCardStore = create<CardStore>()(
             newPointsUsed.crewPoints += deckCard.crewPointCost;
           }
 
-          // Add to deck
           return {
             currentDeck: {
               ...state.currentDeck,
@@ -440,24 +455,24 @@ export const useCardStore = create<CardStore>()(
       removeFromDeck: (id: string) => {
         set(state => {
           if (!state.currentDeck) return state;
-
+          
           const cardToRemove = state.currentDeck.cards.find(c => c.id === id);
           if (!cardToRemove) return state;
-
-          // Adjust points used
-          const newPointsUsed = { ...state.currentDeck.pointsUsed };
+          
+          // Calculate updated points used
+          const updatedPointsUsed = { ...state.currentDeck.pointsUsed };
           if (cardToRemove.buildPointCost) {
-            newPointsUsed.buildPoints -= cardToRemove.buildPointCost;
+            updatedPointsUsed.buildPoints -= cardToRemove.buildPointCost;
           }
           if (cardToRemove.crewPointCost) {
-            newPointsUsed.crewPoints -= cardToRemove.crewPointCost;
+            updatedPointsUsed.crewPoints -= cardToRemove.crewPointCost;
           }
-
+          
           return {
             currentDeck: {
               ...state.currentDeck,
               cards: state.currentDeck.cards.filter(c => c.id !== id),
-              pointsUsed: newPointsUsed
+              pointsUsed: updatedPointsUsed
             }
           };
         });
@@ -466,19 +481,16 @@ export const useCardStore = create<CardStore>()(
       updateCardPosition: (id: string, x: number, y: number) => {
         set(state => {
           if (!state.currentDeck) return state;
-
-          const cardIndex = state.currentDeck.cards.findIndex(c => c.id === id);
-          if (cardIndex === -1) return state;          const updatedCards = [...state.currentDeck.cards];
-          // Update with position as a nested object property
-          updatedCards[cardIndex] = { 
-            ...updatedCards[cardIndex], 
-            position: { x, y }
-          };
-
+          
+          const cardToUpdate = state.currentDeck.cards.find(c => c.id === id);
+          if (!cardToUpdate) return state;
+          
           return {
             currentDeck: {
               ...state.currentDeck,
-              cards: updatedCards
+              cards: state.currentDeck.cards.map(c => 
+                c.id === id ? { ...c, x, y } : c
+              )
             }
           };
         });
@@ -487,43 +499,29 @@ export const useCardStore = create<CardStore>()(
       updateCardArea: (id: string, area: CardArea) => {
         set(state => {
           if (!state.currentDeck) return state;
-
-          const cardIndex = state.currentDeck.cards.findIndex(c => c.id === id);
-          if (cardIndex === -1) return state;
-
-          const card = state.currentDeck.cards[cardIndex];
           
-          // Validate card movement to new area
-          const isValidMove = validateCardMovement(card, area, state.currentDeck.cards);
-          if (!isValidMove) {
-            console.warn('Cannot move card to area');
-            return state;
-          }
-
-          const updatedCards = [...state.currentDeck.cards];
-          updatedCards[cardIndex] = { ...updatedCards[cardIndex], area };
-
+          const cardToUpdate = state.currentDeck.cards.find(c => c.id === id);
+          if (!cardToUpdate) return state;
+          
           return {
             currentDeck: {
               ...state.currentDeck,
-              cards: updatedCards
+              cards: state.currentDeck.cards.map(c => 
+                c.id === id ? { ...c, area } : c
+              )
             }
           };
         });
       },
 
       setDeck: (deck: DeckLayout) => {
-        set({
-          currentDeck: {
-            ...deck,
-            division: deck.division || 'Unknown',
-          },
-        });
+        set({ currentDeck: deck });
       },
 
       updateDeckName: (name: string) => {
         set(state => {
           if (!state.currentDeck) return state;
+          
           return {
             currentDeck: {
               ...state.currentDeck,
@@ -536,10 +534,11 @@ export const useCardStore = create<CardStore>()(
       updateDeckBackground: (imageUrl: string) => {
         set(state => {
           if (!state.currentDeck) return state;
+          
           return {
             currentDeck: {
               ...state.currentDeck,
-              imageUrl
+              backgroundImage: imageUrl
             }
           };
         });
@@ -548,6 +547,7 @@ export const useCardStore = create<CardStore>()(
       updatePointLimits: (limits: PointLimits) => {
         set(state => {
           if (!state.currentDeck) return state;
+          
           return {
             currentDeck: {
               ...state.currentDeck,
@@ -558,32 +558,43 @@ export const useCardStore = create<CardStore>()(
       },
 
       resetDeck: () => {
-        set({ currentDeck: createEmptyDeck() });
+        set(state => ({ currentDeck: createEmptyDeck(state.collectionCards) }));
       },
 
       setName: (name: string) => {
-        set((state) => ({
-          ...state,
-          currentDeck: state.currentDeck
-            ? { ...state.currentDeck, name, division: state.currentDeck.division || 'Unknown' }
-            : null,
-        }));
+        set(state => {
+          if (!state.currentDeck) return state;
+          
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              name
+            }
+          };
+        });
       },
-      
-      // Add new action to update division
+
       setDivision: (division: string) => {
-        set((state) => ({
-          ...state,
-          currentDeck: state.currentDeck
-            ? { ...state.currentDeck, division }
-            : null,
-        }));
+        set(state => {
+          if (!state.currentDeck) return state;
+          
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              division
+            }
+          };
+        });
       },
+
+      // For development: remove all data
+      devReset: () => {
+        set({ collectionCards: [], currentDeck: null });
+      }
     }),
     {
       name: 'car-wars-storage',
       storage,
-      // Only persist the currentDeck in localStorage, collectionCards will come from the API
       partialize: (state) => ({ currentDeck: state.currentDeck }),
     }
   )
