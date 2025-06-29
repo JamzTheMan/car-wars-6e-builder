@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faSquareCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { ToastContext } from '@/components/Toast';
 import { PrintButton } from '@/components/PrintButton';
+import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
 
 function PointsSummary() {
   const { currentDeck, setDeck, updatePointLimits } = useCardStore();
@@ -170,6 +171,7 @@ export default function Home() {
   const [isStoreHydrated, setIsStoreHydrated] = useState(false);
   const [leftPanelWidth, setLeftPanelWidth] = useState(30); // percentage - will be updated from preferences
   const [isDragging, setIsDragging] = useState(false);
+  const [isSavedVehiclesOpen, setIsSavedVehiclesOpen] = useState(false);
 
   const handleMouseDown = () => {
     setIsDragging(true);
@@ -282,45 +284,50 @@ export default function Home() {
   }
 
   return (
-    <DndWrapper>
-      <CardUploadProvider>
-        <main className="h-full flex flex-col bg-gray-900">
-          <div className="flex-1 min-h-0">
-            <div id="split-container" className="h-full flex gap-2">
-              <div className="panel-left bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
-                <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0">
-                  <CardCollectionHeader />
-                  <CardCollectionTitleUpload />
+    <>
+      <DndWrapper>
+        <CardUploadProvider>
+          <main className="h-full flex flex-col bg-gray-900">
+            <div className="flex-1 min-h-0">
+              <div id="split-container" className="h-full flex gap-2">
+                <div className="panel-left bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
+                  <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0">
+                    <CardCollectionHeader />
+                    <CardCollectionTitleUpload />
+                  </div>
+                  <div className="flex-1 overflow-auto">
+                    <CardCollection />
+                  </div>
                 </div>
-                <div className="flex-1 overflow-auto">
-                  <CardCollection />
-                </div>
-              </div>
 
-              <div className="resize-handle" onMouseDown={handleMouseDown} />
+                <div className="resize-handle" onMouseDown={handleMouseDown} />
 
-              <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
-                <div className="relative border-b border-gray-700 flex-shrink-0 flex items-center p-2 min-h-12">
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2">
-                    <VehicleName />
+                <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
+                  <div className="relative border-b border-gray-700 flex-shrink-0 flex items-center p-2 min-h-12">
+                    <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                      <VehicleName onOpenSavedVehicles={() => setIsSavedVehiclesOpen(true)} />
+                    </div>
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center -space-x-2">
+                      <PrintButton />
+                      <ResetCarButton />
+                    </div>
+                    <div className="mx-auto flex items-center gap-2">
+                      <PointsSummary />
+                    </div>
                   </div>
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center space-x-0">
-                    <PrintButton />
-                    <ResetCarButton />
+                  <div className="flex-1 overflow-auto">
+                    <DeckLayout />
                   </div>
-                  <div className="mx-auto flex items-center gap-2">
-                    {/* <DivisionSelector /> */}
-                    <PointsSummary />
-                  </div>
-                </div>
-                <div className="flex-1 overflow-auto">
-                  <DeckLayout />
                 </div>
               </div>
             </div>
-          </div>
-        </main>
-      </CardUploadProvider>
-    </DndWrapper>
+          </main>
+        </CardUploadProvider>
+      </DndWrapper>
+      <SavedVehiclesDialog
+        isOpen={isSavedVehiclesOpen}
+        onClose={() => setIsSavedVehiclesOpen(false)}
+      />
+    </>
   );
 }

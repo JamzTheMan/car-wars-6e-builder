@@ -7,13 +7,11 @@ import { useToast } from '@/components/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faFolderOpen, faPencil } from '@fortawesome/free-solid-svg-icons';
 import { saveVehicle } from '@/utils/savedVehicles';
-import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
 
-export function VehicleName() {
+export function VehicleName({ onOpenSavedVehicles }: { onOpenSavedVehicles?: () => void }) {
   const { currentDeck, updateDeckName, setDeck } = useCardStore();
   const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [isSavedVehiclesOpen, setIsSavedVehiclesOpen] = useState(false);
   const [vehicleName, setVehicleName] = useState(currentDeck?.name || 'Car Wars 6e Car Builder');
   const [nameOptions, setNameOptions] = useState<string[]>([]);
   const randomButtonRef = useRef<HTMLButtonElement>(null);
@@ -67,7 +65,9 @@ export function VehicleName() {
   };
 
   const handleLoadFromStorage = () => {
-    setIsSavedVehiclesOpen(true);
+    if (onOpenSavedVehicles) {
+      onOpenSavedVehicles();
+    }
   };
 
   if (isEditing) {
@@ -204,10 +204,6 @@ export function VehicleName() {
       >
         <FontAwesomeIcon icon={faPencil} className="h-4 w-4" />
       </button>
-      <SavedVehiclesDialog
-        isOpen={isSavedVehiclesOpen}
-        onClose={() => setIsSavedVehiclesOpen(false)}
-      />
     </div>
   );
 }
