@@ -23,8 +23,14 @@ import { saveVehicleToStorage, loadVehicleFromStorage } from '@/utils/userPrefer
 export { VehicleName };
 
 export function DeckLayout() {
-  const { currentDeck, updateCardPosition, addToDeck, canAddCardToDeck, updateCardArea } =
-    useCardStore();
+  const {
+    currentDeck,
+    updateCardPosition,
+    addToDeck,
+    canAddCardToDeck,
+    updateCardArea,
+    reorderCardInArea,
+  } = useCardStore();
   const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
   const [showZoom, setShowZoom] = useState(false);
   const zoomTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -138,6 +144,45 @@ export function DeckLayout() {
       [area]
     );
 
+    // Card drop target for reordering within area
+    const CardDropTarget = ({ card, children }: { card: CardType; children: React.ReactNode }) => {
+      const [{ isOver, canDrop }, dropRef] = useDrop<
+        CardType & { source: 'deck'; id: string },
+        unknown,
+        { isOver: boolean; canDrop: boolean }
+      >(
+        () => ({
+          accept: 'CARD',
+          canDrop: item => {
+            // Only allow reordering if dragging from deck, same area, and not self
+            return (
+              item.source === 'deck' &&
+              item.id !== card.id &&
+              currentDeck.cards.find(c => c.id === item.id)?.area === card.area
+            );
+          },
+          drop: item => {
+            if (item.source === 'deck' && item.id !== card.id) {
+              reorderCardInArea(item.id, card.id, card.area!);
+            }
+          },
+          collect: monitor => ({
+            isOver: !!monitor.isOver(),
+            canDrop: !!monitor.canDrop(),
+          }),
+        }),
+        [card, currentDeck.cards]
+      );
+      return (
+        <div
+          ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
+          className={isOver && canDrop ? 'ring-2 ring-yellow-400' : ''}
+        >
+          {children}
+        </div>
+      );
+    };
+
     // Get all cards for this area
     let areaCards = currentDeck.cards.filter(card => card.area === area);
 
@@ -181,17 +226,38 @@ export function DeckLayout() {
           className={`${area === CardArea.Turret ? 'flex justify-center items-center h-full' : 'flex flex-wrap gap-2'}`}
         >
           {areaCards.map(card => (
-            <Card
-              key={card.id}
-              card={card}
-              isDraggable={true}
-              isInCollection={false}
-              onClick={() => handleCardClick(card)}
-            />
+            <CardDropTarget key={card.id} card={card}>
+              <Card
+                card={card}
+                isDraggable={true}
+                isInCollection={false}
+                onClick={() => handleCardClick(card)}
+              />
+            </CardDropTarget>
           ))}
+          {/* Drop target for end of area (empty space) */}
+          <div className="inline-block min-w-6 min-h-6">
+            <DropEndTarget area={area} />
+          </div>
         </div>
       </div>
     );
+  };
+
+  // Drop target for end of area (empty space)
+  const DropEndTarget = ({ area }: { area: CardArea }) => {
+    const [, dropRef] = useDrop<CardType & { source: 'deck'; id: string }, unknown, unknown>(
+      () => ({
+        accept: 'CARD',
+        canDrop: item =>
+          item.source === 'deck' && currentDeck.cards.find(c => c.id === item.id)?.area === area,
+        drop: item => {
+          reorderCardInArea(item.id, null, area);
+        },
+      }),
+      [area, currentDeck.cards]
+    );
+    return <div ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>} className="w-6 h-6" />;
   };
 
   return (
@@ -238,12 +304,12 @@ export function DeckLayout() {
         )}
       <div
         id="deck-layout"
-        className="h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden"
-        style={{
-          backgroundImage: currentDeck.backgroundImage
-            ? `url(${currentDeck.backgroundImage})`
-            : `url(public/assets/default_background.webp)`,
-        }}
+        className={`h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden ${currentDeck.backgroundImage ? '' : 'bg-[url(/assets/default_background.webp)]'}`}
+        style={
+          currentDeck.backgroundImage
+            ? { backgroundImage: `url(${currentDeck.backgroundImage})` }
+            : {}
+        }
       >
         {' '}
         {/* No direction indicators - using area labels instead */}
@@ -262,8 +328,7 @@ export function DeckLayout() {
               <img
                 src="/assets/car_with_logo.webp"
                 alt="Car with Logo"
-                className="w-[90%] h-[90%] object-contain"
-                style={{ maxWidth: '90%', maxHeight: '90%' }}
+                className="w-[90%] h-[90%] object-contain max-w-[90%] max-h-[90%]"
               />
             </div>
             <AreaDropTarget area={CardArea.Turret} label="Turret" className="h-full z-10" />

@@ -100,6 +100,7 @@ interface CardStore {
   bulkUpdateCollection: (cards: Card[]) => Promise<void>;
   setName: (name: string) => void;
   setDivision: (division: string) => void;
+  reorderCardInArea: (draggedId: string, targetId: string | null, area: CardArea) => void;
 }
 
 // Set up localStorage only in browser
@@ -583,6 +584,43 @@ export const useCardStore = create<CardStore>()(
               ...state.currentDeck,
               division
             }
+          };
+        });
+      },
+
+      reorderCardInArea: (draggedId: string, targetId: string | null, area: CardArea) => {
+        set(state => {
+          if (!state.currentDeck) return state;
+          const cardsInArea = state.currentDeck.cards.filter(c => c.area === area);
+          const draggedIndex = cardsInArea.findIndex(c => c.id === draggedId);
+          if (draggedIndex === -1) return state;
+          const draggedCard = cardsInArea[draggedIndex];
+          let newCardsInArea = cardsInArea.filter(c => c.id !== draggedId);
+          if (targetId) {
+            const targetIndex = newCardsInArea.findIndex(c => c.id === targetId);
+            if (targetIndex !== -1) {
+              // If dragged card was after the target, insert before target
+              // If dragged card was before the target, insert after target
+              const originalTargetIndex = cardsInArea.findIndex(c => c.id === targetId);
+              if (draggedIndex > originalTargetIndex) {
+                newCardsInArea.splice(targetIndex, 0, draggedCard); // before
+              } else {
+                newCardsInArea.splice(targetIndex + 1, 0, draggedCard); // after
+              }
+            } else {
+              newCardsInArea.push(draggedCard);
+            }
+          } else {
+            // Always move to end if dropped in same area and not onto a card
+            newCardsInArea.push(draggedCard);
+          }
+          // Rebuild the full deck card list, replacing the area cards with the reordered ones
+          const newCards = state.currentDeck.cards.filter(c => c.area !== area).concat(newCardsInArea);
+          return {
+            currentDeck: {
+              ...state.currentDeck,
+              cards: newCards,
+            },
           };
         });
       },
