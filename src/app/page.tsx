@@ -159,8 +159,8 @@ function ResetCarButton() {
         }
       }}
       className="p-2 hover:bg-red-700 rounded-full text-gray-400 hover:text-white ml-2"
-      title="Reset Car"
-      aria-label="Reset Car"
+      title="Reset Vehicle"
+      aria-label="Reset Vehicle"
     >
       <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
     </button>

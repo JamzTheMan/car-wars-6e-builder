@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/types/types';
 import { validateCardForDeck, validateCardSidePlacement, validateCardMovement } from '@/utils/cardValidation';
+import { generateVehicleName } from '@/utils/vehicleNameGenerator';
 
 // Helper function to sort cards by custom type order, then cost/subtype, then name
 const sortCards = (cards: Card[]): Card[] => {
@@ -115,13 +116,13 @@ const generateId = () => Math.random().toString(36).substring(2, 15);
 
 const createEmptyDeck = (): DeckLayout => ({
   id: generateId(),
-  name: 'New Vehicle',
-  division: 'Unknown',
+  name: generateVehicleName(),
+  division: '4',
   backgroundImage: '',
   cards: [],
   pointLimits: {
-    buildPoints: 25,
-    crewPoints: 5,
+    buildPoints: 16,
+    crewPoints: 4,
   },
   pointsUsed: {
     buildPoints: 0,
@@ -557,7 +558,7 @@ export const useCardStore = create<CardStore>()(
       },
 
       resetDeck: () => {
-        set({ currentDeck: null });
+        set({ currentDeck: createEmptyDeck() });
       },
 
       setName: (name: string) => {
