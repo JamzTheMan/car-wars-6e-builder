@@ -93,6 +93,14 @@ function CardCollectionTitleUpload() {
   const { showToast } = useContext(ToastContext) || {};
   const { collectionCards, clearCollection } = useCardStore();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [isDebug, setIsDebug] = useState(false);
+
+  useEffect(() => {
+    // Only show the button if localStorage.debug is set to 'true'
+    if (typeof window !== 'undefined') {
+      setIsDebug(localStorage.getItem('debug') === 'true');
+    }
+  }, []);
 
   const handleClearAllClick = () => {
     setShowClearConfirm(true);
@@ -110,8 +118,8 @@ function CardCollectionTitleUpload() {
 
   return (
     <div className="relative">
-      {/* Clear All Cards button */}
-      {collectionCards.length > 0 && (
+      {/* Clear All Cards button (debug only) */}
+      {isDebug && collectionCards.length > 0 && (
         <button
           onClick={handleClearAllClick}
           className="text-gray-400 hover:text-red-600"
