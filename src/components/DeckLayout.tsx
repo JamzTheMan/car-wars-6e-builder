@@ -94,6 +94,27 @@ export function DeckLayout() {
     const { collectionCards } = useCardStore();
     const { showToast } = useToast();
     const { handleValidationError } = useCardValidationErrors();
+    // Helper to add multiple copies if needed, but only deduct cost once (copied from Card.tsx)
+    const addCopiesToDeckDnD = (card: CardType, area: CardArea) => {
+      const copiesToAdd = card.copies && card.copies > 1 ? card.copies : 1;
+      let added = false;
+      if (copiesToAdd > 0) {
+        // First copy: validate and deduct cost
+        const cardAdded = validateAndAddCard(
+          card,
+          { canAddCardToDeck, addToDeck },
+          area,
+          showToast,
+          handleValidationError
+        );
+        if (cardAdded) added = true;
+        // Remaining copies: add directly, no cost/validation
+        for (let i = 1; i < copiesToAdd; i++) {
+          addToDeck(card.id, area, false);
+        }
+      }
+      return added;
+    };
     const [{ isOver }, dropRef] = useDrop<
       CardType & { source: 'collection' | 'deck'; id: string },
       unknown,
@@ -112,14 +133,11 @@ export function DeckLayout() {
         },
         drop: (item: CardType & { source: 'collection' | 'deck' }) => {
           if (item.source === 'collection') {
-            // Add from collection to specific area using the centralized function
-            validateAndAddCard(
-              item,
-              { canAddCardToDeck, addToDeck },
-              area,
-              showToast,
-              handleValidationError
-            );
+            // Add all copies from collection to deck using the same logic as addCopiesToDeck
+            const cardToAdd = collectionCards.find((c: CardType) => c.id === item.id);
+            if (cardToAdd) {
+              addCopiesToDeckDnD(cardToAdd, area);
+            }
           } else if (item.source === 'deck') {
             // Use the centralized validation function for card movements
             const canMove = validateCardMovement(item, area, currentDeck.cards, showToast);
@@ -137,7 +155,7 @@ export function DeckLayout() {
           isOver: !!monitor.isOver(),
         }),
       }),
-      [area]
+      [area, collectionCards, currentDeck.cards] // <-- fix: wrap in a single array
     );
 
     // Card drop target for reordering within area
@@ -167,7 +185,7 @@ export function DeckLayout() {
             canDrop: !!monitor.canDrop(),
           }),
         }),
-        [card, currentDeck.cards]
+        [card, currentDeck.cards] // <-- fix: wrap in a single array
       );
       return (
         <div
@@ -251,7 +269,7 @@ export function DeckLayout() {
           reorderCardInArea(item.id, null, item.area); // Use the dragged card's area
         },
       }),
-      [area, currentDeck.cards]
+      [area, currentDeck.cards] // <-- fix: wrap in a single array
     );
     return <div ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>} className="w-6 h-6" />;
   };

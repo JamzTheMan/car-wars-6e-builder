@@ -36,13 +36,13 @@ interface CardCollectionProps {
 }
 
 export function CardCollection({
-                                 filterCardTypes,
-                                 filterSubtypes,
-                                 filterCardName,
-                                 filterMinCost,
-                                 filterMaxCost,
-                                 filterSources,
-                               }: CardCollectionProps) {
+  filterCardTypes,
+  filterSubtypes,
+  filterCardName,
+  filterMinCost,
+  filterMaxCost,
+  filterSources,
+}: CardCollectionProps) {
   // CSS for custom range sliders
   const rangeSliderStyle = `
     input[type="range"]::-webkit-slider-thumb {
@@ -234,7 +234,11 @@ export function CardCollection({
       else if (monitor.getItemType() === 'CARD' && item.id) {
         // Only remove the card if it's coming from the deck
         if (item.source === 'deck') {
-          removeFromDeck(item.id);
+          // Remove x copies if card.copies > 1, otherwise just one (same logic as Card.tsx)
+          const deckCard = currentDeck?.cards.find(c => c.id === item.id);
+          const copiesToRemove =
+            deckCard && deckCard.copies && deckCard.copies > 1 ? deckCard.copies : 1;
+          removeFromDeck(item.id, copiesToRemove);
         }
       }
     },
