@@ -64,16 +64,14 @@ export function Card({
   const { showToast } = useToast();
   const { handleValidationError } = useCardValidationErrors();
 
-  const [{ isDragging }, dragRef] = useDrag<DragItem, unknown, { isDragging: boolean }>(
-    () => ({
-      type: 'CARD',
-      item: { ...card, source: isInCollection ? 'collection' : 'deck' },
-      collect: (monitor: any) => ({
-        isDragging: !!monitor.isDragging(),
-      }),
+  const [{ isDragging }, dragRef] = useDrag<DragItem, unknown, { isDragging: boolean }>({
+    type: 'CARD',
+    item: { ...card, source: isInCollection ? 'collection' : 'deck' },
+    collect: (monitor: any) => ({
+      isDragging: !!monitor.isDragging(),
     }),
-    [card, isDraggable, isPreviewOpen]
-  );
+    // No dependency array needed; React DnD will update on item changes
+  });
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
