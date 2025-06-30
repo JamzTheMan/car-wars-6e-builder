@@ -300,17 +300,10 @@ export function DeckLayout() {
         )}
       <div
         id="deck-layout"
-        className={`h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden ${currentDeck.backgroundImage ? '' : 'bg-[url(/assets/default_background.webp)]'}`}
-        style={
-          currentDeck.backgroundImage
-            ? { backgroundImage: `url(${currentDeck.backgroundImage})` }
-            : {}
-        }
+        className="h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden"
       >
-        {' '}
         {/* No direction indicators - using area labels instead */}
         <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-1 p-1">
-          {' '}
           {/* Top row */}
           <AreaDropTarget area={CardArea.Crew} label="Crew & Sidearms" className="h-full" />
           <AreaDropTarget area={CardArea.Front} label="Front Area" className="h-full" />
