@@ -3,13 +3,10 @@
 import { useState, useMemo, useContext, useEffect } from 'react';
 import { Card } from '@/components/Card';
 import { useCardStore } from '@/store/cardStore';
-import { CardType, CardTypeCategories } from '@/types/types';
+import { CardType } from '@/types/types';
 import { useCardUpload } from '@/context/CardUploadContext';
 import { uploadCardImage } from '@/utils/cardUpload';
-import { getUserPreferences, saveFilterPreferences } from '@/utils/userPreferences';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ToastContext } from '@/components/Toast';
-import { ChipSelector } from '@/components/ChipSelector';
 import {
   faCloudUploadAlt,
   faFileImport,
@@ -19,12 +16,54 @@ import {
   faRotateLeft,
   faChevronUp,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { processCSVToCards } from '@/utils/csvProcessing';
-import { CardCollectionFilters } from './CardCollectionFilters';
 
-export function CardCollection() {
+interface CardCollectionProps {
+  filterPanelOpen: boolean;
+  updateFilterPanelOpen: (value: boolean) => void;
+  filterCardTypes: string[];
+  updateFilterCardTypes: (value: string[]) => void;
+  filterSubtypes: string[];
+  updateFilterSubtypes: (value: string[]) => void;
+  filterCardName: string;
+  updateFilterCardName: (value: string) => void;
+  filterMinCost: number;
+  updateFilterMinCost: (value: number) => void;
+  filterMaxCost: number;
+  updateFilterMaxCost: (value: number) => void;
+  filterSources: string[];
+  updateFilterSources: (value: string[]) => void;
+  resetFilters: () => void;
+  filteredCardsCount: number;
+  totalCardsCount: number;
+  subtypesByCardType: Record<string, string[]>;
+  uniqueSources: string[];
+}
+
+export function CardCollection({
+  filterPanelOpen,
+  updateFilterPanelOpen,
+  filterCardTypes,
+  updateFilterCardTypes,
+  filterSubtypes,
+  updateFilterSubtypes,
+  filterCardName,
+  updateFilterCardName,
+  filterMinCost,
+  updateFilterMinCost,
+  filterMaxCost,
+  updateFilterMaxCost,
+  filterSources,
+  updateFilterSources,
+  resetFilters,
+  filteredCardsCount,
+  totalCardsCount,
+  subtypesByCardType,
+  uniqueSources,
+}: CardCollectionProps) {
   // CSS for custom range sliders
   const rangeSliderStyle = `
     input[type="range"]::-webkit-slider-thumb {
@@ -72,64 +111,6 @@ export function CardCollection() {
     setNewSource,
   } = useCardUpload();
   const [isUploading, setIsUploading] = useState(false);
-  // Filter states - default values will be replaced by user preferences
-  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
-  const [filterCardTypes, setFilterCardTypes] = useState<string[]>([]);
-  const [filterSubtypes, setFilterSubtypes] = useState<string[]>([]);
-  const [filterCardName, setFilterCardName] = useState<string>('');
-  const [filterMinCost, setFilterMinCost] = useState<number>(0);
-  const [filterMaxCost, setFilterMaxCost] = useState<number>(8);
-  const [filterSources, setFilterSources] = useState<string[]>([]);
-
-  // Load saved filter preferences on mount
-  useEffect(() => {
-    const userPrefs = getUserPreferences();
-    const { filterPreferences } = userPrefs;
-
-    setFilterPanelOpen(filterPreferences.filterPanelOpen);
-    setFilterCardTypes(filterPreferences.filterCardTypes);
-    setFilterSubtypes(filterPreferences.filterSubtypes);
-    setFilterCardName(filterPreferences.filterCardName);
-    setFilterMinCost(filterPreferences.filterMinCost);
-    setFilterMaxCost(filterPreferences.filterMaxCost);
-    setFilterSources(filterPreferences.filterSources);
-  }, []);
-
-  // Custom setters that save preferences
-  const updateFilterPanelOpen = (value: boolean) => {
-    setFilterPanelOpen(value);
-    saveFilterPreferences({ filterPanelOpen: value });
-  };
-
-  const updateFilterCardTypes = (value: string[]) => {
-    setFilterCardTypes(value);
-    saveFilterPreferences({ filterCardTypes: value });
-  };
-
-  const updateFilterSubtypes = (value: string[]) => {
-    setFilterSubtypes(value);
-    saveFilterPreferences({ filterSubtypes: value });
-  };
-
-  const updateFilterCardName = (value: string) => {
-    setFilterCardName(value);
-    saveFilterPreferences({ filterCardName: value });
-  };
-
-  const updateFilterMinCost = (value: number) => {
-    setFilterMinCost(value);
-    saveFilterPreferences({ filterMinCost: value });
-  };
-
-  const updateFilterMaxCost = (value: number) => {
-    setFilterMaxCost(value);
-    saveFilterPreferences({ filterMaxCost: value });
-  };
-
-  const updateFilterSources = (value: string[]) => {
-    setFilterSources(value);
-    saveFilterPreferences({ filterSources: value });
-  };
 
   const {
     collectionCards: cards,
@@ -151,7 +132,7 @@ export function CardCollection() {
   }, [loadCollection]);
 
   // Get unique subtypes organized by their corresponding card type
-  const subtypesByCardType = useMemo(() => {
+  const subtypesByCardTypeMemo = useMemo(() => {
     // Create an object to map subtypes to their card type
     const subtypeToCardTypeMap: Record<string, CardType> = {};
 
@@ -203,7 +184,7 @@ export function CardCollection() {
     return result;
   }, [cards]);
 
-  const uniqueSources = useMemo(() => {
+  const uniqueSourcesMemo = useMemo(() => {
     const sources = new Set<string>();
     cards.forEach(card => {
       if (card.source && card.source.trim() !== '') {
@@ -262,16 +243,6 @@ export function CardCollection() {
     filterMaxCost,
     filterSources,
   ]);
-  // Reset all filters
-  const resetFilters = () => {
-    updateFilterCardTypes([]);
-    updateFilterSubtypes([]);
-    updateFilterCardName('');
-    updateFilterMinCost(0);
-    updateFilterMaxCost(8);
-    updateFilterSources([]);
-  };
-
   // Create a multi-drop target that accepts both files and cards
   const [{ isOver, isCardOver }, drop] = useDrop({
     accept: ['CARD', NativeTypes.FILE],
@@ -460,28 +431,6 @@ export function CardCollection() {
   return (
     <div className="h-full">
       <style jsx>{rangeSliderStyle}</style>
-      {/* Filter Controls */}
-      <CardCollectionFilters
-        filterPanelOpen={filterPanelOpen}
-        updateFilterPanelOpen={updateFilterPanelOpen}
-        filterCardTypes={filterCardTypes}
-        updateFilterCardTypes={updateFilterCardTypes}
-        filterSubtypes={filterSubtypes}
-        updateFilterSubtypes={updateFilterSubtypes}
-        filterCardName={filterCardName}
-        updateFilterCardName={updateFilterCardName}
-        filterMinCost={filterMinCost}
-        updateFilterMinCost={updateFilterMinCost}
-        filterMaxCost={filterMaxCost}
-        updateFilterMaxCost={updateFilterMaxCost}
-        filterSources={filterSources}
-        updateFilterSources={updateFilterSources}
-        resetFilters={resetFilters}
-        filteredCardsCount={filteredCards.length}
-        totalCardsCount={cards.length}
-        subtypesByCardType={subtypesByCardType}
-        uniqueSources={uniqueSources}
-      />
       {/* Card collection area with drag and drop */}
       <div ref={drop} className="relative p-2">
         {isOver && (

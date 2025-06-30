@@ -13,6 +13,8 @@ import { ToastContext } from '@/components/Toast';
 import { PrintButton } from '@/components/PrintButton';
 import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
 import { PrintView } from '@/components/PrintView';
+import { CardCollectionFilters } from '@/components/CardCollectionFilters';
+import { useCardCollectionFilters } from './CardCollectionFiltersWrapper';
 
 function PointsSummary() {
   const { currentDeck, setDeck, updatePointLimits } = useCardStore();
@@ -176,13 +178,16 @@ function ResetCarButton() {
 }
 
 export default function Home() {
-  const { setDeck, currentDeck } = useCardStore();
+  const { setDeck, currentDeck, collectionCards } = useCardStore();
   const [isStoreHydrated, setIsStoreHydrated] = useState(false);
   const [leftPanelWidth, setLeftPanelWidth] = useState(30); // percentage - will be updated from preferences
   const [isDragging, setIsDragging] = useState(false);
   const [isSavedVehiclesOpen, setIsSavedVehiclesOpen] = useState(false);
   const [showPrintOptions, setShowPrintOptions] = useState(false);
   const [printMode, setPrintMode] = useState<'full' | 'simple' | null>(null);
+
+  // Use the custom hook to manage filter state and logic
+  const filterProps = useCardCollectionFilters(collectionCards);
 
   const handleMouseDown = () => {
     setIsDragging(true);
@@ -306,8 +311,12 @@ export default function Home() {
                     <CardCollectionHeader />
                     <CardCollectionTitleUpload />
                   </div>
+                  {/* Render filters above the card collection */}
+                  <div>
+                    <CardCollectionFilters {...filterProps} />
+                  </div>
                   <div className="flex-1 overflow-auto">
-                    <CardCollection />
+                    <CardCollection {...filterProps} />
                   </div>
                 </div>
 
