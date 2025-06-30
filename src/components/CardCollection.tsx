@@ -17,6 +17,7 @@ import {
   faUndo,
   faFilter,
   faRotateLeft,
+  faChevronUp,
 } from '@fortawesome/free-solid-svg-icons';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -467,7 +468,7 @@ export function CardCollection() {
               className="flex items-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded"
             >
               <FontAwesomeIcon
-                icon={filterPanelOpen ? faUndo : faFilter}
+                icon={filterPanelOpen ? faChevronUp : faFilter}
                 className="mr-2 h-3 w-3"
               />
               {filterPanelOpen ? 'Hide Filters' : 'Filter Cards'}
