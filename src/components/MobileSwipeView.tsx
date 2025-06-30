@@ -6,6 +6,7 @@ import { DeckLayout } from '@/components/DeckLayout';
 import { useCardCollectionFilters } from '@/app/CardCollectionFiltersWrapper';
 import { CardCollectionFilters } from '@/components/CardCollectionFilters';
 import { CardArea } from '@/types/types';
+import { VehicleName } from '@/components/DeckLayout';
 
 interface MobileSwipeViewProps {
   collectionCards: any[];
@@ -15,6 +16,26 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({ collectionCards }) =>
   const mobileView = useCardStore(state => state.mobileView);
   const cycleMobileView = useCardStore(state => state.cycleMobileView);
   const filterProps = useCardCollectionFilters(collectionCards);
+  const [showVehicleName, setShowVehicleName] = React.useState(false);
+  const [showFilters, setShowFilters] = React.useState(filterProps.filterPanelOpen);
+
+  // Keep local showFilters in sync with filterProps
+  React.useEffect(() => {
+    setShowFilters(filterProps.filterPanelOpen);
+  }, [filterProps.filterPanelOpen]);
+
+  // Helper to open filters and close vehicle name
+  const handleOpenFilters = () => {
+    setShowFilters(true);
+    setShowVehicleName(false);
+    filterProps.updateFilterPanelOpen(true);
+  };
+  // Helper to open vehicle name and close filters
+  const handleOpenVehicleName = () => {
+    setShowVehicleName(true);
+    setShowFilters(false);
+    filterProps.updateFilterPanelOpen(false);
+  };
 
   const handlers = useSwipeable({
     onSwipedLeft: () => cycleMobileView('right'),
@@ -31,7 +52,24 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({ collectionCards }) =>
       content = (
         <div className="h-full flex flex-col">
           <div className="bg-gray-900 p-2 border-b border-gray-700">
-            <CardCollectionFilters {...filterProps} />
+            <div className="flex items-center">
+              <div className="w-full flex-shrink-0">
+                <CardCollectionFilters {...filterProps} />
+                <button
+                  className="flex ml-2 items-center justify-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded md:hidden"
+                  onClick={() => setShowVehicleName(v => !v)}
+                  aria-label="Toggle Vehicle Name"
+                  type="button"
+                >
+                  {showVehicleName ? 'Hide Vehicle Name' : 'Show Vehicle Name'}
+                </button>
+              </div>
+            </div>
+            {showVehicleName && (
+              <div className="mt-2 md:hidden">
+                <VehicleName />
+              </div>
+            )}
           </div>
           <div className="flex-1 overflow-y-auto">
             <CardCollection {...filterProps} />

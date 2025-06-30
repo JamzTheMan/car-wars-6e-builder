@@ -27,9 +27,6 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
     useCardStore();
   const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
   const [showZoom, setShowZoom] = useState(false);
-  // Mobile toggles
-  const [showFilters, setShowFilters] = useState(true);
-  const [showVehicleName, setShowVehicleName] = useState(false);
 
   // Handle Escape key to close zoom
   useEffect(() => {
