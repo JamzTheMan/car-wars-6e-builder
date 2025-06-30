@@ -193,7 +193,7 @@ export function Card({
           onClick
             ? e => {
                 e.stopPropagation();
-                onClick(card);
+                onClick();
               }
             : openPreview
         }

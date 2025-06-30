@@ -248,7 +248,7 @@ export function DeckLayout() {
         canDrop: item =>
           item.source === 'deck' && currentDeck.cards.find(c => c.id === item.id)?.area === area,
         drop: item => {
-          reorderCardInArea(item.id, null, area);
+          reorderCardInArea(item.id, null, item.area); // Use the dragged card's area
         },
       }),
       [area, currentDeck.cards]
