@@ -96,7 +96,7 @@ interface CardStore {
   removeFromCollection: (id: string) => Promise<void>;
   clearCollection: () => Promise<void>;
   addToDeck: (cardId: string, area?: CardArea, deductCost?: boolean) => void;
-  removeFromDeck: (id: string) => void;
+  removeFromDeck: (id: string, copies?: number) => void;
   updateCardPosition: (id: string, x: number, y: number) => void;
   updateCardArea: (id: string, area: CardArea) => void;
   setDeck: (deck: DeckLayout) => void;
@@ -475,14 +475,22 @@ export const useCardStore = create<CardStore>()(
         });
       },
 
-      removeFromDeck: (id: string) => {
+      removeFromDeck: (id: string, copies: number = 1) => {
         set(state => {
           if (!state.currentDeck) return state;
 
+          // Find the card to remove by unique id
           const cardToRemove = state.currentDeck.cards.find(c => c.id === id);
           if (!cardToRemove) return state;
 
-          // Calculate updated points used
+          // Find all cards in the deck that match the original card id (before unique id)
+          const baseId = cardToRemove.id.split('-')[0];
+          // Get all matching cards (by base id)
+          const matchingCards = state.currentDeck.cards.filter(c => c.id.startsWith(baseId + '-'));
+          // Remove up to 'copies' cards, starting with the one being deleted
+          const cardsToRemove = [cardToRemove, ...matchingCards.filter(c => c.id !== id)].slice(0, copies);
+
+          // Calculate updated points used (only refund for the first removed card)
           const updatedPointsUsed = { ...state.currentDeck.pointsUsed };
           if (cardToRemove.buildPointCost) {
             updatedPointsUsed.buildPoints -= cardToRemove.buildPointCost;
@@ -494,7 +502,7 @@ export const useCardStore = create<CardStore>()(
           return {
             currentDeck: {
               ...state.currentDeck,
-              cards: state.currentDeck.cards.filter(c => c.id !== id),
+              cards: state.currentDeck.cards.filter(c => !cardsToRemove.some(r => r.id === c.id)),
               pointsUsed: updatedPointsUsed,
             },
           };

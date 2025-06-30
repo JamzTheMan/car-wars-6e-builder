@@ -109,9 +109,7 @@ export function Card({
     } else {
       // Remove x copies if card.copies > 1, otherwise just one
       const copiesToRemove = card.copies && card.copies > 1 ? card.copies : 1;
-      for (let i = 0; i < copiesToRemove; i++) {
-        removeFromDeck(card.id);
-      }
+      removeFromDeck(card.id, copiesToRemove);
     }
   };
 
