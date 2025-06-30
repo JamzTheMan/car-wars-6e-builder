@@ -7,7 +7,7 @@ export function PrintButton({ onOpenPrintDialog }: { onOpenPrintDialog?: () => v
   return (
     <button
       onClick={onOpenPrintDialog}
-      className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-gray-200"
+      className="text-gray-400 hover:text-gray-200"
       title="Print Deck"
       aria-label="Print Deck"
     >

@@ -8,7 +8,7 @@ import { CardCollectionHeader } from '@/components/CardCollectionHeader';
 import { DeckLayout, VehicleName } from '@/components/DeckLayout';
 import { useCardStore } from '@/store/cardStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faSquareCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faSquareCaretDown, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { ToastContext } from '@/components/Toast';
 import { PrintButton } from '@/components/PrintButton';
 import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
@@ -114,9 +114,9 @@ function CardCollectionTitleUpload() {
       {collectionCards.length > 0 && (
         <button
           onClick={handleClearAllClick}
-          className="p-2 hover:bg-red-700 rounded-full text-gray-400 hover:text-white"
-          title="Clear All Cards"
-          aria-label="Clear All Cards"
+          className="text-gray-400 hover:text-red-600"
+          title="Clear the Collection"
+          aria-label="Clear the Collection"
         >
           <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
         </button>
@@ -158,11 +158,11 @@ function ResetCarButton() {
           useCardStore.getState().resetDeck();
         }
       }}
-      className="p-2 hover:bg-red-700 rounded-full text-gray-400 hover:text-white ml-2"
+      className="text-gray-400 hover:text-red-600"
       title="Reset Vehicle"
       aria-label="Reset Vehicle"
     >
-      <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
+      <FontAwesomeIcon icon={faRotateLeft} className="w-4 h-4" />
     </button>
   );
 }
