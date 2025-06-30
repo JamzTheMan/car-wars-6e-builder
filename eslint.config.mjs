@@ -25,18 +25,11 @@ const eslintConfig = [
   {
     files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     rules: {
-      // Unused variables
-      "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
-      // Unused imports
-      "unused-imports/no-unused-imports": "warn",
-      "unused-imports/no-unused-vars": [
-        "warn",
-        { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
-      ]
+      // Prettier integration
+      "prettier/prettier": "error",
     },
     plugins: {
-      prettier: (await import("eslint-plugin-prettier")).default,
-      "unused-imports": (await import("eslint-plugin-unused-imports")).default,
+      prettier: require("eslint-plugin-prettier"),
     },
   },
 ];
