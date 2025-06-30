@@ -24,12 +24,6 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({ collectionCards }) =>
     setShowFilters(filterProps.filterPanelOpen);
   }, [filterProps.filterPanelOpen]);
 
-  // Helper to open filters and close vehicle name
-  const handleOpenFilters = () => {
-    setShowFilters(true);
-    setShowVehicleName(false);
-    filterProps.updateFilterPanelOpen(true);
-  };
   // Helper to open vehicle name and close filters
   const handleOpenVehicleName = () => {
     setShowVehicleName(true);
@@ -54,22 +48,10 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({ collectionCards }) =>
           <div className="bg-gray-900 p-2 border-b border-gray-700">
             <div className="flex items-center">
               <div className="w-full flex-shrink-0">
+                <VehicleName />
                 <CardCollectionFilters {...filterProps} />
-                <button
-                  className="flex ml-2 items-center justify-center text-sm px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded md:hidden"
-                  onClick={() => setShowVehicleName(v => !v)}
-                  aria-label="Toggle Vehicle Name"
-                  type="button"
-                >
-                  {showVehicleName ? 'Hide Vehicle Name' : 'Show Vehicle Name'}
-                </button>
               </div>
             </div>
-            {showVehicleName && (
-              <div className="mt-2 md:hidden">
-                <VehicleName />
-              </div>
-            )}
           </div>
           <div className="flex-1 overflow-y-auto">
             <CardCollection {...filterProps} />

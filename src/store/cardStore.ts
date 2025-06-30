@@ -659,17 +659,10 @@ export const useCardStore = create<CardStore>()(
 
       setMobileView: (view) => set({ mobileView: view }),
       cycleMobileView: (direction) => {
-        const order = ['collection', 'left', 'front', 'right', 'back', 'turret'];
-        const vertical = {
-          collection: { up: 'gear', down: 'crew' },
-          left: { up: 'gear', down: 'crew' },
-          front: { up: 'gear', down: 'crew' },
-          right: { up: 'gear', down: 'crew' },
-          back: { up: 'gear', down: 'crew' },
-          turret: { up: 'gear', down: 'crew' },
-          gear: { down: 'collection' },
-          crew: { up: 'collection' },
-        };
+        // New order: left, right, front, back, turret, gear, crew, collection
+        const order: CardStore['mobileView'][] = [
+          'left', 'right', 'front', 'back', 'turret', 'gear', 'crew', 'collection'
+        ];
         const current = get().mobileView;
         if (direction === 'left' || direction === 'right') {
           const idx = order.indexOf(current);
@@ -677,14 +670,10 @@ export const useCardStore = create<CardStore>()(
             let newIdx = direction === 'left' ? idx - 1 : idx + 1;
             if (newIdx < 0) newIdx = order.length - 1;
             if (newIdx >= order.length) newIdx = 0;
-            set({ mobileView: order[newIdx] as CardStore['mobileView'] });
-          } else if (current === 'crew' || current === 'gear') {
-            set({ mobileView: 'collection' });
+            set({ mobileView: order[newIdx] });
           }
-        } else if (direction === 'up' || direction === 'down') {
-          const next = vertical[current]?.[direction];
-          if (next) set({ mobileView: next });
         }
+        // Up/down swiping is now disabled
       },
 
       // For development: remove all data

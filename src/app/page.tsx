@@ -291,7 +291,10 @@ export default function Home() {
       <DndWrapper>
         <CardUploadProvider>
           <main className="h-full flex flex-col bg-gray-900">
-            <MobileSwipeView collectionCards={collectionCards} />
+            <MobileSwipeView
+              collectionCards={collectionCards}
+              onOpenSavedVehicles={() => setIsSavedVehiclesOpen(true)}
+            />
           </main>
         </CardUploadProvider>
       </DndWrapper>
