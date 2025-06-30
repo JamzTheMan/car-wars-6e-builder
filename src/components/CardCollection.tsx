@@ -16,6 +16,7 @@ import {
   faTrash,
   faUndo,
   faFilter,
+  faRotateLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -76,7 +77,6 @@ export function CardCollection() {
   const [filterCardName, setFilterCardName] = useState<string>('');
   const [filterMinCost, setFilterMinCost] = useState<number>(0);
   const [filterMaxCost, setFilterMaxCost] = useState<number>(8);
-  const [costFilterEnabled, setCostFilterEnabled] = useState<boolean>(false);
   const [filterSources, setFilterSources] = useState<string[]>([]);
 
   // Load saved filter preferences on mount
@@ -90,7 +90,6 @@ export function CardCollection() {
     setFilterCardName(filterPreferences.filterCardName);
     setFilterMinCost(filterPreferences.filterMinCost);
     setFilterMaxCost(filterPreferences.filterMaxCost);
-    setCostFilterEnabled(filterPreferences.costFilterEnabled);
     setFilterSources(filterPreferences.filterSources);
   }, []);
 
@@ -123,11 +122,6 @@ export function CardCollection() {
   const updateFilterMaxCost = (value: number) => {
     setFilterMaxCost(value);
     saveFilterPreferences({ filterMaxCost: value });
-  };
-
-  const updateCostFilterEnabled = (value: boolean) => {
-    setCostFilterEnabled(value);
-    saveFilterPreferences({ costFilterEnabled: value });
   };
 
   const updateFilterSources = (value: string[]) => {
@@ -238,17 +232,15 @@ export function CardCollection() {
       }
 
       // Filter by cost range
-      if (costFilterEnabled) {
-        // Get the effective cost - the maximum of build and crew point costs
-        const effectiveCost = Math.max(
-          card.buildPointCost !== undefined ? card.buildPointCost : 0,
-          card.crewPointCost !== undefined ? card.crewPointCost : 0
-        );
+      // Get the effective cost - the maximum of build and crew point costs
+      const effectiveCost = Math.max(
+        card.buildPointCost !== undefined ? card.buildPointCost : 0,
+        card.crewPointCost !== undefined ? card.crewPointCost : 0
+      );
 
-        // Check if the cost is outside the selected range
-        if (effectiveCost < filterMinCost || effectiveCost > filterMaxCost) {
-          return false;
-        }
+      // Check if the cost is outside the selected range
+      if (effectiveCost < filterMinCost || effectiveCost > filterMaxCost) {
+        return false;
       }
 
       // Filter by source - if any sources are selected, the card must match one of them
@@ -266,7 +258,6 @@ export function CardCollection() {
     filterCardName,
     filterMinCost,
     filterMaxCost,
-    costFilterEnabled,
     filterSources,
   ]);
   // Reset all filters
@@ -276,7 +267,6 @@ export function CardCollection() {
     updateFilterCardName('');
     updateFilterMinCost(0);
     updateFilterMaxCost(8);
-    updateCostFilterEnabled(false);
     updateFilterSources([]);
   };
 
@@ -469,7 +459,7 @@ export function CardCollection() {
     <div className="h-full">
       <style jsx>{rangeSliderStyle}</style>
       {/* Filter Controls */}{' '}
-      <div className="px-2 mb-4">
+      <div className="p-2 -mb-4">
         <div className="flex justify-between items-center mb-2">
           <div className="flex space-x-2">
             <button
@@ -483,7 +473,6 @@ export function CardCollection() {
               {filterPanelOpen ? 'Hide Filters' : 'Filter Cards'}
               {(filterCardTypes.length > 0 ||
                 filterSubtypes.length > 0 ||
-                costFilterEnabled ||
                 filterSources.length > 0) && (
                 <span className="ml-2 bg-blue-600 px-1.5 py-0.5 rounded-full text-xs">Active</span>
               )}
@@ -494,14 +483,20 @@ export function CardCollection() {
             {(filterCardTypes.length > 0 ||
               filterSubtypes.length > 0 ||
               filterCardName.trim() !== '' ||
-              costFilterEnabled ||
-              filterSources.length > 0) && (
+              filterSources.length > 0 ||
+              filterMinCost !== 0 ||
+              filterMaxCost !== 8) && (
               <>
-                <span className="text-xs text-gray-400 mr-2">
+                <span className="text-gray-400 mr-2">
                   {filteredCards.length} of {cards.length} cards
                 </span>
-                <button onClick={resetFilters} className="text-xs text-gray-400 hover:text-white">
-                  Reset
+                <button
+                  onClick={resetFilters}
+                  className="text-gray-400 hover:text-red-600"
+                  title="Clear all filters"
+                  aria-label="Clear all filters"
+                >
+                  <FontAwesomeIcon icon={faRotateLeft} className="h-5 w-5" />
                 </button>
               </>
             )}
@@ -600,21 +595,9 @@ export function CardCollection() {
                 <div className="flex-1 w-full md:w-1/2">
                   <div className="flex items-center justify-between">
                     <label className="font-medium text-sm">Cost Range</label>
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="cost-filter-enabled"
-                        className="mr-2 h-4 w-4"
-                        checked={costFilterEnabled}
-                        onChange={e => updateCostFilterEnabled(e.target.checked)}
-                      />
-                      <label htmlFor="cost-filter-enabled" className="text-sm text-gray-300">
-                        {costFilterEnabled ? 'Enabled' : 'Disabled'}
-                      </label>
-                    </div>
                   </div>
 
-                  <div className={`mt-2 px-1 ${costFilterEnabled ? 'opacity-100' : 'opacity-50'}`}>
+                  <div className="mt-2 px-1 opacity-100">
                     <div className="flex justify-between mb-1 text-xs text-gray-400">
                       <div className="flex items-center">
                         <span className="w-4 text-center">{filterMinCost}</span>
@@ -638,7 +621,6 @@ export function CardCollection() {
                           const value = Number(e.target.value);
                           updateFilterMinCost(Math.min(value, filterMaxCost));
                         }}
-                        disabled={!costFilterEnabled}
                         className="absolute w-full bg-gray-700 h-2 rounded-lg appearance-none cursor-pointer"
                         id="min-cost-range"
                         aria-label="Minimum cost filter"
@@ -656,17 +638,11 @@ export function CardCollection() {
                           const value = Number(e.target.value);
                           updateFilterMaxCost(Math.max(value, filterMinCost));
                         }}
-                        disabled={!costFilterEnabled}
                         className="absolute w-full bg-transparent h-2 rounded-lg appearance-none cursor-pointer"
                         id="max-cost-range"
                         aria-label="Maximum cost filter"
                         title="Maximum cost filter"
                       />
-                    </div>
-
-                    <div className="flex justify-between mt-1.5 text-xs text-gray-500">
-                      <span>Min</span>
-                      <span>Max</span>
                     </div>
                   </div>
                 </div>
