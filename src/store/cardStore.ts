@@ -110,6 +110,9 @@ interface CardStore {
   setName: (name: string) => void;
   setDivision: (division: string) => void;
   reorderCardInArea: (draggedId: string, targetId: string | null, area: CardArea) => void;
+  mobileView: 'collection' | 'left' | 'front' | 'right' | 'back' | 'turret' | 'crew' | 'gear' | 'deck';
+  setMobileView: (view: CardStore['mobileView']) => void;
+  cycleMobileView: (direction: 'left' | 'right' | 'up' | 'down') => void;
 }
 
 // Set up localStorage only in browser
@@ -162,6 +165,7 @@ export const useCardStore = create<CardStore>()(
       collectionCards: [],
       currentDeck: null,
       isLoading: true,
+      mobileView: 'collection',
 
       // Load the global card collection from the API
       loadCollection: async () => {
@@ -651,6 +655,36 @@ export const useCardStore = create<CardStore>()(
             },
           };
         });
+      },
+
+      setMobileView: (view) => set({ mobileView: view }),
+      cycleMobileView: (direction) => {
+        const order = ['collection', 'left', 'front', 'right', 'back', 'turret'];
+        const vertical = {
+          collection: { up: 'gear', down: 'crew' },
+          left: { up: 'gear', down: 'crew' },
+          front: { up: 'gear', down: 'crew' },
+          right: { up: 'gear', down: 'crew' },
+          back: { up: 'gear', down: 'crew' },
+          turret: { up: 'gear', down: 'crew' },
+          gear: { down: 'collection' },
+          crew: { up: 'collection' },
+        };
+        const current = get().mobileView;
+        if (direction === 'left' || direction === 'right') {
+          const idx = order.indexOf(current);
+          if (idx !== -1) {
+            let newIdx = direction === 'left' ? idx - 1 : idx + 1;
+            if (newIdx < 0) newIdx = order.length - 1;
+            if (newIdx >= order.length) newIdx = 0;
+            set({ mobileView: order[newIdx] as CardStore['mobileView'] });
+          } else if (current === 'crew' || current === 'gear') {
+            set({ mobileView: 'collection' });
+          }
+        } else if (direction === 'up' || direction === 'down') {
+          const next = vertical[current]?.[direction];
+          if (next) set({ mobileView: next });
+        }
       },
 
       // For development: remove all data

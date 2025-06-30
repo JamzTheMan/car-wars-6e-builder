@@ -16,6 +16,9 @@ import { PrintView } from '@/components/PrintView';
 import { CardCollectionFilters } from '@/components/CardCollectionFilters';
 import { useCardCollectionFilters } from './CardCollectionFiltersWrapper';
 import { useConfirmationDialog } from '@/components/useConfirmationDialog';
+import dynamic from 'next/dynamic';
+
+const MobileSwipeView = dynamic(() => import('@/components/MobileSwipeView'));
 
 function PointsSummary() {
   const { currentDeck, setDeck, updatePointLimits } = useCardStore();
@@ -277,6 +280,21 @@ export default function Home() {
       <div className="h-full flex flex-col bg-gray-900 items-center justify-center">
         <div className="text-white text-xl">Loading...</div>
       </div>
+    );
+  }
+
+  // Responsive: use mobile swipe view for small screens
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
+  if (isMobile) {
+    return (
+      <DndWrapper>
+        <CardUploadProvider>
+          <main className="h-full flex flex-col bg-gray-900">
+            <MobileSwipeView collectionCards={collectionCards} />
+          </main>
+        </CardUploadProvider>
+      </DndWrapper>
     );
   }
 

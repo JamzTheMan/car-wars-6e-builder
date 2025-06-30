@@ -18,7 +18,11 @@ import {
 // Re-export VehicleName for compatibility
 export { VehicleName };
 
-export function DeckLayout() {
+interface DeckLayoutProps {
+  area?: CardArea | 'crew' | 'gear';
+}
+
+export function DeckLayout({ area }: DeckLayoutProps = {}) {
   const {
     currentDeck,
     updateCardPosition,
@@ -273,6 +277,63 @@ export function DeckLayout() {
     );
     return <div ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>} className="w-6 h-6" />;
   };
+
+  // Helper function to render a single area (for mobile)
+  if (area) {
+    let areaEnum: CardArea | undefined = undefined;
+    switch (area) {
+      case 'crew':
+        areaEnum = CardArea.Crew;
+        break;
+      case 'gear':
+        areaEnum = CardArea.GearUpgrade;
+        break;
+      case 'front':
+        areaEnum = CardArea.Front;
+        break;
+      case 'back':
+        areaEnum = CardArea.Back;
+        break;
+      case 'left':
+        areaEnum = CardArea.Left;
+        break;
+      case 'right':
+        areaEnum = CardArea.Right;
+        break;
+      case 'turret':
+        areaEnum = CardArea.Turret;
+        break;
+      default:
+        areaEnum = undefined;
+    }
+    if (areaEnum) {
+      return (
+        <div className="h-full flex flex-col">
+          <AreaDropTarget
+            area={areaEnum}
+            label={
+              areaEnum === CardArea.Crew
+                ? 'Crew & Sidearms'
+                : areaEnum === CardArea.GearUpgrade
+                  ? 'Gear & Upgrades'
+                  : areaEnum === CardArea.Front
+                    ? 'Front Area'
+                    : areaEnum === CardArea.Back
+                      ? 'Back Area'
+                      : areaEnum === CardArea.Left
+                        ? 'Left Side'
+                        : areaEnum === CardArea.Right
+                          ? 'Right Side'
+                          : areaEnum === CardArea.Turret
+                            ? 'Turret'
+                            : ''
+            }
+            className="flex-1"
+          />
+        </div>
+      );
+    }
+  }
 
   return (
     <div className="h-full relative">

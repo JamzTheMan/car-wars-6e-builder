@@ -1,0 +1,88 @@
+import React from 'react';
+import { useSwipeable } from 'react-swipeable';
+import { useCardStore } from '@/store/cardStore';
+import { CardCollection } from '@/components/CardCollection';
+import { DeckLayout } from '@/components/DeckLayout';
+import { useCardCollectionFilters } from '@/app/CardCollectionFiltersWrapper';
+import { CardCollectionFilters } from '@/components/CardCollectionFilters';
+import { CardArea } from '@/types/types';
+
+interface MobileSwipeViewProps {
+  collectionCards: any[];
+}
+
+const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({ collectionCards }) => {
+  const mobileView = useCardStore(state => state.mobileView);
+  const cycleMobileView = useCardStore(state => state.cycleMobileView);
+  const filterProps = useCardCollectionFilters(collectionCards);
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => cycleMobileView('right'),
+    onSwipedRight: () => cycleMobileView('left'),
+    onSwipedUp: () => cycleMobileView('up'),
+    onSwipedDown: () => cycleMobileView('down'),
+    trackMouse: true, // for desktop testing
+  });
+
+  // Render the appropriate view based on mobileView
+  let content: React.ReactNode = null;
+  switch (mobileView) {
+    case 'collection':
+      content = (
+        <div className="h-full flex flex-col">
+          <div className="bg-gray-900 p-2 border-b border-gray-700">
+            <CardCollectionFilters {...filterProps} />
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <CardCollection {...filterProps} />
+          </div>
+        </div>
+      );
+      break;
+    case 'left':
+      content = <DeckLayout area={CardArea.Left} />;
+      break;
+    case 'front':
+      content = <DeckLayout area={CardArea.Front} />;
+      break;
+    case 'right':
+      content = <DeckLayout area={CardArea.Right} />;
+      break;
+    case 'back':
+      content = <DeckLayout area={CardArea.Back} />;
+      break;
+    case 'turret':
+      content = <DeckLayout area={CardArea.Turret} />;
+      break;
+    case 'crew':
+      content = <DeckLayout area={CardArea.Crew} />;
+      break;
+    case 'gear':
+      content = <DeckLayout area={CardArea.GearUpgrade} />;
+      break;
+    case 'deck':
+      content = <DeckLayout />;
+      break;
+    default:
+      content = <CardCollection {...filterProps} />;
+  }
+
+  // Simple dot indicator for navigation
+  const views = ['collection', 'left', 'front', 'right', 'back', 'turret', 'crew', 'gear', 'deck'];
+
+  return (
+    <div {...handlers} className="w-full h-full overflow-hidden flex flex-col">
+      <div className="flex-1 min-h-0">{content}</div>
+      <div className="flex justify-center gap-2 py-2">
+        {views.map(view => (
+          <span
+            key={view}
+            className={`w-2 h-2 rounded-full ${mobileView === view ? 'bg-yellow-400' : 'bg-gray-600'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default MobileSwipeView;
