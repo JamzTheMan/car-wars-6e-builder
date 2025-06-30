@@ -443,7 +443,7 @@ export function validateAndAddCard(
     addToDeck,
   }: {
     canAddCardToDeck: (card: Card, targetArea?: CardArea) => CardValidationResult;
-    addToDeck: (cardId: string, area?: CardArea) => void;
+    addToDeck: (cardId: string, area?: CardArea, deductCost?: boolean) => void;
   },
   targetArea?: CardArea,
   showToast?: (message: string, type: 'success' | 'error' | 'info') => void,
@@ -473,7 +473,7 @@ export function validateAndAddCard(
   // If validation passes, add the card
   if (validationResult.allowed) {
     // Pass the original card ID to addToDeck which will now generate a unique ID internally
-    addToDeck(card.id, targetArea);
+    addToDeck(card.id, targetArea, true);
     if (showToast) {
       showToast(`Added ${card.name} to your vehicle`, 'success');
     }

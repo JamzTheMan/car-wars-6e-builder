@@ -107,37 +107,47 @@ export function Card({
         }
       }
     } else {
-      console.log('Removing card from deck:', card.id);
-      // Just remove this instance from the deck
-      removeFromDeck(card.id);
+      // Remove x copies if card.copies > 1, otherwise just one
+      const copiesToRemove = card.copies && card.copies > 1 ? card.copies : 1;
+      for (let i = 0; i < copiesToRemove; i++) {
+        removeFromDeck(card.id);
+      }
     }
   };
+
+  // Helper to add multiple copies if needed, but only deduct cost once
+  const addCopiesToDeck = (area?: CardArea) => {
+    const copiesToAdd = card.copies && card.copies > 1 ? card.copies : 1;
+    let added = false;
+    if (copiesToAdd > 0) {
+      // First copy: validate and deduct cost
+      const cardAdded = validateAndAddCard(
+        card,
+        { canAddCardToDeck, addToDeck },
+        area,
+        showToast,
+        handleValidationError
+      );
+      if (cardAdded) added = true;
+      // Remaining copies: add directly, no cost/validation
+      for (let i = 1; i < copiesToAdd; i++) {
+        // Pass deductCost: false for extra copies (update your store logic to support this)
+        addToDeck(card.id, area, false);
+      }
+    }
+    return added;
+  };
+
   const handleAddToDeck = (e: React.MouseEvent, area?: CardArea) => {
     e.stopPropagation();
-
-    // Use the centralized validation and add function
-    const cardAdded = validateAndAddCard(
-      card,
-      { canAddCardToDeck, addToDeck },
-      area,
-      showToast,
-      handleValidationError
-    );
-
-    if (cardAdded) {
+    const added = addCopiesToDeck(area);
+    if (added) {
       setIsPreviewOpen(false); // Close the preview after adding
     }
   };
 
   const handleQuickAdd = (area: CardArea) => {
-    // Use the centralized validation and add function
-    validateAndAddCard(
-      card,
-      { canAddCardToDeck, addToDeck },
-      area,
-      showToast,
-      handleValidationError
-    );
+    addCopiesToDeck(area);
   };
   const openPreview = () => {
     if (!isDragging && !isPreviewOpen) {

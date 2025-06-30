@@ -95,7 +95,7 @@ interface CardStore {
   addToCollectionWithId: (card: Card) => Promise<void>;
   removeFromCollection: (id: string) => Promise<void>;
   clearCollection: () => Promise<void>;
-  addToDeck: (cardId: string, area?: CardArea) => void;
+  addToDeck: (cardId: string, area?: CardArea, deductCost?: boolean) => void;
   removeFromDeck: (id: string) => void;
   updateCardPosition: (id: string, x: number, y: number) => void;
   updateCardArea: (id: string, area: CardArea) => void;
@@ -414,7 +414,7 @@ export const useCardStore = create<CardStore>()(
       },
 
       // The following deck operations remain unchanged since decks are user-specific
-      addToDeck: (cardId: string, area?) => {
+      addToDeck: (cardId: string, area?: CardArea, deductCost: boolean = true) => {
         set(state => {
           if (!state.currentDeck) return state;
 
@@ -456,11 +456,13 @@ export const useCardStore = create<CardStore>()(
 
           // Calculate new points used
           const newPointsUsed = { ...state.currentDeck.pointsUsed };
-          if (deckCard.buildPointCost) {
-            newPointsUsed.buildPoints += deckCard.buildPointCost;
-          }
-          if (deckCard.crewPointCost) {
-            newPointsUsed.crewPoints += deckCard.crewPointCost;
+          if (deductCost) {
+            if (deckCard.buildPointCost) {
+              newPointsUsed.buildPoints += deckCard.buildPointCost;
+            }
+            if (deckCard.crewPointCost) {
+              newPointsUsed.crewPoints += deckCard.crewPointCost;
+            }
           }
 
           return {
