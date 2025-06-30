@@ -13,7 +13,7 @@ export interface UserPreferences {
   layoutPreferences: {
     leftPanelWidth: number; // Percentage width of the left panel
   };
-  
+
   // Filter preferences
   filterPreferences: {
     filterPanelOpen: boolean;
@@ -49,25 +49,25 @@ export function getUserPreferences(): UserPreferences {
   if (typeof window === 'undefined') {
     return defaultPreferences;
   }
-  
+
   const savedPrefs = localStorage.getItem(USER_PREFS_KEY);
   if (!savedPrefs) {
     return defaultPreferences;
   }
-  
+
   try {
     const parsedPrefs = JSON.parse(savedPrefs);
-    
+
     // Properly merge nested objects
     return {
       layoutPreferences: {
         ...defaultPreferences.layoutPreferences,
-        ...(parsedPrefs.layoutPreferences || {})
+        ...(parsedPrefs.layoutPreferences || {}),
       },
       filterPreferences: {
         ...defaultPreferences.filterPreferences,
-        ...(parsedPrefs.filterPreferences || {})
-      }
+        ...(parsedPrefs.filterPreferences || {}),
+      },
     };
   } catch (error) {
     console.error('Error parsing user preferences:', error);
@@ -80,21 +80,21 @@ export function saveUserPreferences(preferences: Partial<UserPreferences>): void
   if (typeof window === 'undefined') {
     return;
   }
-  
+
   const currentPrefs = getUserPreferences();
-  
+
   // Deep merge current preferences with new preferences
   const updatedPrefs = {
     layoutPreferences: {
       ...currentPrefs.layoutPreferences,
-      ...(preferences.layoutPreferences || {})
+      ...(preferences.layoutPreferences || {}),
     },
     filterPreferences: {
       ...currentPrefs.filterPreferences,
-      ...(preferences.filterPreferences || {})
-    }
+      ...(preferences.filterPreferences || {}),
+    },
   };
-  
+
   try {
     localStorage.setItem(USER_PREFS_KEY, JSON.stringify(updatedPrefs));
   } catch (error) {
@@ -103,18 +103,22 @@ export function saveUserPreferences(preferences: Partial<UserPreferences>): void
 }
 
 // Update layout preferences
-export function saveLayoutPreferences(layoutPrefs: Partial<UserPreferences['layoutPreferences']>): void {
+export function saveLayoutPreferences(
+  layoutPrefs: Partial<UserPreferences['layoutPreferences']>
+): void {
   const currentPrefs = getUserPreferences();
   saveUserPreferences({
-    layoutPreferences: { ...currentPrefs.layoutPreferences, ...layoutPrefs }
+    layoutPreferences: { ...currentPrefs.layoutPreferences, ...layoutPrefs },
   });
 }
 
 // Update filter preferences
-export function saveFilterPreferences(filterPrefs: Partial<UserPreferences['filterPreferences']>): void {
+export function saveFilterPreferences(
+  filterPrefs: Partial<UserPreferences['filterPreferences']>
+): void {
   const currentPrefs = getUserPreferences();
   saveUserPreferences({
-    filterPreferences: { ...currentPrefs.filterPreferences, ...filterPrefs }
+    filterPreferences: { ...currentPrefs.filterPreferences, ...filterPrefs },
   });
 }
 
@@ -123,11 +127,11 @@ export function savePanelWidth(width: number): void {
   if (typeof window === 'undefined') {
     return;
   }
-  
+
   try {
     // Store as a separate item in case there's an issue with the main preferences
     localStorage.setItem('car-wars-6e-builder:panelWidth', width.toString());
-    
+
     // Also update in main preferences
     saveLayoutPreferences({ leftPanelWidth: width });
   } catch (error) {
@@ -139,7 +143,7 @@ export function getPanelWidth(): number {
   if (typeof window === 'undefined') {
     return defaultPreferences.layoutPreferences.leftPanelWidth;
   }
-  
+
   try {
     // Try to get from direct storage first
     const storedWidth = localStorage.getItem('car-wars-6e-builder:panelWidth');
@@ -149,7 +153,7 @@ export function getPanelWidth(): number {
         return parsedWidth;
       }
     }
-    
+
     // Fall back to full preferences
     return getUserPreferences().layoutPreferences.leftPanelWidth;
   } catch (error) {
@@ -164,13 +168,13 @@ export function debugPrintUserPreferences(): void {
     console.log('Not in browser environment');
     return;
   }
-  
+
   const savedPrefs = localStorage.getItem(USER_PREFS_KEY);
   console.log('Raw saved preferences:', savedPrefs);
-  
+
   const userPrefs = getUserPreferences();
   console.log('Parsed user preferences:', userPrefs);
-  
+
   if (savedPrefs) {
     try {
       const parsedJson = JSON.parse(savedPrefs);
@@ -184,7 +188,7 @@ export function debugPrintUserPreferences(): void {
 // Vehicle storage functions
 export const saveVehicleToStorage = (vehicle: DeckLayout): boolean => {
   if (typeof window === 'undefined') return false;
-  
+
   try {
     localStorage.setItem(VEHICLE_STORAGE_KEY, JSON.stringify(vehicle));
     return true;
@@ -196,7 +200,7 @@ export const saveVehicleToStorage = (vehicle: DeckLayout): boolean => {
 
 export const loadVehicleFromStorage = (): DeckLayout | null => {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     const stored = localStorage.getItem(VEHICLE_STORAGE_KEY);
     return stored ? JSON.parse(stored) : null;

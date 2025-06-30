@@ -7,15 +7,7 @@ import { CardType } from '@/types/types';
 import { useCardUpload } from '@/context/CardUploadContext';
 import { uploadCardImage } from '@/utils/cardUpload';
 import { ToastContext } from '@/components/Toast';
-import {
-  faCloudUploadAlt,
-  faFileImport,
-  faTrash,
-  faUndo,
-  faFilter,
-  faRotateLeft,
-  faChevronUp,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCloudUploadAlt, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';

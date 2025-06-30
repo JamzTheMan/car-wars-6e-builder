@@ -1,20 +1,20 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { Card, DeckLayout, CardTypeCategories, PointLimits, CardArea } from '@/types/types';
-import { validateCardForDeck, validateCardSidePlacement, validateCardMovement } from '@/utils/cardValidation';
+import { Card, DeckLayout, PointLimits, CardArea } from '@/types/types';
+import { validateCardForDeck, validateCardSidePlacement } from '@/utils/cardValidation';
 import { generateVehicleName } from '@/utils/vehicleNameGenerator';
 
 // Helper function to sort cards by custom type order, then cost/subtype, then name
 const sortCards = (cards: Card[]): Card[] => {
   // Define custom order for card types
   const typeOrder = {
-    'Crew': 1,
-    'Sidearm': 3,
-    'Gear': 4,
-    'Accessory': 5,
-    'Upgrade': 6,
-    'Structure': 7,
-    'Weapon': 8
+    Crew: 1,
+    Sidearm: 3,
+    Gear: 4,
+    Accessory: 5,
+    Upgrade: 6,
+    Structure: 7,
+    Weapon: 8,
   };
 
   return [...cards].sort((a, b) => {
@@ -22,23 +22,23 @@ const sortCards = (cards: Card[]): Card[] => {
     if (a.type === 'Crew' && b.type === 'Crew') {
       const aIsDriver = a.subtype?.toLowerCase() === 'driver';
       const bIsDriver = b.subtype?.toLowerCase() === 'driver';
-      
+
       if (aIsDriver && !bIsDriver) return -1;
       if (!aIsDriver && bIsDriver) return 1;
     }
-    
+
     // Sort by card type using custom order
     if (a.type !== b.type) {
       return (typeOrder[a.type] || 99) - (typeOrder[b.type] || 99);
     }
-    
+
     // For Upgrades: sort by subtype first, then cost
     if (a.type === 'Upgrade') {
       // First by subtype
       if (a.subtype !== b.subtype) {
         return (a.subtype || '').localeCompare(b.subtype || '');
       }
-      
+
       // Then by cost
       const aCost = a.buildPointCost || a.crewPointCost || 0;
       const bCost = b.buildPointCost || b.crewPointCost || 0;
@@ -52,13 +52,13 @@ const sortCards = (cards: Card[]): Card[] => {
       if (aCost !== bCost) {
         return aCost - bCost;
       }
-      
+
       // Then by subtype
       if (a.subtype !== b.subtype) {
         return (a.subtype || '').localeCompare(b.subtype || '');
       }
     }
-    
+
     // Finally, sort by name
     return a.name.localeCompare(b.name);
   });
@@ -66,9 +66,18 @@ const sortCards = (cards: Card[]): Card[] => {
 
 interface CardValidationResult {
   allowed: boolean;
-  reason?: 'duplicate_gear' | 'duplicate_sidearm' | 'duplicate_accessory' | 'duplicate_upgrade' | 
-           'same_subtype' | 'not_enough_points' | 'crew_limit_reached' | 'structure_limit_reached' | 
-           'weapon_cost_limit' | 'exclusive_limit_reached' | 'invalid_side';
+  reason?:
+    | 'duplicate_gear'
+    | 'duplicate_sidearm'
+    | 'duplicate_accessory'
+    | 'duplicate_upgrade'
+    | 'same_subtype'
+    | 'not_enough_points'
+    | 'crew_limit_reached'
+    | 'structure_limit_reached'
+    | 'weapon_cost_limit'
+    | 'exclusive_limit_reached'
+    | 'invalid_side';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
   area?: CardArea;
@@ -125,12 +134,12 @@ const createEmptyDeck = (collectionCards: Card[] = []): DeckLayout => {
       id: `${handCannon.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       area: CardArea.Crew,
       x: 0,
-      y: 0
+      y: 0,
     };
     cards = [deckCard];
     pointsUsed = {
       buildPoints: deckCard.buildPointCost || 0,
-      crewPoints: deckCard.crewPointCost || 0
+      crewPoints: deckCard.crewPointCost || 0,
     };
   }
   return {
@@ -159,11 +168,11 @@ export const useCardStore = create<CardStore>()(
         try {
           set({ isLoading: true });
           const response = await fetch('/api/cards');
-          
+
           if (!response.ok) {
             throw new Error('Failed to fetch cards');
           }
-          
+
           const cards = await response.json();
           set({ collectionCards: cards, isLoading: false });
         } catch (error) {
@@ -182,11 +191,11 @@ export const useCardStore = create<CardStore>()(
             },
             body: JSON.stringify(card),
           });
-          
+
           if (!response.ok) {
             throw new Error('Failed to add card');
           }
-          
+
           const data = await response.json();
           set({ collectionCards: data.cards || [] });
         } catch (error) {
@@ -204,37 +213,37 @@ export const useCardStore = create<CardStore>()(
             },
             body: JSON.stringify(card),
           });
-          
+
           if (!response.ok) {
             throw new Error('Failed to add card');
           }
-          
+
           const data = await response.json();
           set({ collectionCards: data.cards || [] });
         } catch (error) {
           console.error('Error adding card to collection:', error);
         }
       },
-      
+
       // Remove a card from the collection via API
       removeFromCollection: async (id: string) => {
         try {
           // First handle deck cleanup
           set(state => {
             if (!state.currentDeck) return state;
-            
+
             const cardToRemove = state.collectionCards.find(c => c.id === id);
             if (!cardToRemove) return state;
-            
+
             const deckCardsToRemove = state.currentDeck.cards.filter(
               c => c.id === id || c.imageUrl === cardToRemove.imageUrl
             );
-            
+
             if (deckCardsToRemove.length === 0) return state;
-            
+
             // Calculate points to remove
-            let updatedPointsUsed = { ...state.currentDeck.pointsUsed };
-            
+            const updatedPointsUsed = { ...state.currentDeck.pointsUsed };
+
             deckCardsToRemove.forEach(card => {
               if (card.buildPointCost) {
                 updatedPointsUsed.buildPoints -= card.buildPointCost;
@@ -243,24 +252,26 @@ export const useCardStore = create<CardStore>()(
                 updatedPointsUsed.crewPoints -= card.crewPointCost;
               }
             });
-            
+
             return {
               currentDeck: {
                 ...state.currentDeck,
-                cards: state.currentDeck.cards.filter(c => !deckCardsToRemove.some(dc => dc.id === c.id)),
-                pointsUsed: updatedPointsUsed
-              }
+                cards: state.currentDeck.cards.filter(
+                  c => !deckCardsToRemove.some(dc => dc.id === c.id)
+                ),
+                pointsUsed: updatedPointsUsed,
+              },
             };
           });
-            // Then remove from collection via API
+          // Then remove from collection via API
           const response = await fetch(`/api/cards/${id}`, {
             method: 'DELETE',
           });
-          
+
           if (!response.ok) {
             throw new Error('Failed to delete card');
           }
-          
+
           const data = await response.json();
           set({ collectionCards: data.cards || [] });
         } catch (error) {
@@ -274,25 +285,25 @@ export const useCardStore = create<CardStore>()(
           // Reset the deck first
           set(state => {
             if (!state.currentDeck) return state;
-            
+
             return {
               currentDeck: {
                 ...state.currentDeck,
                 cards: [],
-                pointsUsed: { buildPoints: 0, crewPoints: 0 }
-              }
+                pointsUsed: { buildPoints: 0, crewPoints: 0 },
+              },
             };
           });
-          
+
           // Clear the collection via API
           const response = await fetch('/api/cards/clear', {
             method: 'POST',
           });
-          
+
           if (!response.ok) {
             throw new Error('Failed to clear collection');
           }
-          
+
           set({ collectionCards: [] });
         } catch (error) {
           console.error('Error clearing collection:', error);
@@ -309,11 +320,11 @@ export const useCardStore = create<CardStore>()(
             },
             body: JSON.stringify(cards),
           });
-          
+
           if (!response.ok) {
             throw new Error('Failed to update collection');
           }
-          
+
           const { cards: updatedCards } = await response.json();
           set({ collectionCards: updatedCards });
         } catch (error) {
@@ -333,7 +344,7 @@ export const useCardStore = create<CardStore>()(
             state.currentDeck.pointLimits.crewPoints - state.currentDeck.pointsUsed.crewPoints,
         };
       },
-      
+
       canAddCardToDeck: (card: Card, targetArea?: CardArea) => {
         // Check if we can add the card to the current deck
         const state = get();
@@ -343,54 +354,61 @@ export const useCardStore = create<CardStore>()(
 
         // Use the centralized validation utility for deck validation
         const deckValidation = validateCardForDeck(
-          card, 
-          state.currentDeck.cards, 
-          state.currentDeck.pointLimits, 
+          card,
+          state.currentDeck.cards,
+          state.currentDeck.pointLimits,
           state.currentDeck.pointsUsed
         );
-        
+
         // If deck validation fails, return that result
         if (!deckValidation.allowed) {
           return deckValidation;
         }
-        
+
         // Additional structure card area validation
         // Determine target area if not provided explicitly
-        const area = targetArea || (() => {
-          if (card.type === 'Crew' || card.type === 'Sidearm') {
-            return CardArea.Crew;
-          } else if (card.type === 'Gear' || card.type === 'Upgrade') {
-            return CardArea.GearUpgrade;
-          } else {
-            return CardArea.Front; // Default for weapons, accessories, structure
-          }
-        })();
-        
+        const area =
+          targetArea ||
+          (() => {
+            if (card.type === 'Crew' || card.type === 'Sidearm') {
+              return CardArea.Crew;
+            } else if (card.type === 'Gear' || card.type === 'Upgrade') {
+              return CardArea.GearUpgrade;
+            } else {
+              return CardArea.Front; // Default for weapons, accessories, structure
+            }
+          })();
+
         // For Structure cards, check if there's already a structure in the target area
         if (card.type === 'Structure') {
-          const isVehicleLocation = [CardArea.Front, CardArea.Back, CardArea.Left, CardArea.Right].includes(area);
-          
+          const isVehicleLocation = [
+            CardArea.Front,
+            CardArea.Back,
+            CardArea.Left,
+            CardArea.Right,
+          ].includes(area);
+
           if (isVehicleLocation) {
-            const hasStructureInArea = state.currentDeck.cards.some(c => 
-              c.type === 'Structure' && c.area === area
+            const hasStructureInArea = state.currentDeck.cards.some(
+              c => c.type === 'Structure' && c.area === area
             );
-              
+
             if (hasStructureInArea) {
               return {
                 allowed: false,
                 reason: 'structure_limit_reached',
-                area: area
+                area: area,
               };
             }
           }
         }
-        
+
         // Validate side placement for the card
         const sideValidation = validateCardSidePlacement(card, area);
         if (!sideValidation.allowed) {
           return sideValidation;
         }
-        
+
         // All validations passed
         return { allowed: true };
       },
@@ -411,27 +429,29 @@ export const useCardStore = create<CardStore>()(
           }
 
           // Determine the area based on card type if not specified
-          const targetArea = area || (() => {
-            if (cardToAdd.type === 'Crew' || cardToAdd.type === 'Sidearm') {
-              return CardArea.Crew;
-            } else if (cardToAdd.type === 'Gear' || cardToAdd.type === 'Upgrade') {
-              return CardArea.GearUpgrade;
-            } else {
-              return CardArea.Front; // Default for weapons, structures, etc.
-            }
-          })();
+          const targetArea =
+            area ||
+            (() => {
+              if (cardToAdd.type === 'Crew' || cardToAdd.type === 'Sidearm') {
+                return CardArea.Crew;
+              } else if (cardToAdd.type === 'Gear' || cardToAdd.type === 'Upgrade') {
+                return CardArea.GearUpgrade;
+              } else {
+                return CardArea.Front; // Default for weapons, structures, etc.
+              }
+            })();
 
           // Generate a new unique ID for the card in the deck
           const uniqueId = `${cardId}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
           // Clone the card for the deck and add area information
-          const deckCard = { 
-            ...cardToAdd, 
+          const deckCard = {
+            ...cardToAdd,
             id: uniqueId, // Use the new unique ID
             area: targetArea,
             // Default positions based on area
-            x: 0, 
-            y: 0 
+            x: 0,
+            y: 0,
           };
 
           // Calculate new points used
@@ -447,8 +467,8 @@ export const useCardStore = create<CardStore>()(
             currentDeck: {
               ...state.currentDeck,
               cards: [...state.currentDeck.cards, deckCard],
-              pointsUsed: newPointsUsed
-            }
+              pointsUsed: newPointsUsed,
+            },
           };
         });
       },
@@ -456,10 +476,10 @@ export const useCardStore = create<CardStore>()(
       removeFromDeck: (id: string) => {
         set(state => {
           if (!state.currentDeck) return state;
-          
+
           const cardToRemove = state.currentDeck.cards.find(c => c.id === id);
           if (!cardToRemove) return state;
-          
+
           // Calculate updated points used
           const updatedPointsUsed = { ...state.currentDeck.pointsUsed };
           if (cardToRemove.buildPointCost) {
@@ -468,13 +488,13 @@ export const useCardStore = create<CardStore>()(
           if (cardToRemove.crewPointCost) {
             updatedPointsUsed.crewPoints -= cardToRemove.crewPointCost;
           }
-          
+
           return {
             currentDeck: {
               ...state.currentDeck,
               cards: state.currentDeck.cards.filter(c => c.id !== id),
-              pointsUsed: updatedPointsUsed
-            }
+              pointsUsed: updatedPointsUsed,
+            },
           };
         });
       },
@@ -482,17 +502,15 @@ export const useCardStore = create<CardStore>()(
       updateCardPosition: (id: string, x: number, y: number) => {
         set(state => {
           if (!state.currentDeck) return state;
-          
+
           const cardToUpdate = state.currentDeck.cards.find(c => c.id === id);
           if (!cardToUpdate) return state;
-          
+
           return {
             currentDeck: {
               ...state.currentDeck,
-              cards: state.currentDeck.cards.map(c => 
-                c.id === id ? { ...c, x, y } : c
-              )
-            }
+              cards: state.currentDeck.cards.map(c => (c.id === id ? { ...c, x, y } : c)),
+            },
           };
         });
       },
@@ -500,17 +518,15 @@ export const useCardStore = create<CardStore>()(
       updateCardArea: (id: string, area: CardArea) => {
         set(state => {
           if (!state.currentDeck) return state;
-          
+
           const cardToUpdate = state.currentDeck.cards.find(c => c.id === id);
           if (!cardToUpdate) return state;
-          
+
           return {
             currentDeck: {
               ...state.currentDeck,
-              cards: state.currentDeck.cards.map(c => 
-                c.id === id ? { ...c, area } : c
-              )
-            }
+              cards: state.currentDeck.cards.map(c => (c.id === id ? { ...c, area } : c)),
+            },
           };
         });
       },
@@ -522,12 +538,12 @@ export const useCardStore = create<CardStore>()(
       updateDeckName: (name: string) => {
         set(state => {
           if (!state.currentDeck) return state;
-          
+
           return {
             currentDeck: {
               ...state.currentDeck,
-              name
-            }
+              name,
+            },
           };
         });
       },
@@ -535,12 +551,12 @@ export const useCardStore = create<CardStore>()(
       updateDeckBackground: (imageUrl: string) => {
         set(state => {
           if (!state.currentDeck) return state;
-          
+
           return {
             currentDeck: {
               ...state.currentDeck,
-              backgroundImage: imageUrl
-            }
+              backgroundImage: imageUrl,
+            },
           };
         });
       },
@@ -548,12 +564,12 @@ export const useCardStore = create<CardStore>()(
       updatePointLimits: (limits: PointLimits) => {
         set(state => {
           if (!state.currentDeck) return state;
-          
+
           return {
             currentDeck: {
               ...state.currentDeck,
-              pointLimits: limits
-            }
+              pointLimits: limits,
+            },
           };
         });
       },
@@ -565,12 +581,12 @@ export const useCardStore = create<CardStore>()(
       setName: (name: string) => {
         set(state => {
           if (!state.currentDeck) return state;
-          
+
           return {
             currentDeck: {
               ...state.currentDeck,
-              name
-            }
+              name,
+            },
           };
         });
       },
@@ -578,12 +594,12 @@ export const useCardStore = create<CardStore>()(
       setDivision: (division: string) => {
         set(state => {
           if (!state.currentDeck) return state;
-          
+
           return {
             currentDeck: {
               ...state.currentDeck,
-              division
-            }
+              division,
+            },
           };
         });
       },
@@ -595,7 +611,7 @@ export const useCardStore = create<CardStore>()(
           const draggedIndex = cardsInArea.findIndex(c => c.id === draggedId);
           if (draggedIndex === -1) return state;
           const draggedCard = cardsInArea[draggedIndex];
-          let newCardsInArea = cardsInArea.filter(c => c.id !== draggedId);
+          const newCardsInArea = cardsInArea.filter(c => c.id !== draggedId);
           if (targetId) {
             const targetIndex = newCardsInArea.findIndex(c => c.id === targetId);
             if (targetIndex !== -1) {
@@ -615,7 +631,9 @@ export const useCardStore = create<CardStore>()(
             newCardsInArea.push(draggedCard);
           }
           // Rebuild the full deck card list, replacing the area cards with the reordered ones
-          const newCards = state.currentDeck.cards.filter(c => c.area !== area).concat(newCardsInArea);
+          const newCards = state.currentDeck.cards
+            .filter(c => c.area !== area)
+            .concat(newCardsInArea);
           return {
             currentDeck: {
               ...state.currentDeck,
@@ -628,12 +646,12 @@ export const useCardStore = create<CardStore>()(
       // For development: remove all data
       devReset: () => {
         set({ collectionCards: [], currentDeck: null });
-      }
+      },
     }),
     {
       name: 'car-wars-storage',
       storage,
-      partialize: (state) => ({ currentDeck: state.currentDeck }),
+      partialize: state => ({ currentDeck: state.currentDeck }),
     }
   )
 );

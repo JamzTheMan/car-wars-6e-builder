@@ -6,7 +6,7 @@ const VEHICLE_STORAGE_KEY_PREFIX = 'car-wars-6e:vehicle:';
 export interface SavedVehicleInfo {
   name: string;
   division: string;
-  lastSaved: string;  // ISO date string
+  lastSaved: string; // ISO date string
   storageKey: string;
 }
 
@@ -30,7 +30,7 @@ export function saveVehicle(deck: DeckLayout): boolean {
       division: deck.division || 'unknown',
       lastSaved: new Date().toISOString(),
       storageKey,
-      deck
+      deck,
     };
 
     localStorage.setItem(storageKey, JSON.stringify(vehicleEntry));
@@ -76,7 +76,7 @@ export function getSavedVehicles(): SavedVehicleInfo[] {
   try {
     const index = localStorage.getItem(`${VEHICLE_STORAGE_KEY_PREFIX}index`);
     if (!index) return [];
-    
+
     return JSON.parse(index);
   } catch (error) {
     console.error('Error getting saved vehicles:', error);
@@ -89,12 +89,12 @@ function updateSavedVehiclesIndex(vehicleEntry: SavedVehicleEntry): void {
   try {
     const vehicles = getSavedVehicles();
     const existingIndex = vehicles.findIndex(v => v.storageKey === vehicleEntry.storageKey);
-    
+
     const vehicleInfo: SavedVehicleInfo = {
       name: vehicleEntry.name,
       division: vehicleEntry.division,
       lastSaved: vehicleEntry.lastSaved,
-      storageKey: vehicleEntry.storageKey
+      storageKey: vehicleEntry.storageKey,
     };
 
     if (existingIndex >= 0) {

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CardCollectionFilters } from '@/components/CardCollectionFilters';
 import { getUserPreferences, saveFilterPreferences } from '@/utils/userPreferences';
-import { useCardStore } from '@/store/cardStore';
 
 export function useCardCollectionFilters(cards: any[]) {
   // Filter states - default values will be replaced by user preferences

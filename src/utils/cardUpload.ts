@@ -1,5 +1,4 @@
 import { CardType } from '@/types/types';
-import { ToastContextType } from '@/components/Toast';
 
 export interface CardUploadResult {
   imageUrl: string;

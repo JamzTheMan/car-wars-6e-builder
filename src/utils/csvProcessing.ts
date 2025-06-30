@@ -41,7 +41,7 @@ export function parseNameWithSubtype(name: string): { name: string; subtype?: st
   if (underscoreMatch) {
     return {
       name: underscoreMatch[1],
-      subtype: underscoreMatch[2]
+      subtype: underscoreMatch[2],
     };
   }
   return { name };
@@ -56,8 +56,8 @@ export function parseNameWithSubtype(name: string): { name: string; subtype?: st
  * @returns URL to the image if found, or undefined if not found
  */
 async function findExistingCardImage(
-  cardName: string, 
-  cardType?: CardType, 
+  cardName: string,
+  cardType?: CardType,
   cardSubtype?: string
 ): Promise<string | undefined> {
   try {
@@ -65,16 +65,16 @@ async function findExistingCardImage(
     if (typeof window === 'undefined') {
       return undefined;
     }
-    
+
     const response = await fetch('/api/check-card-image', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         cardName,
         cardType,
-        cardSubtype 
+        cardSubtype,
       }),
     });
 
@@ -101,13 +101,13 @@ export async function processCSVToCards(
   collectionCards: Card[] = []
 ): Promise<Omit<Card, 'id'>[]> {
   const records = parseCSV(csvContent);
-  
+
   // Process each record and collect the promises
-  const cardPromises = records.map(async (record) => {
+  const cardPromises = records.map(async record => {
     // Get the card name and check for Name_Subtype format
     const rawName = record['Name'] || 'Unnamed Card';
     const parsedNameResult = parseNameWithSubtype(rawName);
-    
+
     // Get the card type, defaulting to Weapon if invalid
     const typeString = record['Type'] || '';
     const cardType = Object.values(CardType).includes(typeString as CardType)
@@ -116,49 +116,56 @@ export async function processCSVToCards(
 
     // Try to find a matching blank card to use as a template
     const blankCard = findBlankCard(cardType, collectionCards);
-    
+
     // Determine subtype, with precedence:
     // 1. From Name_Subtype format if available
     // 2. From CSV Subtype field if available
     // 3. Empty string as fallback
     const subtype = parsedNameResult.subtype || record['Subtype'] || '';
-      // Use the blank card's image if available, otherwise use the placeholders
-    const defaultImageUrl = blankCard ? blankCard.imageUrl : getPlaceholderImageUrl(cardType, subtype);
-    
+    // Use the blank card's image if available, otherwise use the placeholders
+    const defaultImageUrl = blankCard
+      ? blankCard.imageUrl
+      : getPlaceholderImageUrl(cardType, subtype);
+
     // Check for existing card images in the uploads directory
     // Pass card type and subtype for more accurate matching
     const existingImageUrl = await findExistingCardImage(parsedNameResult.name, cardType, subtype);
-    
+
     // Also check if a card with the same name already exists in the collection
     const existingCard = collectionCards.find(card => {
       // Basic name match
       const nameMatch = card.name.toLowerCase() === parsedNameResult.name.toLowerCase();
-      
+
       // For Crew cards, make sure we match the correct subtype (Driver vs Gunner)
       if (cardType === CardType.Crew && subtype) {
         return nameMatch && card.subtype.toLowerCase() === subtype.toLowerCase();
       }
-      
+
       return nameMatch;
     });
-    
+
     // Priority: 1. Existing uploaded image, 2. Existing card in collection, 3. Default placeholder
-    const finalImageUrl = existingImageUrl || (existingCard ? existingCard.imageUrl : defaultImageUrl);
-    
+    const finalImageUrl =
+      existingImageUrl || (existingCard ? existingCard.imageUrl : defaultImageUrl);
+
     // Process new fields
     // Copies: Number of copies given per purchase of points (default 1)
     const copies = record['Copies'] ? parseInt(record['Copies']) || 1 : 1;
-    
+
     // Exclusive: Whether card is exclusive (only one can be used)
-    const exclusive = record['Exclusive'] === 'y' || record['Exclusive'] === 'yes' || record['Exclusive'] === 'true';
-    
+    const exclusive =
+      record['Exclusive'] === 'y' ||
+      record['Exclusive'] === 'yes' ||
+      record['Exclusive'] === 'true';
+
     // Sides: Which sides of the car the card can be placed on (F, B, L, R)
     const sides = record['Sides'] || '';
-    
+
     // Create a new card object
     const card = {
       name: parsedNameResult.name,
-      imageUrl: finalImageUrl,      type: cardType,
+      imageUrl: finalImageUrl,
+      type: cardType,
       subtype: subtype,
       buildPointCost: parseInt(record['Build Point Cost'] || '0') || 0,
       crewPointCost: parseInt(record['Crew Point Cost'] || '0') || 0,
@@ -168,14 +175,19 @@ export async function processCSVToCards(
       exclusive: exclusive,
       sides: sides,
     };
-      // Determine the source of the image for logging
-    const imageSource = existingImageUrl ? 'Uploads Directory' : 
-                      (existingCard ? 'Collection Match' : 'Default Placeholder');
-    
-    console.log(`Processed card: ${card.name}, Type: ${card.type}, Subtype: ${card.subtype}, Image Source: ${imageSource}`);
+    // Determine the source of the image for logging
+    const imageSource = existingImageUrl
+      ? 'Uploads Directory'
+      : existingCard
+        ? 'Collection Match'
+        : 'Default Placeholder';
+
+    console.log(
+      `Processed card: ${card.name}, Type: ${card.type}, Subtype: ${card.subtype}, Image Source: ${imageSource}`
+    );
     return card;
   });
-  
+
   // Wait for all the card promises to resolve
   return Promise.all(cardPromises);
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { DndWrapper } from '@/components/DndWrapper';
 import { CardUploadProvider } from '@/context/CardUploadContext';
 import { CardCollection } from '@/components/CardCollection';

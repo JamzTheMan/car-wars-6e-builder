@@ -1,4 +1,3 @@
-import { DragSourceHookSpec, DropTargetHookSpec } from 'react-dnd';
 
 declare module 'react-dnd' {
   interface DragSourceHookSpec<DragObject, DragSpecCollectedProps, DropResult> {

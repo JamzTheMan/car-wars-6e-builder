@@ -15,7 +15,7 @@ function readCards(): Card[] {
     if (!fs.existsSync(cardsFilePath)) {
       return [];
     }
-    
+
     const data = fs.readFileSync(cardsFilePath, 'utf8');
     return JSON.parse(data);
   } catch (error) {
@@ -34,9 +34,9 @@ function writeCards(cards: Card[]) {
     if (!fs.existsSync(path.dirname(cardsFilePath))) {
       fs.mkdirSync(path.dirname(cardsFilePath), { recursive: true });
     }
-    
+
     fs.writeFileSync(cardsFilePath, JSON.stringify(cards, null, 2), {
-      mode: 0o644 // Make the file readable by all, writable by owner
+      mode: 0o644, // Make the file readable by all, writable by owner
     });
   } catch (error) {
     console.error('Error writing cards file:', error);
@@ -45,21 +45,18 @@ function writeCards(cards: Card[]) {
 }
 
 // GET /api/cards/[id] - Get a specific card by ID
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   // Await params before accessing its properties
   const { id } = await params;
-  
+
   try {
     const cards = readCards();
     const card = cards.find(card => card.id === id);
-    
+
     if (!card) {
       return NextResponse.json({ error: 'Card not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json(card);
   } catch (error) {
     console.error('Error getting card:', error);
@@ -68,23 +65,20 @@ export async function GET(
 }
 
 // DELETE /api/cards/[id] - Delete a specific card by ID
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   // Await params before accessing its properties
   const { id } = await params;
-  
+
   try {
     const cards = readCards();
     const filteredCards = cards.filter(card => card.id !== id);
-    
+
     if (filteredCards.length === cards.length) {
       return NextResponse.json({ error: 'Card not found' }, { status: 404 });
     }
-    
+
     writeCards(filteredCards);
-    
+
     return NextResponse.json({ success: true, cards: filteredCards });
   } catch (error) {
     console.error('Error deleting card:', error);
@@ -93,32 +87,29 @@ export async function DELETE(
 }
 
 // PATCH /api/cards/[id] - Update a specific card by ID
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {  
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   // Await params before accessing its properties
   const { id } = await params;
-  
+
   try {
     const updatedCardData = await request.json();
     const cards = readCards();
-    
+
     const cardIndex = cards.findIndex(card => card.id === id);
-    
+
     if (cardIndex === -1) {
       return NextResponse.json({ error: 'Card not found' }, { status: 404 });
     }
-    
+
     // Update card while preserving its ID
     cards[cardIndex] = {
       ...cards[cardIndex],
       ...updatedCardData,
-      id // Ensure ID remains unchanged
+      id, // Ensure ID remains unchanged
     };
-    
+
     writeCards(cards);
-    
+
     return NextResponse.json({ success: true, card: cards[cardIndex] });
   } catch (error) {
     console.error('Error updating card:', error);

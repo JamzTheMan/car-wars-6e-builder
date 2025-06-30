@@ -2,7 +2,7 @@
 
 import { useToast } from './Toast';
 import { useCardStore } from '@/store/cardStore';
-import { useRef, useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDrag } from 'react-dnd';
 import {
   Card as CardType,

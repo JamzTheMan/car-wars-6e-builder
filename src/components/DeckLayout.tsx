@@ -1,23 +1,19 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useDrop } from 'react-dnd';
 import { Card } from '@/components/Card';
 import { useCardStore } from '@/store/cardStore';
-import type { Card as CardType, DeckLayout as DeckLayoutType } from '@/types/types';
+import type { Card as CardType } from '@/types/types';
 import { CardArea, canCardTypeGoInArea } from '@/types/types';
 import { VehicleName } from './VehicleName';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave, faTrashAlt, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useToast } from './Toast';
 import {
   useCardValidationErrors,
   validateAndAddCard,
   validateCardMovement,
 } from '@/utils/cardValidation';
-import { PrintButton } from './PrintButton';
-import { saveVehicleToStorage, loadVehicleFromStorage } from '@/utils/userPreferences';
 
 // Re-export VehicleName for compatibility
 export { VehicleName };

@@ -13,10 +13,10 @@ function ensureCardsFileExists() {
   if (!fs.existsSync(path.dirname(cardsFilePath))) {
     fs.mkdirSync(path.dirname(cardsFilePath), { recursive: true });
   }
-  
+
   if (!fs.existsSync(cardsFilePath)) {
     fs.writeFileSync(cardsFilePath, JSON.stringify([], null, 2), {
-      mode: 0o644 // Make the file readable by all, writable by owner
+      mode: 0o644, // Make the file readable by all, writable by owner
     });
   }
 }
@@ -27,7 +27,7 @@ function ensureCardsFileExists() {
  */
 function readCards(): Card[] {
   ensureCardsFileExists();
-  
+
   try {
     const data = fs.readFileSync(cardsFilePath, 'utf8');
     return JSON.parse(data);
@@ -43,10 +43,10 @@ function readCards(): Card[] {
  */
 function writeCards(cards: Card[]) {
   ensureCardsFileExists();
-  
+
   try {
     fs.writeFileSync(cardsFilePath, JSON.stringify(cards, null, 2), {
-      mode: 0o644 // Make the file readable by all, writable by owner
+      mode: 0o644, // Make the file readable by all, writable by owner
     });
   } catch (error) {
     console.error('Error writing cards file:', error);
@@ -60,13 +60,13 @@ function writeCards(cards: Card[]) {
 function sortCards(cards: Card[]): Card[] {
   // Define custom order for card types
   const typeOrder = {
-    'Crew': 1,
-    'Sidearm': 3,
-    'Gear': 4,
-    'Accessory': 5,
-    'Upgrade': 6,
-    'Structure': 7,
-    'Weapon': 8
+    Crew: 1,
+    Sidearm: 3,
+    Gear: 4,
+    Accessory: 5,
+    Upgrade: 6,
+    Structure: 7,
+    Weapon: 8,
   };
 
   return [...cards].sort((a, b) => {
@@ -74,23 +74,23 @@ function sortCards(cards: Card[]): Card[] {
     if (a.type === 'Crew' && b.type === 'Crew') {
       const aIsDriver = a.subtype?.toLowerCase() === 'driver';
       const bIsDriver = b.subtype?.toLowerCase() === 'driver';
-      
+
       if (aIsDriver && !bIsDriver) return -1;
       if (!aIsDriver && bIsDriver) return 1;
     }
-    
+
     // Sort by card type using custom order
     if (a.type !== b.type) {
       return (typeOrder[a.type] || 99) - (typeOrder[b.type] || 99);
     }
-    
+
     // For Upgrades: sort by subtype first, then cost
     if (a.type === 'Upgrade') {
       // First by subtype
       if (a.subtype !== b.subtype) {
         return (a.subtype || '').localeCompare(b.subtype || '');
       }
-      
+
       // Then by cost
       const aCost = a.buildPointCost || a.crewPointCost || 0;
       const bCost = b.buildPointCost || b.crewPointCost || 0;
@@ -104,13 +104,13 @@ function sortCards(cards: Card[]): Card[] {
       if (aCost !== bCost) {
         return aCost - bCost;
       }
-      
+
       // Then by subtype
       if (a.subtype !== b.subtype) {
         return (a.subtype || '').localeCompare(b.subtype || '');
       }
     }
-    
+
     // Finally, sort by name
     return a.name.localeCompare(b.name);
   });
@@ -132,15 +132,15 @@ export async function POST(request: NextRequest) {
   try {
     const cards = readCards();
     const newCard = await request.json();
-    
+
     // Generate a new UUID regardless of whether an ID was provided
     const newId = crypto.randomUUID();
-    
+
     // If ID was provided, check for duplicates
     if (newCard.id) {
       // Check if this ID already exists in the collection
       const existingCardIndex = cards.findIndex(card => card.id === newCard.id);
-      
+
       if (existingCardIndex >= 0) {
         console.warn(`Found duplicate ID ${newCard.id}, generating new ID ${newId} instead`);
         newCard.id = newId;
@@ -149,13 +149,13 @@ export async function POST(request: NextRequest) {
       // No ID provided, assign a new one
       newCard.id = newId;
     }
-    
+
     cards.push(newCard);
-    
+
     // Sort cards before saving
     const sortedCards = sortCards(cards);
     writeCards(sortedCards);
-    
+
     return NextResponse.json({ success: true, cards: sortedCards });
   } catch (error) {
     console.error('Error adding card:', error);
@@ -167,11 +167,11 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const newCards = await request.json();
-    
+
     // Sort cards before saving
     const sortedCards = sortCards(newCards);
     writeCards(sortedCards);
-    
+
     return NextResponse.json({ success: true, cards: sortedCards });
   } catch (error) {
     console.error('Error updating cards:', error);

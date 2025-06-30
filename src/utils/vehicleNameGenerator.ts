@@ -172,15 +172,50 @@ export function generateVehicleName(): string {
   ];
 
   const modelDesignations = [
-    'GT', 'RS', 'XR', 'ZX', 'MK', 'EV', 'LX', 'ST', 'RX', 'GX',
-    'TT', 'SS', 'XV', 'QX', 'VX', 'DX', 'NX', 'TX', 'HX', 'WX'
+    'GT',
+    'RS',
+    'XR',
+    'ZX',
+    'MK',
+    'EV',
+    'LX',
+    'ST',
+    'RX',
+    'GX',
+    'TT',
+    'SS',
+    'XV',
+    'QX',
+    'VX',
+    'DX',
+    'NX',
+    'TX',
+    'HX',
+    'WX',
   ];
 
   const modelNumbers = [
-    '100', '200', '300', '400', '500', '1000',
-    '50', '90', '95', 'X3', 'X5', 'X7', 'X9',
-    '3000', '5000', '7000', '9000',
-    'Zero', 'One', 'Two', 'Three'
+    '100',
+    '200',
+    '300',
+    '400',
+    '500',
+    '1000',
+    '50',
+    '90',
+    '95',
+    'X3',
+    'X5',
+    'X7',
+    'X9',
+    '3000',
+    '5000',
+    '7000',
+    '9000',
+    'Zero',
+    'One',
+    'Two',
+    'Three',
   ];
 
   // Choose a random pattern

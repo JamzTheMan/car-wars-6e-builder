@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
@@ -13,12 +13,12 @@ export async function POST() {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
     }
-    
+
     // Write an empty array to the cards file
     fs.writeFileSync(cardsFilePath, JSON.stringify([], null, 2), {
-      mode: 0o644 // Make the file readable by all, writable by owner
+      mode: 0o644, // Make the file readable by all, writable by owner
     });
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error clearing cards:', error);
