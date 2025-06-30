@@ -9,7 +9,7 @@ import { faFloppyDisk, faFolderOpen, faPencil } from '@fortawesome/free-solid-sv
 import { saveVehicle } from '@/utils/savedVehicles';
 
 export function VehicleName({ onOpenSavedVehicles }: { onOpenSavedVehicles?: () => void }) {
-  const { currentDeck, updateDeckName, setDeck } = useCardStore();
+  const { currentDeck, updateDeckName} = useCardStore();
   const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [vehicleName, setVehicleName] = useState(currentDeck?.name || 'Car Wars 6e Car Builder');

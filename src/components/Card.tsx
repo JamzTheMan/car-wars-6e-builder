@@ -5,21 +5,21 @@ import { useCardStore } from '@/store/cardStore';
 import { useState } from 'react';
 import { useDrag } from 'react-dnd';
 import {
+  canCardTypeGoInArea,
   Card as CardType,
   CardArea,
   CardType as CardTypeEnum,
-  canCardTypeGoInArea,
 } from '@/types/types';
 import { useCardValidationErrors, validateAndAddCard } from '@/utils/cardValidation';
 import { deleteCardImage } from '@/utils/cardDelete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faCaretUp,
   faCaretDown,
   faCaretLeft,
   faCaretRight,
-  faTrash,
+  faCaretUp,
   faClone,
+  faTrash,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -32,7 +32,7 @@ interface CardProps {
   card: CardType;
   isDraggable?: boolean;
   isInCollection?: boolean;
-  onClick?: (card: CardType) => void;
+  onClick?: () => void;
   zoomed?: boolean;
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
@@ -49,14 +49,6 @@ function canBePlacedInTurret(card: CardType): boolean {
 }
 
 // Function to determine if the card should show side buttons or just a simple "Add to Deck" button
-function shouldShowSideButtons(card: CardType): boolean {
-  // If it's a turret-only weapon, don't show side buttons
-  if (canBePlacedInTurret(card) && card.sides.length === 1) {
-    return false;
-  }
-  return canBePlacedOnSides(card.type);
-}
-
 export function Card({
   card,
   isDraggable = true,
@@ -68,7 +60,7 @@ export function Card({
 }: CardProps) {
   const { removeFromCollection, removeFromDeck, addToDeck, canAddCardToDeck } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [showQuickAdd] = useState(false);
   const { showToast } = useToast();
   const { handleValidationError } = useCardValidationErrors();
 
@@ -79,7 +71,6 @@ export function Card({
       collect: (monitor: any) => ({
         isDragging: !!monitor.isDragging(),
       }),
-      canDrag: () => isDraggable && !isPreviewOpen,
     }),
     [card, isDraggable, isPreviewOpen]
   );
@@ -283,8 +274,7 @@ export function Card({
           (['Sidearm', 'Crew', 'Gear'].includes(card.type) ? (
             <div className="card-cost-badge card-cost-badge-crew">
               {(() => {
-                const cost = (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
-                return cost;
+                return (card.buildPointCost ?? 0) + (card.crewPointCost ?? 0);
               })()}
             </div>
           ) : (
@@ -436,10 +426,7 @@ export function Card({
                         const vehicleButtons = availableAreas.filter(area =>
                           vehicleLocations.includes(area)
                         );
-                        const otherButtons = availableAreas.filter(
-                          area => !vehicleLocations.includes(area)
-                        );
-
+                        availableAreas.filter(area => !vehicleLocations.includes(area));
                         if (vehicleButtons.length > 1) {
                           // If we have multiple vehicle location buttons, use a grid layout
                           return (

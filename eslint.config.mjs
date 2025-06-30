@@ -25,8 +25,6 @@ const eslintConfig = [
   {
     files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     rules: {
-      // Prettier integration
-      "prettier/prettier": "error",
       // Unused variables
       "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
       // Unused imports

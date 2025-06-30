@@ -56,8 +56,9 @@ export interface CardValidationResult {
 /**
  * Validate a card against the current deck
  * @param card The card to validate
- * @param currentDeck The current deck
- * @param getAvailablePoints Function that returns available points
+ * @param deckCards
+ * @param pointLimits
+ * @param pointsUsed
  * @returns Validation result
  */
 export function validateCardForDeck(

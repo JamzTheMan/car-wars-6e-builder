@@ -36,26 +36,13 @@ interface CardCollectionProps {
 }
 
 export function CardCollection({
-  filterPanelOpen,
-  updateFilterPanelOpen,
-  filterCardTypes,
-  updateFilterCardTypes,
-  filterSubtypes,
-  updateFilterSubtypes,
-  filterCardName,
-  updateFilterCardName,
-  filterMinCost,
-  updateFilterMinCost,
-  filterMaxCost,
-  updateFilterMaxCost,
-  filterSources,
-  updateFilterSources,
-  resetFilters,
-  filteredCardsCount,
-  totalCardsCount,
-  subtypesByCardType,
-  uniqueSources,
-}: CardCollectionProps) {
+                                 filterCardTypes,
+                                 filterSubtypes,
+                                 filterCardName,
+                                 filterMinCost,
+                                 filterMaxCost,
+                                 filterSources,
+                               }: CardCollectionProps) {
   // CSS for custom range sliders
   const rangeSliderStyle = `
     input[type="range"]::-webkit-slider-thumb {
