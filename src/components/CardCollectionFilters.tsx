@@ -48,7 +48,7 @@ export const CardCollectionFilters: React.FC<CardCollectionFiltersProps> = ({
   uniqueSources,
 }) => {
   return (
-    <div className="p-2 -mb-4">
+    <div className="p-2 -mb-2">
       <div className="flex justify-between items-center mb-2">
         <div className="flex space-x-2">
           <button
