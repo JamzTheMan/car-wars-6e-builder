@@ -348,7 +348,7 @@ export function Card({
           onClick={closePreview}
         >
           <div
-            className="bg-white bg-opacity-85 rounded-lg overflow-hidden shadow-2xl max-w-3xl max-h-[90vh] relative"
+            className="bg-white bg-opacity-85 rounded-lg overflow-hidden shadow-2xl max-w-3xl max-h-[90vh] overflow-y-auto relative"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center p-4 border-b">
