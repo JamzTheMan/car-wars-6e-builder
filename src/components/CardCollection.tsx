@@ -36,7 +36,7 @@ export function CardCollection() {
       background: #3b82f6;
       cursor: pointer;
       margin-top: -6px;
-      z-index: 10;
+      z-index: 1;
       position: relative;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
     }
