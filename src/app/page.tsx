@@ -306,7 +306,7 @@ export default function Home() {
                 <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
                   <div className="relative border-b border-gray-700 flex items-center min-h-12 px-2">
                     {/* Left: VehicleName absolute */}
-                    <div className="absolute left-2 top-1/2 -translate-y-1/2">
+                    <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
                       <VehicleName onOpenSavedVehicles={() => setIsSavedVehiclesOpen(true)} />
                     </div>
                     {/* Center: PointsSummary absolutely centered */}
@@ -320,7 +320,7 @@ export default function Home() {
                         onClick={async () => {
                           const confirmed = await confirm({
                             message:
-                              'Are you sure you want to reset the car?This will remove all cards and reset AADA division to 4.',
+                              'Are you sure you want to reset the car? This will remove all cards and reset AADA division to 4.',
                             title: 'Reset Vehicle',
                             confirmText: 'Reset',
                             cancelText: 'Cancel',
