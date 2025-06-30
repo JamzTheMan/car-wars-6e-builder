@@ -307,7 +307,7 @@ export default function Home() {
             <div className="flex-1 min-h-0">
               <div id="split-container" className="h-full flex gap-2">
                 <div className="panel-left bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
-                  <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0">
+                  <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0 min-h-12">
                     <CardCollectionHeader />
                     <CardCollectionTitleUpload />
                   </div>
@@ -323,7 +323,7 @@ export default function Home() {
                 <div className="resize-handle" onMouseDown={handleMouseDown} />
 
                 <div className="panel-right bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
-                  <div className="relative border-b border-gray-700 flex items-center min-h-14 px-2">
+                  <div className="relative border-b border-gray-700 flex items-center min-h-12 px-2">
                     {/* Left: VehicleName absolute */}
                     <div className="absolute left-2 top-1/2 -translate-y-1/2">
                       <VehicleName onOpenSavedVehicles={() => setIsSavedVehiclesOpen(true)} />
