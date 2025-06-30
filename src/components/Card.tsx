@@ -386,19 +386,7 @@ export function Card({
                     {/* Display exclusive status if true */}
                     {card.exclusive && (
                       <p className="text-gray-600">
-                        <span className="font-medium">Exclusive:</span> Yes (Only one exclusive card
-                        allowed per vehicle)
-                      </p>
-                    )}
-                    {/* Display side restrictions if present */}
-                    {card.sides && card.sides.trim() !== '' && (
-                      <p className="text-gray-600">
-                        <span className="font-medium">Allowed locations:</span>{' '}
-                        {card.sides.includes('F') ? 'Front ' : ''}
-                        {card.sides.includes('B') ? 'Back ' : ''}
-                        {card.sides.includes('L') ? 'Left ' : ''}
-                        {card.sides.includes('R') ? 'Right ' : ''}
-                        {card.sides.includes('t') || card.sides.includes('T') ? 'Turret' : ''}
+                        <span className="font-medium">Exclusive:</span> Yes
                       </p>
                     )}
                     {/* Conditionally show description if available */}
@@ -414,65 +402,49 @@ export function Card({
                     <div className="mt-4">
                       <h4 className="text-lg font-semibold mb-2 text-gray-700">Add to Car:</h4>
                       {(() => {
-                        const availableAreas = getAvailableAreas(card.type);
-                        const vehicleLocations = [
-                          CardArea.Front,
-                          CardArea.Back,
-                          CardArea.Left,
-                          CardArea.Right,
-                        ];
-                        const vehicleButtons = availableAreas.filter(area =>
-                          vehicleLocations.includes(area)
+                        // Only show buttons for valid sides, similar to quick add overlay
+                        const sides =
+                          card.sides && card.sides.trim() !== ''
+                            ? card.sides.toUpperCase()
+                            : 'FLRB';
+                        const areaMap: { [key: string]: CardArea } = {
+                          F: CardArea.Front,
+                          L: CardArea.Left,
+                          R: CardArea.Right,
+                          B: CardArea.Back,
+                          T: CardArea.Turret,
+                        };
+                        const validAreas = Object.entries(areaMap)
+                          .filter(([side]) => sides.includes(side))
+                          .map(([, area]) => area);
+                        // If no valid sides, fallback to all available areas
+                        const areasToShow =
+                          validAreas.length > 0 ? validAreas : getAvailableAreas(card.type);
+                        return (
+                          <div className="flex flex-col gap-2">
+                            {areasToShow.map(area => (
+                              <button
+                                key={area}
+                                onClick={e => handleAddToDeck(e, area)}
+                                className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded flex items-center justify-center gap-2 w-auto inline-flex max-w-[180px]"
+                              >
+                                <FontAwesomeIcon icon={faClone} />
+                                {area === 'gearupgrade'
+                                  ? 'Gear & Upgrades'
+                                  : area.charAt(0).toUpperCase() + area.slice(1)}
+                              </button>
+                            ))}
+                            {areasToShow.length === 0 && (
+                              <button
+                                onClick={e => handleAddToDeck(e)}
+                                className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded flex items-center justify-center gap-2 w-auto inline-flex max-w-[180px]"
+                              >
+                                <FontAwesomeIcon icon={faClone} />
+                                Add to Car
+                              </button>
+                            )}
+                          </div>
                         );
-                        availableAreas.filter(area => !vehicleLocations.includes(area));
-                        if (vehicleButtons.length > 1) {
-                          // If we have multiple vehicle location buttons, use a grid layout
-                          return (
-                            <>
-                              {/* Vehicle location buttons in a grid */}
-                              <div className="flex flex-col gap-2">
-                                {vehicleButtons.map(area => (
-                                  <button
-                                    key={area}
-                                    onClick={e => handleAddToDeck(e, area)}
-                                    className={`${getButtonClasses(availableAreas)} flex items-center justify-center gap-2 w-auto inline-flex max-w-[180px]`}
-                                  >
-                                    <FontAwesomeIcon icon={faClone} />
-                                    {area.charAt(0).toUpperCase() + area.slice(1)}
-                                  </button>
-                                ))}
-                              </div>
-                            </>
-                          );
-                        } else {
-                          // Default vertical layout for all other buttons
-                          return (
-                            <div className="flex flex-col gap-2">
-                              {availableAreas.map(area => (
-                                <button
-                                  key={area}
-                                  onClick={e => handleAddToDeck(e, area)}
-                                  className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded flex items-center justify-center gap-2 w-auto inline-flex max-w-[180px]"
-                                >
-                                  <FontAwesomeIcon icon={faClone} />
-                                  {area === 'gearupgrade'
-                                    ? 'Gear & Upgrades'
-                                    : area.charAt(0).toUpperCase() + area.slice(1)}
-                                </button>
-                              ))}
-
-                              {availableAreas.length === 0 && (
-                                <button
-                                  onClick={e => handleAddToDeck(e)}
-                                  className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded flex items-center justify-center gap-2 w-auto inline-flex max-w-[180px]"
-                                >
-                                  <FontAwesomeIcon icon={faClone} />
-                                  Add to Car
-                                </button>
-                              )}
-                            </div>
-                          );
-                        }
                       })()}
                     </div>
                   )}
