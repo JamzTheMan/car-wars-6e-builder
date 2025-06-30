@@ -25,7 +25,6 @@ interface DeckLayoutProps {
 export function DeckLayout({ area }: DeckLayoutProps = {}) {
   const {
     currentDeck,
-    updateCardPosition,
     addToDeck,
     canAddCardToDeck,
     updateCardArea,
@@ -33,8 +32,7 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
   } = useCardStore();
   const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
   const [showZoom, setShowZoom] = useState(false);
-  const zoomTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
+  
   // Handle Escape key to close zoom
   useEffect(() => {
     if (!showZoom) return;
@@ -55,12 +53,6 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
   const closeZoom = useCallback(() => {
     setShowZoom(false);
     setTimeout(() => setZoomedCard(null), 200); // match animation duration
-  }, []);
-
-  // Add the handler in DeckLayout
-  const handleCardHover = useCallback((card: CardType) => {
-    setZoomedCard(card);
-    setShowZoom(true);
   }, []);
 
   if (!currentDeck) {
@@ -285,7 +277,7 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
       case 'crew':
         areaEnum = CardArea.Crew;
         break;
-      case 'gear':
+      case 'gearupgrade':
         areaEnum = CardArea.GearUpgrade;
         break;
       case 'front':
