@@ -104,7 +104,7 @@ export function ChipSelector({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute z-10 mt-1 bg-gray-800 border border-gray-600 rounded shadow-lg w-64 max-h-64 overflow-auto"
+          className="absolute z-50 mt-1 bg-gray-800 border border-gray-600 rounded shadow-lg w-64 max-h-64 overflow-auto"
         >
           {groupedOptions
             ? // Grouped options
