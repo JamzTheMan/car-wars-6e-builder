@@ -77,17 +77,11 @@ export function CardCollection({
   const { showToast } = useContext(ToastContext) || {};
   const {
     newCardType,
-    setNewCardType,
     newCardSubtype,
-    setNewCardSubtype,
     newBuildPointCost,
-    setNewBuildPointCost,
     newCrewPointCost,
-    setNewCrewPointCost,
     newNumberAllowed,
-    setNewNumberAllowed,
     newSource,
-    setNewSource,
   } = useCardUpload();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -97,9 +91,7 @@ export function CardCollection({
     addToCollectionWithId,
     removeFromDeck,
     removeFromCollection,
-    resetDeck,
     currentDeck,
-    clearCollection,
     loadCollection,
     isLoading,
     bulkUpdateCollection,
@@ -126,25 +118,16 @@ export function CardCollection({
       [CardType.Sidearm]: [],
     };
 
-    console.log('Total cards in collection:', cards.length);
-
-    // Debug: print some card examples to see what's in the collection
-    if (cards.length > 0) {
-      console.log('Example card:', cards[0]);
-    }
 
     // First pass: map each subtype to its card type
     cards.forEach(card => {
       if (card.subtype && card.subtype.trim() !== '' && card.type) {
-        console.log(`Found subtype: ${card.subtype} for card type: ${card.type}`);
         // Map this subtype to its card type if not already mapped
         if (!subtypeToCardTypeMap[card.subtype]) {
           subtypeToCardTypeMap[card.subtype] = card.type;
         }
       }
     });
-
-    console.log('Mapped subtypes:', subtypeToCardTypeMap);
 
     // Second pass: collect all unique subtypes for each card type
     Object.entries(subtypeToCardTypeMap).forEach(([subtype, cardType]) => {
@@ -157,8 +140,6 @@ export function CardCollection({
     Object.keys(result).forEach(type => {
       result[type as CardType].sort();
     });
-
-    console.log('Final grouped subtypes:', result);
 
     return result;
   }, [cards]);

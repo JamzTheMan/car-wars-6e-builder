@@ -23,16 +23,14 @@ interface DeckLayoutProps {
 }
 
 export function DeckLayout({ area }: DeckLayoutProps = {}) {
-  const {
-    currentDeck,
-    addToDeck,
-    canAddCardToDeck,
-    updateCardArea,
-    reorderCardInArea,
-  } = useCardStore();
+  const { currentDeck, addToDeck, canAddCardToDeck, updateCardArea, reorderCardInArea } =
+    useCardStore();
   const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
   const [showZoom, setShowZoom] = useState(false);
-  
+  // Mobile toggles
+  const [showFilters, setShowFilters] = useState(true);
+  const [showVehicleName, setShowVehicleName] = useState(false);
+
   // Handle Escape key to close zoom
   useEffect(() => {
     if (!showZoom) return;
@@ -301,6 +299,7 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
     if (areaEnum) {
       return (
         <div className="h-full flex flex-col">
+          {/* Only render the area drop target, no toggles or VehicleName/filter components in area view */}
           <AreaDropTarget
             area={areaEnum}
             label={
