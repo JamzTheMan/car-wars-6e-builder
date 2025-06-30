@@ -15,6 +15,7 @@ import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
 import { PrintView } from '@/components/PrintView';
 import { CardCollectionFilters } from '@/components/CardCollectionFilters';
 import { useCardCollectionFilters } from './CardCollectionFiltersWrapper';
+import { useConfirmationDialog } from '@/components/useConfirmationDialog';
 
 function PointsSummary() {
   const { currentDeck, setDeck, updatePointLimits } = useCardStore();
@@ -156,27 +157,6 @@ function CardCollectionTitleUpload() {
   );
 }
 
-function ResetCarButton() {
-  return (
-    <button
-      onClick={() => {
-        if (
-          confirm(
-            'Are you sure you want to reset the car? This will remove all cards and reset point costs to zero.'
-          )
-        ) {
-          useCardStore.getState().resetDeck();
-        }
-      }}
-      className="text-gray-400 hover:text-red-600"
-      title="Reset Vehicle"
-      aria-label="Reset Vehicle"
-    >
-      <FontAwesomeIcon icon={faRotateLeft} className="w-4 h-4" />
-    </button>
-  );
-}
-
 export default function Home() {
   const { setDeck, currentDeck, collectionCards } = useCardStore();
   const [isStoreHydrated, setIsStoreHydrated] = useState(false);
@@ -188,6 +168,7 @@ export default function Home() {
 
   // Use the custom hook to manage filter state and logic
   const filterProps = useCardCollectionFilters(collectionCards);
+  const { confirm, dialog: confirmationDialog } = useConfirmationDialog();
 
   const handleMouseDown = () => {
     setIsDragging(true);
@@ -335,7 +316,25 @@ export default function Home() {
                     {/* Right: Print & Reset absolute */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
                       <PrintButton onOpenPrintDialog={() => setShowPrintOptions(true)} />
-                      <ResetCarButton />
+                      <button
+                        onClick={async () => {
+                          const confirmed = await confirm({
+                            message:
+                              'Are you sure you want to reset the car?This will remove all cards and reset AADA division to 4.',
+                            title: 'Reset Vehicle',
+                            confirmText: 'Reset',
+                            cancelText: 'Cancel',
+                          });
+                          if (confirmed) {
+                            useCardStore.getState().resetDeck();
+                          }
+                        }}
+                        className="text-gray-400 hover:text-red-600"
+                        title="Reset Vehicle"
+                        aria-label="Reset Vehicle"
+                      >
+                        <FontAwesomeIcon icon={faRotateLeft} className="w-4 h-4" />
+                      </button>
                     </div>
                     {/* Spacer for min height */}
                     <div className="invisible h-0">&nbsp;</div>
@@ -354,7 +353,7 @@ export default function Home() {
         onClose={() => setIsSavedVehiclesOpen(false)}
       />
       {showPrintOptions && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-xl">
             <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Print Options</h2>
             <div className="flex flex-col gap-4">
@@ -387,6 +386,7 @@ export default function Home() {
         </div>
       )}
       {printMode && <PrintView printMode={printMode} onClose={() => setPrintMode(null)} />}
+      {confirmationDialog}
     </>
   );
 }
