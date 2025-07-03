@@ -62,6 +62,7 @@ export function Card({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showQuickAdd] = useState(false);
   const [associatedCard, setAssociatedCard] = useState<CardType | null>(null);
+  const [showingAssociatedCard, setShowingAssociatedCard] = useState(false);
   const { showToast } = useToast();
   const { handleValidationError } = useCardValidationErrors();
 
@@ -207,7 +208,13 @@ export function Card({
     e.stopPropagation();
     setIsPreviewOpen(false);
     setAssociatedCard(null);
+    setShowingAssociatedCard(false);
   };
+  const swapCards = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowingAssociatedCard(!showingAssociatedCard);
+  };
+
   // Function to get available areas for a card based on its type
   const getAvailableAreas = (cardType: CardTypeEnum): CardArea[] => {
     const allAreas = Object.values(CardArea);
@@ -403,7 +410,9 @@ export function Card({
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-xl font-bold text-gray-800">{card.name}</h3>
+              <h3 className="text-xl font-bold text-gray-800">
+                {showingAssociatedCard && associatedCard ? associatedCard.name : card.name}
+              </h3>
               <button
                 onClick={closePreview}
                 className="text-gray-500 hover:text-gray-700"
@@ -414,62 +423,130 @@ export function Card({
             </div>
             <div className="p-4">
               <div className="flex flex-col md:flex-row gap-6">
-                <div className="w-full md:w-1/2 flex-shrink-0">
-                  <img
-                    src={card.imageUrl}
-                    alt={card.name}
-                    className="w-full h-auto object-contain max-h-[77vh] rounded-md shadow-md"
-                  />
+                {/* Card Display Area */}
+                <div className="w-full md:w-1/2 flex-shrink-0 relative">
+                  {/* Without Associated Card - Standard Display */}
+                  {!associatedCard && (
+                    <div className="flex items-center justify-center">
+                      <img
+                        src={card.imageUrl}
+                        alt={card.name}
+                        className="w-full h-auto object-contain max-h-[77vh] rounded-md shadow-md"
+                      />
+                    </div>
+                  )}
 
-                  {/* Associated card display */}
+                  {/* With Associated Card - Stacked Card Display */}
                   {associatedCard && (
-                    <div className="mt-4">
-                      <h4 className="text-lg font-semibold mb-2 text-gray-700">Associated Card:</h4>
-                      <div className="border border-gray-300 rounded-md p-2">
-                        <h5 className="font-medium text-gray-800 mb-1">{associatedCard.name}</h5>
+                    <div className="card-stack-container">
+                      {/* Main Card - Positioned absolutely to allow proper stacking */}
+                      <div
+                        onClick={swapCards}
+                        className={`card-stack absolute cursor-pointer ${
+                          !showingAssociatedCard
+                            ? 'z-20 top-0 left-0 right-0'
+                            : 'z-10 top-0 left-0 rotate-3'
+                        }`}
+                      >
+                        <img
+                          src={card.imageUrl}
+                          alt={card.name}
+                          className={`w-full h-auto object-contain max-h-[77vh] rounded-lg shadow-lg ${
+                            showingAssociatedCard ? 'opacity-80' : 'opacity-100'
+                          }`}
+                        />
+                      </div>
+
+                      {/* Associated Card */}
+                      <div
+                        onClick={swapCards}
+                        className={`card-stack absolute cursor-pointer ${
+                          showingAssociatedCard
+                            ? 'z-20 top-0 -left-[50%] right-0'
+                            : 'z-10 -left-[48%] rotate-3'
+                        }`}
+                      >
                         <img
                           src={associatedCard.imageUrl}
                           alt={associatedCard.name}
-                          className="w-full h-auto object-contain rounded-md shadow-sm"
+                          className={`w-full h-auto object-contain max-h-[77vh] rounded-lg shadow-lg ${
+                            !showingAssociatedCard ? 'opacity-90' : 'opacity-100'
+                          }`}
                         />
                       </div>
                     </div>
                   )}
                 </div>
+
+                {/* Card Details Area */}
                 <div className="w-full md:w-1/2 flex-shrink-0">
                   <div className="mb-4">
                     <h4 className="text-lg font-semibold mb-1 text-gray-700">Details:</h4>
-                    <p className="text-gray-600">
-                      <span className="font-medium">Type:</span> {card.type}
-                    </p>
-                    {card.subtype && (
-                      <p className="text-gray-600">
-                        <span className="font-medium">Subtype:</span> {card.subtype}
-                      </p>
+                    {showingAssociatedCard && associatedCard ? (
+                      // Associated Card Details
+                      <>
+                        <p className="text-gray-600">
+                          <span className="font-medium">Type:</span> {associatedCard.type}
+                        </p>
+                        {associatedCard.subtype && (
+                          <p className="text-gray-600">
+                            <span className="font-medium">Subtype:</span> {associatedCard.subtype}
+                          </p>
+                        )}
+                        <p className="text-gray-600">
+                          <span className="font-medium">Cost:</span>{' '}
+                          {(associatedCard.buildPointCost ?? 0) +
+                            (associatedCard.crewPointCost ?? 0)}{' '}
+                          points
+                        </p>
+                        {/* Description for associated card if available */}
+                        {associatedCard.description && (
+                          <div className="mt-4">
+                            <h4 className="text-lg font-semibold mb-1 text-gray-700">
+                              Description:
+                            </h4>
+                            <p className="text-gray-600">{associatedCard.description}</p>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      // Main Card Details
+                      <>
+                        <p className="text-gray-600">
+                          <span className="font-medium">Type:</span> {card.type}
+                        </p>
+                        {card.subtype && (
+                          <p className="text-gray-600">
+                            <span className="font-medium">Subtype:</span> {card.subtype}
+                          </p>
+                        )}
+                        <p className="text-gray-600">
+                          <span className="font-medium">Cost:</span>{' '}
+                          {(card.buildPointCost ?? 0) + (card.crewPointCost ?? 0)} points
+                        </p>
+                        {/* Display copies information if greater than 1 */}
+                        {card.copies && card.copies > 1 && (
+                          <p className="text-gray-600">
+                            <span className="font-medium">Copies per purchase:</span> {card.copies}
+                          </p>
+                        )}
+                        {/* Display exclusive status if true */}
+                        {card.exclusive && (
+                          <p className="text-gray-600">
+                            <span className="font-medium">Exclusive:</span> Yes
+                          </p>
+                        )}
+                        {/* Description for main card if available */}
+                        {card.description && (
+                          <div className="mt-4">
+                            <h4 className="text-lg font-semibold mb-1 text-gray-700">
+                              Description:
+                            </h4>
+                            <p className="text-gray-600">{card.description}</p>
+                          </div>
+                        )}
+                      </>
                     )}
-                    <p className="text-gray-600">
-                      <span className="font-medium">Cost:</span>{' '}
-                      {(card.buildPointCost ?? 0) + (card.crewPointCost ?? 0)} points
-                    </p>
-                    {/* Display copies information if greater than 1 */}
-                    {card.copies && card.copies > 1 && (
-                      <p className="text-gray-600">
-                        <span className="font-medium">Copies per purchase:</span> {card.copies}
-                      </p>
-                    )}
-                    {/* Display exclusive status if true */}
-                    {card.exclusive && (
-                      <p className="text-gray-600">
-                        <span className="font-medium">Exclusive:</span> Yes
-                      </p>
-                    )}
-                    {/* Conditionally show description if available */}
-                    {card.description && (
-                      <div className="mt-4">
-                        <h4 className="text-lg font-semibold mb-1 text-gray-700">Description:</h4>
-                        <p className="text-gray-600">{card.description}</p>
-                      </div>
-                    )}{' '}
                   </div>
 
                   {isInCollection && (
