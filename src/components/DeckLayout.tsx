@@ -9,10 +9,12 @@ import type { Card as CardType } from '@/types/types';
 import { CardArea, canCardTypeGoInArea } from '@/types/types';
 import { VehicleName } from './VehicleName';
 import { useToast } from './Toast';
+import { useConfirmationDialog } from './useConfirmationDialog';
 import {
   useCardValidationErrors,
   validateAndAddCard,
   validateCardMovement,
+  checkNumberAllowedWarning,
 } from '@/utils/cardValidation';
 
 // Re-export VehicleName for compatibility
@@ -27,6 +29,7 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
     useCardStore();
   const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
   const [showZoom, setShowZoom] = useState(false);
+  const { confirm, dialog: confirmationDialog } = useConfirmationDialog();
 
   // Handle Escape key to close zoom
   useEffect(() => {
@@ -56,7 +59,12 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
         <p className="text-gray-500">No deck selected</p>
       </div>
     );
-  } // Helper function to create area drop targets
+  }
+
+  // Show the confirmation dialog
+  const ConfirmationDialogPortal = () => {
+    return typeof document !== 'undefined' ? createPortal(confirmationDialog, document.body) : null;
+  }; // Helper function to create area drop targets
   const AreaDropTarget = ({
     area,
     label,
@@ -85,23 +93,47 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
     const { collectionCards } = useCardStore();
     const { showToast } = useToast();
     const { handleValidationError } = useCardValidationErrors();
-    // Helper to add multiple copies if needed, but only deduct cost once (copied from Card.tsx)
-    const addCopiesToDeckDnD = (card: CardType, area: CardArea) => {
+    // Helper to add multiple copies if needed, but only deduct cost once
+    const addCopiesToDeckDnD = async (card: CardType, area: CardArea) => {
       const copiesToAdd = card.copies && card.copies > 1 ? card.copies : 1;
       let added = false;
+
       if (copiesToAdd > 0) {
+        // Check for numberAllowed warning first
+        const deckCards = currentDeck?.cards || [];
+        const warning = checkNumberAllowedWarning(card, deckCards);
+
+        // If adding would exceed the number allowed, show a confirmation dialog
+        if (warning) {
+          const confirmed = await confirm({
+            title: 'Card Limit Warning',
+            message: `You already have ${warning.currentCount} copies of "${card.name}" on your vehicle, but you may only have ${warning.maxAllowed} physical copies of the card. Add anyway?`,
+            confirmText: 'Add Anyway',
+            cancelText: 'Cancel',
+          });
+
+          if (!confirmed) {
+            return false;
+          }
+        }
+
         // First copy: validate and deduct cost
-        const cardAdded = validateAndAddCard(
+        const cardAdded = await validateAndAddCard(
           card,
           { canAddCardToDeck, addToDeck },
           area,
           showToast,
           handleValidationError
         );
-        if (cardAdded) added = true;
-        // Remaining copies: add directly, no cost/validation
-        for (let i = 1; i < copiesToAdd; i++) {
-          addToDeck(card.id, area, false);
+
+        if (cardAdded) {
+          added = true;
+
+          // Remaining copies: add directly, no cost/validation
+          for (let i = 1; i < copiesToAdd; i++) {
+            // Pass deductCost: false for extra copies
+            addToDeck(card.id, area, false);
+          }
         }
       }
       return added;
@@ -122,12 +154,12 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
 
           return cardToCheck ? canCardTypeGoInArea(cardToCheck.type, area) : false;
         },
-        drop: (item: CardType & { source: 'collection' | 'deck' }) => {
+        drop: async (item: CardType & { source: 'collection' | 'deck' }) => {
           if (item.source === 'collection') {
             // Add all copies from collection to deck using the same logic as addCopiesToDeck
             const cardToAdd = collectionCards.find((c: CardType) => c.id === item.id);
             if (cardToAdd) {
-              addCopiesToDeckDnD(cardToAdd, area);
+              await addCopiesToDeckDnD(cardToAdd, area);
             }
           } else if (item.source === 'deck') {
             // Use the centralized validation function for card movements
@@ -365,6 +397,7 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
           </div>,
           typeof window !== 'undefined' ? document.body : (null as any)
         )}
+      <ConfirmationDialogPortal />
       <div
         id="deck-layout"
         className="h-full relative bg-cover bg-center bg-gray-900 rounded overflow-hidden"
