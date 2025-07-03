@@ -44,6 +44,8 @@ export interface CardValidationResult {
     | 'structure_limit_reached'
     | 'weapon_cost_limit'
     | 'exclusive_limit_reached'
+    | 'missing_prerequisite'
+    | 'has_dependent_cards'
     | 'invalid_side';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
@@ -67,6 +69,20 @@ export function validateCardForDeck(
   pointLimits: { buildPoints: number; crewPoints: number },
   pointsUsed: { buildPoints: number; crewPoints: number }
 ): CardValidationResult {
+  // Check for prerequisite
+  if (card.prerequisite && card.prerequisite.trim() !== '') {
+    const hasPrerequisite = deckCards.some(
+      c => c.name.toLowerCase() === card.prerequisite?.toLowerCase()
+    );
+    if (!hasPrerequisite) {
+      return {
+        allowed: false,
+        reason: 'missing_prerequisite',
+        conflictingCard: { ...card, name: card.prerequisite } as Card,
+      };
+    }
+  }
+
   // Calculate available points
   const availablePoints = {
     buildPoints: pointLimits.buildPoints - pointsUsed.buildPoints,
@@ -345,15 +361,29 @@ export function validateCardSidePlacement(card: Card, targetArea: CardArea): Car
 export function useCardValidationErrors() {
   const { showToast } = useToast();
 
+  // Handle validation errors with a proper error message based on the reason
   const handleValidationError = (
     validationResult: CardValidationResult,
     cardName: string,
     cardType: string,
     cardSubtype?: string
   ) => {
+    // Skip if no validation result
+    if (!validationResult) return;
+
     switch (validationResult.reason) {
+      case 'missing_prerequisite':
+        if (validationResult.conflictingCard) {
+          showToast(
+            `Cannot add ${cardName}. It requires ${validationResult.conflictingCard.name} to be in your vehicle first.`,
+            'error'
+          );
+        } else {
+          showToast(`Cannot add ${cardName}. It requires a prerequisite card.`, 'error');
+        }
+        break;
       case 'duplicate_gear':
-        showToast(`You cannot equip multiple copies of the same gear card: "${cardName}"`, 'error');
+        showToast(`You can only equip one copy of each gear card.`, 'error');
         break;
       case 'duplicate_sidearm':
         showToast(`You cannot equip multiple copies of the same sidearm: "${cardName}"`, 'error');
@@ -583,4 +613,28 @@ export function validateCardMovement(
 
   // Validation passed
   return true;
+}
+
+/**
+ * Validate if a card can be removed from the deck
+ * This checks if any other card in the deck has this card as a prerequisite
+ * @param cardToRemove The card to remove
+ * @param deckCards All cards currently in the deck
+ * @returns Validation result with allowed=true if the card can be removed
+ */
+export function validateCardRemoval(cardToRemove: Card, deckCards: Card[]): CardValidationResult {
+  // Check if any card in the deck has this card as a prerequisite
+  const dependentCard = deckCards.find(
+    c => c.prerequisite && c.prerequisite.toLowerCase() === cardToRemove.name.toLowerCase()
+  );
+
+  if (dependentCard) {
+    return {
+      allowed: false,
+      reason: 'has_dependent_cards',
+      conflictingCard: dependentCard,
+    };
+  }
+
+  return { allowed: true };
 }

@@ -48,6 +48,7 @@ export interface Card {
   copies: number; // Number of copies per purchase
   exclusive: boolean; // Only one exclusive card can be in a car
   sides: string; // Limits which sides the card can be placed on (F, B, L, R)
+  prerequisite?: string; // Name of a card that must be in the deck before this card can be added
   associated?: string; // Name of an associated card that should be shown with this card
   description?: string; // Making it optional since existing cards may not have it
   area?: CardArea;

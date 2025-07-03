@@ -58,7 +58,8 @@ export function Card({
   onMouseEnter,
   onMouseLeave,
 }: CardProps) {
-  const { removeFromCollection, removeFromDeck, addToDeck, canAddCardToDeck } = useCardStore();
+  const { removeFromCollection, removeFromDeck, addToDeck, canAddCardToDeck, canRemoveFromDeck } =
+    useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showQuickAdd] = useState(false);
   const [associatedCard, setAssociatedCard] = useState<CardType | null>(null);
@@ -109,6 +110,21 @@ export function Card({
         }
       }
     } else {
+      // Check if the card can be removed (no dependent cards)
+      const validationResult = canRemoveFromDeck(card.id);
+
+      if (
+        !validationResult.allowed &&
+        validationResult.reason === 'has_dependent_cards' &&
+        validationResult.conflictingCard
+      ) {
+        showToast(
+          `Cannot remove ${card.name} because ${validationResult.conflictingCard.name} depends on it. Remove ${validationResult.conflictingCard.name} first.`,
+          'error'
+        );
+        return;
+      }
+
       // Remove x copies if card.copies > 1, otherwise just one
       const copiesToRemove = card.copies && card.copies > 1 ? card.copies : 1;
       removeFromDeck(card.id, copiesToRemove);

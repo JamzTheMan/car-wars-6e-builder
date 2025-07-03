@@ -174,6 +174,7 @@ export async function processCSVToCards(
       copies: copies,
       exclusive: exclusive,
       sides: sides,
+      prerequisite: record['Prerequisite'] || '',
       associated: record['Associated'] || '',
     };
     // Determine the source of the image for logging

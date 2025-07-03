@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDrop } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { processCSVToCards } from '@/utils/csvProcessing';
+import { useConfirmationDialog } from './useConfirmationDialog';
 
 interface CardCollectionProps {
   filterPanelOpen: boolean;
@@ -84,16 +85,16 @@ export function CardCollection({
     newSource,
   } = useCardUpload();
   const [isUploading, setIsUploading] = useState(false);
+  const { confirm, dialog } = useConfirmationDialog();
 
   const {
-    collectionCards: cards,
-    addToCollection: addCard,
-    addToCollectionWithId,
-    removeFromDeck,
-    removeFromCollection,
+    collectionCards,
     currentDeck,
     loadCollection,
-    isLoading,
+    addToCollectionWithId,
+    removeFromDeck,
+    canRemoveFromDeck,
+    clearCollection,
     bulkUpdateCollection,
   } = useCardStore();
 
@@ -118,9 +119,8 @@ export function CardCollection({
       [CardType.Sidearm]: [],
     };
 
-
     // First pass: map each subtype to its card type
-    cards.forEach(card => {
+    collectionCards.forEach(card => {
       if (card.subtype && card.subtype.trim() !== '' && card.type) {
         // Map this subtype to its card type if not already mapped
         if (!subtypeToCardTypeMap[card.subtype]) {
@@ -142,20 +142,20 @@ export function CardCollection({
     });
 
     return result;
-  }, [cards]);
+  }, [collectionCards]);
 
   const uniqueSourcesMemo = useMemo(() => {
     const sources = new Set<string>();
-    cards.forEach(card => {
+    collectionCards.forEach(card => {
       if (card.source && card.source.trim() !== '') {
         sources.add(card.source);
       }
     });
     return Array.from(sources).sort();
-  }, [cards]); // Filter cards based on filter criteria
+  }, [collectionCards]); // Filter cards based on filter criteria
   const filteredCards = useMemo(() => {
     // Cards are already sorted at the store level, so we just need to filter
-    return cards.filter(card => {
+    return collectionCards.filter(card => {
       // Filter by card type - if any card types are selected, the card must match one of them
       if (filterCardTypes.length > 0 && !filterCardTypes.includes(card.type)) {
         return false;
@@ -195,7 +195,7 @@ export function CardCollection({
     });
     // Note: No need to sort here as the cards collection is already sorted
   }, [
-    cards,
+    collectionCards,
     filterCardTypes,
     filterSubtypes,
     filterCardName,
@@ -215,6 +215,21 @@ export function CardCollection({
       else if (monitor.getItemType() === 'CARD' && item.id) {
         // Only remove the card if it's coming from the deck
         if (item.source === 'deck') {
+          // Check if the card can be removed (no dependent cards)
+          const validationResult = canRemoveFromDeck(item.id);
+
+          if (
+            !validationResult.allowed &&
+            validationResult.reason === 'has_dependent_cards' &&
+            validationResult.conflictingCard
+          ) {
+            showToast(
+              `Cannot remove ${item.name} because ${validationResult.conflictingCard.name} depends on it. Remove ${validationResult.conflictingCard.name} first.`,
+              'error'
+            );
+            return;
+          }
+
           // Remove x copies if card.copies > 1, otherwise just one (same logic as Card.tsx)
           const deckCard = currentDeck?.cards.find(c => c.id === item.id);
           const copiesToRemove =
@@ -266,7 +281,7 @@ export function CardCollection({
 
           // Try to find a card with a matching name (case-insensitive, trimmed)
           // If we have a subtype from the filename, also match on that
-          const existingCard = cards.find(card => {
+          const existingCard = collectionCards.find(card => {
             const nameMatch = card.name.trim().toLowerCase() === cardName.trim().toLowerCase();
 
             // If we have a subtype from the filename, make sure it matches BOTH name AND subtype
@@ -305,7 +320,7 @@ export function CardCollection({
               ...existingCard,
               imageUrl: uploadResult.imageUrl,
             };
-            await removeFromCollection(existingCard.id);
+            // We now use addToCollectionWithId directly from the store
             await addToCollectionWithId(updatedCard);
             continue; // Skip to next file
           } // For new cards, add normally
@@ -324,8 +339,11 @@ export function CardCollection({
             sides: uploadResult.sides || '',
           };
 
-          // Add to collection
-          await addCard(newCard);
+          // Add to collection using the store function
+          await addToCollectionWithId({
+            ...newCard,
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          });
         } catch (error) {
           console.error(`Error uploading ${file.name}:`, error);
           alert(`Failed to upload ${file.name}. Please try again.`);
@@ -339,6 +357,15 @@ export function CardCollection({
   const handleCSVFiles = async (csvFiles: File[]) => {
     for (const file of csvFiles) {
       try {
+        // First, show the confirmation dialog before processing to avoid delay
+        const replaceCollection = await confirm({
+          title: 'Import CSV Cards',
+          message: 'Do you want to replace the entire collection with these CSV cards?',
+          confirmText: 'Replace All',
+          cancelText: 'Add to Collection',
+        });
+
+        // Now proceed with file reading
         const reader = new FileReader();
 
         // Set up a promise to handle file reading
@@ -358,27 +385,64 @@ export function CardCollection({
         reader.readAsText(file);
 
         // Wait for the file to be read
-        const csvContent = await csvContentPromise; // Process the CSV content using our utility
-        const newCards = await processCSVToCards(csvContent, cards); // Check if we need to add the cards to existing collection or
-        // create a completely new collection from CSV
-        if (
-          showToast &&
-          confirm(
-            'Do you want to replace the entire collection with these CSV cards?\n\nClick OK to replace all cards,\nCancel to add these to the existing collection'
-          )
-        ) {
-          // Replace the entire collection - always generate new unique IDs
-          const cardsWithUniqueIds = newCards.map(card => ({
-            ...card,
-            id: crypto.randomUUID(),
-          }));
-          await bulkUpdateCollection(cardsWithUniqueIds);
+        const csvContent = await csvContentPromise;
+
+        // Process the CSV content using our utility
+        const newCards = await processCSVToCards(csvContent, collectionCards);
+
+        // Take action based on the user's choice in the dialog
+        if (replaceCollection) {
+          try {
+            // First, clear the existing collection
+            await clearCollection();
+
+            if (showToast) {
+              showToast('Cleared existing collection', 'info');
+            }
+
+            // Then add all the new cards with unique IDs
+            const cardsWithUniqueIds = newCards.map(card => ({
+              ...card,
+              id: crypto.randomUUID(),
+            }));
+
+            // Use bulk update to add all cards at once
+            await bulkUpdateCollection(cardsWithUniqueIds);
+
+            if (showToast) {
+              showToast(
+                `Replaced collection with ${cardsWithUniqueIds.length} new cards`,
+                'success'
+              );
+            }
+          } catch (error) {
+            console.error('Error replacing collection:', error);
+            if (showToast) {
+              showToast('Failed to replace collection', 'error');
+            }
+          }
         } else {
-          // Add each new card to the collection individually - the API will handle unique IDs
-          for (const newCard of newCards) {
-            // Create a new card object without the id property
-            const { id, ...cardWithoutId } = newCard as any;
-            await addCard(cardWithoutId);
+          try {
+            // Add each new card to the collection individually
+            let addedCount = 0;
+
+            for (const newCard of newCards) {
+              // Create a new card object with a generated id
+              await addToCollectionWithId({
+                ...newCard,
+                id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              });
+              addedCount++;
+            }
+
+            if (showToast) {
+              showToast(`Added ${addedCount} new cards to your collection`, 'success');
+            }
+          } catch (error) {
+            console.error('Error adding cards to collection:', error);
+            if (showToast) {
+              showToast('Failed to add some cards to collection', 'error');
+            }
           }
         }
 
@@ -394,6 +458,8 @@ export function CardCollection({
   // Reset functionality moved to DeckLayout menu
   return (
     <div className="h-full">
+      {/* Render the confirmation dialog */}
+      {dialog}
       <style jsx>{rangeSliderStyle}</style>
       {/* Card collection area with drag and drop */}
       <div ref={drop} className="relative p-2">
@@ -410,7 +476,7 @@ export function CardCollection({
             isUploading ? 'opacity-50' : ''
           }`}
         >
-          {cards.length > 0 ? (
+          {filteredCards.length > 0 ? (
             filteredCards.map(card => <Card key={card.id} card={card} isInCollection={true} />)
           ) : (
             <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400 border-2 border-dashed border-gray-700 rounded-lg">

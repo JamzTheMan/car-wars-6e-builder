@@ -77,6 +77,8 @@ interface CardValidationResult {
     | 'structure_limit_reached'
     | 'weapon_cost_limit'
     | 'exclusive_limit_reached'
+    | 'missing_prerequisite'
+    | 'has_dependent_cards'
     | 'invalid_side';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
@@ -96,6 +98,7 @@ interface CardStore {
   removeFromCollection: (id: string) => Promise<void>;
   clearCollection: () => Promise<void>;
   addToDeck: (cardId: string, area?: CardArea, deductCost?: boolean) => void;
+  canRemoveFromDeck: (id: string) => CardValidationResult;
   removeFromDeck: (id: string, copies?: number) => void;
   updateCardPosition: (id: string, x: number, y: number) => void;
   updateCardArea: (id: string, area: CardArea) => void;
@@ -416,6 +419,30 @@ export const useCardStore = create<CardStore>()(
         // All validations passed
         return { allowed: true };
       },
+      
+      canRemoveFromDeck: (id: string) => {
+        const state = get();
+        if (!state.currentDeck) return { allowed: true };
+
+        // Find the card to remove by unique id
+        const cardToRemove = state.currentDeck.cards.find(c => c.id === id);
+        if (!cardToRemove) return { allowed: true };
+
+        // Check if any card has this as a prerequisite
+        const dependentCard = state.currentDeck.cards.find(
+          c => c.prerequisite && c.prerequisite.toLowerCase() === cardToRemove.name.toLowerCase()
+        );
+
+        if (dependentCard) {
+          return {
+            allowed: false,
+            reason: 'has_dependent_cards',
+            conflictingCard: dependentCard,
+          };
+        }
+
+        return { allowed: true };
+      },
 
       // The following deck operations remain unchanged since decks are user-specific
       addToDeck: (cardId: string, area?: CardArea, deductCost: boolean = true) => {
@@ -486,6 +513,13 @@ export const useCardStore = create<CardStore>()(
           // Find the card to remove by unique id
           const cardToRemove = state.currentDeck.cards.find(c => c.id === id);
           if (!cardToRemove) return state;
+
+          // Check if the card can be removed using our validation function
+          const validationResult = get().canRemoveFromDeck(id);
+          if (!validationResult.allowed) {
+            console.warn(`Cannot remove ${cardToRemove.name}: ${validationResult.reason}`);
+            return state; // Return unchanged state to prevent removal
+          }
 
           // Find all cards in the deck that match the original card id (before unique id)
           const baseId = cardToRemove.id.split('-')[0];

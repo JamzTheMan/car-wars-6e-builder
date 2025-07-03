@@ -1,260 +1,260 @@
-﻿Name,Type,Subtype,Build Point Cost,Crew Point Cost,Copies,Number Allowed,Exclusive,Sides,Associated,Source
-Armored Beer Refrigerator,Accessory,,0,,,1,,,,Core
-Grilled Cheese Dispenser,Accessory,,0,,,1,,,,Sonic Strike
-Advanced Brakes,Accessory,,1,,,1,,b,,Core
-Advanced Firing Interface,Accessory,,1,,,1,,,,Miniatures Set 1
-Aerodynamic Fairings,Accessory,,1,,,1,,,,Miniatures Set 1
-Automatic Fire Suppressor,Accessory,,1,,,1,,,,Core
-Autopilot,Accessory,,1,,,1,,,,Uncle Al's Upgrade
-Drag Chute,Accessory,,1,,,1,,b,,Uncle Al's Upgrade
-Fire Extinguisher,Accessory,,1,,,1,,,,Miniatures Set 3
-Magnetic Dampers,Accessory,,1,,,1,,,,Miniatures Set 4
-Off-Road Suspension,Accessory,,1,,,1,,,,Playmat 1
-Power Plant Superconductor,Accessory,,1,,,1,,b,,Uncle Al's Upgrade
-Radar Detector,Accessory,,1,,,1,,,,Uncle Al's Upgrade
-Regenerative Brakes,Accessory,,1,,,1,,,,Miniatures Set 2
-Sharkfin Aero Package,Accessory,,1,,,1,,,,Uncle Al's Upgrade
-Splitter,Accessory,,1,,,1,,f,,Miniatures Set 3
-Spoiler,Accessory,,1,,,1,,fb,,Miniatures Set 3
-Superbooster,Accessory,,1,,,1,,f,,Core
-Targeting Computer,Accessory,,1,,,1,,,,Core
-Boost Cell,Accessory,,2,,,1,,,,Gonzo Gear
-Dynamic Suspension,Accessory,,2,,,1,,,,Core
-High-Torque Differential,Accessory,,2,,,1,,,,Miniatures Set 4
-Radar Jammer,Accessory,,2,,,1,,,,Uncle Al's Upgrade
-Rugged Suspension,Accessory,,2,,,1,,,,Miniatures Set 3
-Supplemental Power Cell,Accessory,,2,,,1,,,,Uncle Al's Upgrade
-Thundercat Battery,Accessory,,2,,,1,,f,,Miniatures Set 2
-Rookie,Crew,Driver,,0,,1,,,,Core
-Wingnut,Crew,Driver,,0,,1,,,,Crew
-Hound,Crew,Gunner,,0,,1,,,,Crew
-Rookie,Crew,Gunner,,0,,1,,,,Core
-Ghost,Crew,Driver,,1,,1,,,,Uncle Al's Upgrade
-Mamba,Crew,Driver,,1,,1,,,,Crew
-Slick,Crew,Driver,,1,,1,,,,Gonzo Gear
-Smokey,Crew,Driver,,1,,1,,,,Gonzo Gear
-Hacker,Crew,Gunner,,1,,1,,,,Uncle Al's Upgrade
-Whiplash,Crew,Gunner,,1,,1,,,,Crew
-Amateur,Crew,Driver,,2,,1,,,,Core
-Hoon,Crew,Driver,,2,,1,,,,Gonzo Gear
-Leadfoot,Crew,Driver,,2,,1,,,,Sonic Strike
-Possum,Crew,Driver,,2,,1,,,,Crew
-Rhino,Crew,Driver,,2,,1,,,,Uncle Al's Upgrade
-Amateur,Crew,Gunner,,2,,1,,,,Core
-Blitz,Crew,Gunner,,2,,1,,,,Gonzo Gear
-Machete,Crew,Gunner,,2,,1,,,,Crew
-Photon,Crew,Gunner,,2,,1,,,,Gonzo Gear
-Pyro,Crew,Gunner,,2,,1,,,,Uncle Al's Upgrade
-Rowdy,Crew,Gunner,,2,,1,,,,Gonzo Gear
-Siren,Crew,Gunner,,2,,1,,,,Sonic Strike
-Striker,Crew,Gunner,,2,,1,,,,Sonic Strike
-Tex,Crew,Gunner,,2,,1,,,,Sonic Strike
-Burnout,Crew,Driver,,3,,1,,,,Sonic Strike
-Medusa,Crew,Driver,,3,,1,,,,Crew
-Scorpion,Crew,Driver,,3,,1,,,,Crew
-Grendel,Crew,Gunner,,3,,1,,,,Crew
-Vandal,Crew,Gunner,,3,,1,,,,Crew
-Bandit,Crew,Driver,,4,,1,,,,Crew
-Turtle,Crew,Driver,,4,,1,,,,Sonic Strike
-Veteran,Crew,Driver,,4,,1,,,,Core
-Monarch,Crew,Gunner,,4,,1,,,,Crew
-Veteran,Crew,Gunner,,4,,1,,,,Core
-Alpine,Crew,Driver,,5,,1,,,,Crew
-Rockwolf,Crew,Driver,,5,,1,,,,Crew
-Hyperion,Crew,Gunner,,5,,1,,,,Crew
-Max,Crew,Gunner,,5,,1,,,,Crew
-Legend,Crew,Driver,,6,,1,,,,Core
-Ranger,Crew,Driver,,6,,1,,,,Crew
-Fang,Crew,Gunner,,6,,1,,,,Crew
-Legend,Crew,Gunner,,6,,1,,,,Core
-Crash Suit,Gear,Vest,,0,,1,,,,Gonzo Gear
-Driving Gloves,Gear,Gloves,,1,,1,,,,Crew
-Holographic Sight,Gear,Optic,,1,,1,,,,Core
-Fire Suit,Gear,Vest,,1,,1,,,,Sonic Strike
-Flak Jacket,Gear,Vest,,1,,1,,,,Core
-Driving Boots,Gear,,,1,,1,,,,Crew
-First-Aid Kit,Gear,,,1,,1,,,,Crew
-HUD Goggles,Gear,,,1,,1,,,,Crew
-Plated Vest,Gear,Vest,,1,,1,,,,Uncle Al's Upgrade
-Steady-Aim Gimbal,Gear,,,1,,1,,,,Uncle Al's Upgrade
-Taco!,Gear,,,1,,1,,,,Uncle Al's Upgrade
-Hand Cannon,Sidearm,,,0,,1,,,,Core
-Assault Rifle,Sidearm,,,1,,1,,,,Core
-Blender,Sidearm,,,1,,1,,,,Gonzo Gear
-Bug Zapper,Sidearm,,,1,,1,,,,Crew
-Concussion Grenades,Sidearm,,,1,,1,,,,Crew
-Doubleshot,Sidearm,,,1,,1,,,,Sonic Strike
-Electrostatic Grenade,Sidearm,,,1,,1,,,Overload,Sonic Strike
-Fragmentation Grenade,Sidearm,,,1,,1,,,,Sonic Strike
-Juicer,Sidearm,,,1,,1,,,,Sonic Strike
-Katana,Sidearm,,,1,,1,,,,Gonzo Gear
-Killstreak,Sidearm,,,1,,1,,,,Crew
-Micro-Rocket Launcher,Sidearm,,,1,,1,,,Shaken,Gonzo Gear
-Paint Grenades,Sidearm,,,1,,1,,,Paint,Dropped Weapons
-Radar Transmitter,Sidearm,,,1,,1,,,,Uncle Al's Upgrade
-Rocket-Propelled Grenade,Sidearm,,,1,,1,,,,Gonzo Gear
-Sawed-Off Shotgun,Sidearm,,,1,,1,,,,Gonzo Gear
-Thermite Grenades,Sidearm,,,1,,1,,,,Crew
-Toaster,Sidearm,,,1,,1,,,,Sonic Strike
-Cast Iron Plate A,Structure,,0,,,1,,,,Gonzo Gear
-Cast Iron Plate B,Structure,,0,,,1,,,,Gonzo Gear
-Cast Iron Plate C,Structure,,0,,,1,,,,Gonzo Gear
-Cast iron Plate D,Structure,,0,,,1,,,,Gonzo Gear
-Light Ceramic Plate,Structure,,1,,,4,,,,Miniatures Set 2
-Light Steel Plate,Structure,,1,,,4,,,,Miniatures Set 3
-Carbon Laminate,Structure,,2,,,4,,,,Miniatures Set 1
-Light Plastic Cladding,Structure,,2,,,4,,,,Miniatures Set 1
-Standard Ceramic Plate,Structure,,2,,,4,,,,Miniatures Set 2
-Standard Steel Plate,Structure,,2,,,4,,,,Core
-Experimental Ablative Cladding,Structure,,3,,,4,,,,Miniatures Set 1
-Heavy Ceramic Plate,Structure,,3,,,4,,,,Miniatures Set 1
-Heavy Plastic Cladding,Structure,,3,,,4,,,,Miniatures Set 4
-Heavy Steel Plate,Structure,,3,,,4,,,,Miniatures Set 3
-Ramplate,Structure,,3,,,1,,f,,Miniatures Set 3
-Standard Composite Plate,Structure,,3,,,4,,,,Miniatures Set 4
-The Slab,Structure,,3,,,1,,b,,Dropped Weapons
-Titanium Laminate,Structure,,3,,,4,,,,Miniatures Set 3
-Ballistic Shell,Structure,,4,,,4,,,,Playmat 1
-Heavy Composite Plate,Structure,,4,,,4,,,,Miniatures Set 2
-Kinetic Diffuser,Structure,,4,,,4,,,,Road Tiles
-Super Heavy Ceramic Plate,Structure,,4,,,4,,,,Miniatures Set 3
-Super Heavy Steel Plate,Structure,,4,,,4,,,,Miniatures Set 4
-Fake Passenger,Upgrade,,0,,,1,,,,Gonzo Gear
-Weapons Locker,Upgrade,,1,1,,1,,,,Sonic Strike
-Bumper Spikes,Upgrade,Frame,1,,,1,,,,Miniatures Set 1
-Chassis Brace,Upgrade,Frame,1,,,1,,,,Core
-Flame Jets,Upgrade,Frame,1,,,1,,,,Miniatures Set 4
-Punchbumper,Upgrade,Frame,1,,,1,,,,Dropped Weapons
-Roll Bar,Upgrade,Frame,1,,,1,,,,Miniatures Set 2
-Reinforced Weapon Brackets,Upgrade,Mount,1,,,1,,,,Miniatures Set 2
-Airless Tires,Upgrade,Wheels,1,,,1,,,,Miniatures Set 1
-Off-Road Tires,Upgrade,Wheels,1,,,1,,,,Playmat 1
-Racing Slicks,Upgrade,Wheels,1,,,1,,,,Gonzo Gear
-Advanced Targeting Computer,Upgrade,,1,,,1,,,,Gonzo Gear
-Defibrillator,Upgrade,,1,,,1,,,,Gonzo Gear
-Gyroscopic Stabilizer,Upgrade,,1,,,1,,,,Miniatures Set 4
-Stability Controller,Upgrade,,1,-1,,1,,,,Crew
-Wheel Guards,Upgrade,,1,,,1,,,,Miniatures Set 4
-Active Camouflage,Upgrade,Coating,2,,,1,,,,Uncle Al's Upgrade
-Safety Cage,Upgrade,Frame,2,,,1,,,,Core
-Strengthened Undercarriage,Upgrade,Frame,2,,,1,,,,Core
-High Density Radials,Upgrade,Wheels,2,,,1,,,,Core
-Run-Flat System,Upgrade,Wheels,2,,,1,,,,Miniatures Set 2
-Sticky Rubber,Upgrade,Wheels,2,,,1,,,,Gonzo Gear
-Cadmium Alloy Fasteners,Upgrade,,2,,,1,,,,Uncle Al's Upgrade
-Power Plant Shielding,Upgrade,,2,,,1,,,,Uncle Al's Upgrade
-Wheel Hubs,Upgrade,,2,,,1,,,,Miniatures Set 1
-EM Distortion Field,Upgrade,Coating,3,,,1,,,,Armory
-Fire-Resistant Coating,Upgrade,Coating,3,,,1,,,,Uncle Al's Upgrade
-Laser-Reflective Coating,Upgrade,Coating,3,,,1,,,,Uncle Al's Upgrade
-Reactive Defense System,Upgrade,,3,,,1,,,,Uncle Al's Upgrade
-Simple Concealment System,Upgrade,,4,,,1,,,,Uncle Al's Upgrade
-Complex Concealment System,Upgrade,,8,,,1,,,,Uncle Al's Upgrade
-Armor Piercing Rocket,Weapon,Blast,1,,,2,,,,Uncle Al's Upgrade
-Firecracker,Weapon,Blast,1,,,2,,,,Miniatures Set 2
-Laser-Guided Light Rocket,Weapon,Blast,1,,,2,,,,Uncle Al's Upgrade
-Light Rocket,Weapon,Blast,1,,2,2,,,,Miniatures Set 1
-Fake Machine Gun,Weapon,Decoy,1,,2,2,,,,Gonzo Gear
-Concussion Mine Dropper,Weapon,Drop,1,,,1,,,Concussion Mine,Dropped Weapons
-Fire Mine Dropper,Weapon,Drop,1,,,1,,,Fire Mine,Dropped Weapons
-Foam Nozzle,Weapon,Drop,1,,,1,,,Foam,Dropped Weapons
-Oil Jets,Weapon,Drop,1,,,1,,,Oil,Dropped Weapons
-Smoke Emitter,Weapon,Drop,1,,,1,,,Smoke,Dropped Weapons
-Spike Dropper,Weapon,Drop,1,,,1,,,Spikes,Dropped Weapons
-Light Incendiary Rocket,Weapon,Fire,1,,,2,,,,Uncle Al's Upgrade
-Brushcutter,Weapon,Melee,1,,,2,,,,Miniatures Set 3
-Light Machine Gun,Weapon,Shred,1,,,2,,,,Core
-Peppermill,Weapon,Shred,1,,,2,,,,Miniatures Set 1
-Wasp,Weapon,Shred,1,,,2,,,,Miniatures Set 4
-Light Recoilless Rifle,Weapon,Slug,1,,,2,,,,Armory
-Slingshot,Weapon,Slug,1,,,2,,,,Miniatures Set 4
-Flamethrower,Weapon,Fire,2,,,2,,,,Core
-Electrolaser,Weapon,Laser,2,,,2,,,,Miniatures Set 3
-Linked Brushcutters,Weapon,Melee,2,,,2,,,,Linked Weapons
-Electrostatic Beam,Weapon,Shock,2,,,2,,,Overload,Sonic Strike
-Joy Buzzer,Weapon,Shock,2,,,2,,,,Sonic Strike
-Armored Machine Gun,Weapon,Shred,2,,,2,,,,Uncle Al's Upgrade
-Linked Shotguns,Weapon,Shred,2,,,2,,,,Linked Weapons
-Standard Machine Gun,Weapon,Shred,2,,,2,,,,Armory
-Stinger,Weapon,Shred,2,,,2,,,,Miniatures Set 4
-Armored Recoilless Rifle,Weapon,Slug,2,,,2,,,,Sonic Strike
-Javelin,Weapon,Slug,2,,,2,,,,Miniatures Set 1
-Standard Recoilless Rifle,Weapon,Slug,2,,,2,,,,Core
-Whistler,Weapon,Sonic,2,,,2,,,,Sonic Strike
-Anti-Power Plant Rocket,Weapon,Blast,3,,,1,y,,,Uncle Al's Upgrade
-Standard Rocket,Weapon,Blast,3,,2,2,,,,Core
-Turreted Light Rocket,Weapon,Blast,3,,,1,y,t,,Linked Weapons
-Turreted Micro-Missile,Weapon,Blast,3,,,1,y,t,,Uncle Al's Upgrade
-Armored Firebolt,Weapon,Fire,3,,,2,,,,Sonic Strike
-Linked Flamethrowers,Weapon,Fire,3,,,2,,,,Linked Weapons
-Standard Incendiary Rocket,Weapon,Fire,3,,,2,,,,Sonic Strike
-Turreted Flamethrower,Weapon,Fire,3,,,1,y,t,,Armory
-Armored Particle Beam,Weapon,Laser,3,,,2,,,,Gonzo Gear
-Particle Beam,Weapon,Laser,3,,,2,,,,Miniatures Set 4
-Turreted Particle Beam,Weapon,Laser,3,,,1,y,t,,Linked Weapons
-Bonesaw,Weapon,Melee,3,,,2,,,,Miniatures Set 1
-Armored Disruptor,Weapon,Shock,3,,,2,,,,Sonic Strike
-Disruptor,Weapon,Shock,3,,,2,,,,Miniatures Set 2
-Turreted Arc Rifle,Weapon,Shock,3,,,1,y,t,,Linked Weapons
-Heavy Machine Gun,Weapon,Shred,3,,,2,,,,Core
-Light Machine Gun Incendiary Rounds,Weapon,Shred,3,,,2,,,,Miniatures Set 3
-Scatter Gun,Weapon,Shred,3,,,2,,,,Miniatures Set 1
-Spike Gun,Weapon,Shred,3,,,2,,,,Uncle Al's Upgrade
-Standard Machine Gun Tracer Rounds,Weapon,Shred,3,,,2,,,,Uncle Al's Upgrade
-Turreted Machine Gun,Weapon,Shred,3,,,1,y,t,,Armory
-Turreted Shotgun,Weapon,Shred,3,,,1,y,t,,Linked Weapons
-Heavy Recoilless Rifle,Weapon,Slug,3,,,2,,,,Armory
-Jackhammer,Weapon,Slug,3,,,2,,,,Miniatures Set 3
-Standard Recoilless Rifle Explosive Rounds,Weapon,Slug,3,,,2,,,,Uncle Al's Upgrade
-Turreted Recoilless Rifle,Weapon,Slug,3,,,1,y,t,,Armory
-Ol' Yeller,Weapon,Sonic,3,,,2,,,,Sonic Strike
-Mako,Weapon,Blast,4,,,2,,,,Gonzo Gear
-Fire Lance,Weapon,Fire,4,,,2,,,,Miniatures Set 2
-Rapid-Cycle Laser,Weapon,Laser,4,,,2,,,,Miniatures Set 2
-Flamesaw,Weapon,Melee,4,,,2,,,,Gonzo Gear
-Arc Rifle,Weapon,Shock,4,,,2,,,,Miniatures Set 2
-Linked Standard Machine Guns,Weapon,Shred,4,,,2,,,,Linked Weapons
-Standard Machine Gun Incendiary Rounds,Weapon,Shred,4,,,2,,,,Miniatures Set 2
-Vulcan,Weapon,Shred,4,,,2,,,,Armory
-Anti-Tank Gun,Weapon,Slug,4,,,2,,,,Core
-Stovepipe,Weapon,Slug,4,,,2,,,,Miniatures Set 3
-Roman Candle,Weapon,Blast,5,,,2,,,,Gonzo Gear
-Pulse Laser,Weapon,Laser,5,,,2,,,,Miniatures Set 1
-Twin Laser,Weapon,Laser,5,,,2,,,,Uncle Al's Upgrade
-Flail,Weapon,Melee,5,,,2,,,,Gonzo Gear
-Betatron,Weapon,Shock,5,,,2,,,,Miniatures Set 4
-Linked Disruptors,Weapon,Shock,5,,,2,,,,Linked Weapons
-Heavy Machine Gun Incendiary Rounds,Weapon,Shred,5,,,2,,,,Miniatures Set 4
-Longbow,Weapon,Shred,5,,,2,,,,Uncle Al's Upgrade
-Ravager,Weapon,Shred,5,,,2,,,,Miniatures Set 3
-Thresher,Weapon,Shred,5,,,2,,,,Core
-Gator,Weapon,Slug,5,,,2,,,,Miniatures Set 2
-Gauss Cannon,Weapon,Slug,5,,,2,,,,Armory
-Howler,Weapon,Sonic,5,,,2,,,,Sonic Strike
-Hammerhead,Weapon,Blast,6,,,2,,fb,,Miniatures Set 3
-Heat Saber,Weapon,Fire,6,,,2,,fb,,Core
-Supercooled Laser,Weapon,Laser,6,,,2,,fb,,Miniatures Set 2
-Wrecking Ball,Weapon,Melee,6,,,2,,,Shaken,Gonzo Gear
-Thundergun,Weapon,Shock,6,,,2,,fb,,Miniatures Set 4
-Autocannon,Weapon,Shred,6,,,2,,fb,,Armory
-Buffalo Gun,Weapon,Slug,6,,,2,,fb,,Core
-Linked Jackhammers,Weapon,Slug,6,,,2,,fb,,Linked Weapons
-Mass Driver,Weapon,Slug,6,,,2,,fb,,Miniatures Set 4
-Big Whoop,Weapon,Sonic,6,,,2,,,,Sonic Strike
-Linked Pulse Lasers,Weapon,Laser,7,,,2,,fb,,Linked Weapons
-Quad Laser,Weapon,Laser,7,,,2,,fb,,Miniatures Set 4
-Lightning Scythe,Weapon,Shock,7,,,2,,fb,,Miniatures Set 2
-Grapeshot Cannon,Weapon,Shred,7,,,2,,fb,,Dropped Weapons
-Hellfire,Weapon,Shred,7,,,2,,fb,,Core
-Railgun,Weapon,Slug,7,,,2,,fb,,Armory
-The Anvil,Weapon,Slug,7,,,2,,fb,,Miniatures Set 1
-Banshee,Weapon,Sonic,7,,,2,,,,Sonic Strike
-Heavy Rocket,Weapon,Blast,8,,2,2,,fb,,Core
-Linked Hammerheads,Weapon,Blast,8,,,2,,fb,,Linked Weapons
-Turreted Heavy Rocket,Weapon,Blast,8,,,1,y,t,,Uncle Al's Upgrade
-Plasma Cannon,Weapon,Fire,8,,,2,,fb,,Miniatures Set 4
-Solid-State Laser,Weapon,Laser,8,,,2,,fb,,Miniatures Set 2
-Shockwave Cannon,Weapon,Shock,8,,,2,,fb,,Miniatures Set 3
-Minigun,Weapon,Shred,8,,,2,,fb,,Armory
-Devastator,Weapon,Slug,8,,,2,,fb,,Core
-Dreadnaught,Weapon,Slug,8,,,2,,fb,,Miniatures Set 1
+﻿Name,Type,Subtype,Build Point Cost,Crew Point Cost,Copies,Number Allowed,Exclusive,Sides,Prerequisite,Associated,Source
+Armored Beer Refrigerator,Accessory,,0,,,1,,,,,Core
+Grilled Cheese Dispenser,Accessory,,0,,,1,,,,,Sonic Strike
+Advanced Brakes,Accessory,,1,,,1,,b,,,Core
+Advanced Firing Interface,Accessory,,1,,,1,,,,,Miniatures Set 1
+Aerodynamic Fairings,Accessory,,1,,,1,,,,,Miniatures Set 1
+Automatic Fire Suppressor,Accessory,,1,,,1,,,,,Core
+Autopilot,Accessory,,1,,,1,,,,,Uncle Al's Upgrade
+Drag Chute,Accessory,,1,,,1,,b,,,Uncle Al's Upgrade
+Fire Extinguisher,Accessory,,1,,,1,,,,,Miniatures Set 3
+Magnetic Dampers,Accessory,,1,,,1,,,,,Miniatures Set 4
+Off-Road Suspension,Accessory,,1,,,1,,,,,Playmat 1
+Power Plant Superconductor,Accessory,,1,,,1,,b,,,Uncle Al's Upgrade
+Radar Detector,Accessory,,1,,,1,,,,,Uncle Al's Upgrade
+Regenerative Brakes,Accessory,,1,,,1,,,,,Miniatures Set 2
+Sharkfin Aero Package,Accessory,,1,,,1,,,,,Uncle Al's Upgrade
+Splitter,Accessory,,1,,,1,,f,,,Miniatures Set 3
+Spoiler,Accessory,,1,,,1,,fb,,,Miniatures Set 3
+Superbooster,Accessory,,1,,,1,,f,,,Core
+Targeting Computer,Accessory,,1,,,1,,,,,Core
+Boost Cell,Accessory,,2,,,1,,,,,Gonzo Gear
+Dynamic Suspension,Accessory,,2,,,1,,,,,Core
+High-Torque Differential,Accessory,,2,,,1,,,,,Miniatures Set 4
+Radar Jammer,Accessory,,2,,,1,,,,,Uncle Al's Upgrade
+Rugged Suspension,Accessory,,2,,,1,,,,,Miniatures Set 3
+Supplemental Power Cell,Accessory,,2,,,1,,,,,Uncle Al's Upgrade
+Thundercat Battery,Accessory,,2,,,1,,f,,,Miniatures Set 2
+Rookie,Crew,Driver,,0,,1,,,,,Core
+Wingnut,Crew,Driver,,0,,1,,,,,Crew
+Hound,Crew,Gunner,,0,,1,,,,,Crew
+Rookie,Crew,Gunner,,0,,1,,,,,Core
+Ghost,Crew,Driver,,1,,1,,,,,Uncle Al's Upgrade
+Mamba,Crew,Driver,,1,,1,,,,,Crew
+Slick,Crew,Driver,,1,,1,,,,,Gonzo Gear
+Smokey,Crew,Driver,,1,,1,,,,,Gonzo Gear
+Hacker,Crew,Gunner,,1,,1,,,,,Uncle Al's Upgrade
+Whiplash,Crew,Gunner,,1,,1,,,,,Crew
+Amateur,Crew,Driver,,2,,1,,,,,Core
+Hoon,Crew,Driver,,2,,1,,,,,Gonzo Gear
+Leadfoot,Crew,Driver,,2,,1,,,,,Sonic Strike
+Possum,Crew,Driver,,2,,1,,,,,Crew
+Rhino,Crew,Driver,,2,,1,,,,,Uncle Al's Upgrade
+Amateur,Crew,Gunner,,2,,1,,,,,Core
+Blitz,Crew,Gunner,,2,,1,,,,,Gonzo Gear
+Machete,Crew,Gunner,,2,,1,,,,,Crew
+Photon,Crew,Gunner,,2,,1,,,,,Gonzo Gear
+Pyro,Crew,Gunner,,2,,1,,,,,Uncle Al's Upgrade
+Rowdy,Crew,Gunner,,2,,1,,,,,Gonzo Gear
+Siren,Crew,Gunner,,2,,1,,,,,Sonic Strike
+Striker,Crew,Gunner,,2,,1,,,,,Sonic Strike
+Tex,Crew,Gunner,,2,,1,,,,,Sonic Strike
+Burnout,Crew,Driver,,3,,1,,,,,Sonic Strike
+Medusa,Crew,Driver,,3,,1,,,,,Crew
+Scorpion,Crew,Driver,,3,,1,,,,,Crew
+Grendel,Crew,Gunner,,3,,1,,,,,Crew
+Vandal,Crew,Gunner,,3,,1,,,,,Crew
+Bandit,Crew,Driver,,4,,1,,,,,Crew
+Turtle,Crew,Driver,,4,,1,,,,,Sonic Strike
+Veteran,Crew,Driver,,4,,1,,,,,Core
+Monarch,Crew,Gunner,,4,,1,,,,,Crew
+Veteran,Crew,Gunner,,4,,1,,,,,Core
+Alpine,Crew,Driver,,5,,1,,,,,Crew
+Rockwolf,Crew,Driver,,5,,1,,,,,Crew
+Hyperion,Crew,Gunner,,5,,1,,,,,Crew
+Max,Crew,Gunner,,5,,1,,,,,Crew
+Legend,Crew,Driver,,6,,1,,,,,Core
+Ranger,Crew,Driver,,6,,1,,,,,Crew
+Fang,Crew,Gunner,,6,,1,,,,,Crew
+Legend,Crew,Gunner,,6,,1,,,,,Core
+Crash Suit,Gear,Vest,,0,,1,,,,,Gonzo Gear
+Driving Gloves,Gear,Gloves,,1,,1,,,,,Crew
+Holographic Sight,Gear,Optic,,1,,1,,,,,Core
+Fire Suit,Gear,Vest,,1,,1,,,,,Sonic Strike
+Flak Jacket,Gear,Vest,,1,,1,,,,,Core
+Driving Boots,Gear,,,1,,1,,,,,Crew
+First-Aid Kit,Gear,,,1,,1,,,,,Crew
+HUD Goggles,Gear,,,1,,1,,,,,Crew
+Plated Vest,Gear,Vest,,1,,1,,,,,Uncle Al's Upgrade
+Steady-Aim Gimbal,Gear,,,1,,1,,,,,Uncle Al's Upgrade
+Taco!,Gear,,,1,,1,,,,,Uncle Al's Upgrade
+Hand Cannon,Sidearm,,,0,,1,,,,,Core
+Assault Rifle,Sidearm,,,1,,1,,,,,Core
+Blender,Sidearm,,,1,,1,,,,,Gonzo Gear
+Bug Zapper,Sidearm,,,1,,1,,,,,Crew
+Concussion Grenades,Sidearm,,,1,,1,,,,,Crew
+Doubleshot,Sidearm,,,1,,1,,,,,Sonic Strike
+Electrostatic Grenade,Sidearm,,,1,,1,,,,Overload,Sonic Strike
+Fragmentation Grenade,Sidearm,,,1,,1,,,,,Sonic Strike
+Juicer,Sidearm,,,1,,1,,,,,Sonic Strike
+Katana,Sidearm,,,1,,1,,,,,Gonzo Gear
+Killstreak,Sidearm,,,1,,1,,,,,Crew
+Micro-Rocket Launcher,Sidearm,,,1,,1,,,,Shaken,Gonzo Gear
+Paint Grenades,Sidearm,,,1,,1,,,,Paint,Dropped Weapons
+Radar Transmitter,Sidearm,,,1,,1,,,,,Uncle Al's Upgrade
+Rocket-Propelled Grenade,Sidearm,,,1,,1,,,,,Gonzo Gear
+Sawed-Off Shotgun,Sidearm,,,1,,1,,,,,Gonzo Gear
+Thermite Grenades,Sidearm,,,1,,1,,,,,Crew
+Toaster,Sidearm,,,1,,1,,,,,Sonic Strike
+Cast Iron Plate A,Structure,,0,,,1,,,,,Gonzo Gear
+Cast Iron Plate B,Structure,,0,,,1,,,Cast iron Plate A,,Gonzo Gear
+Cast Iron Plate C,Structure,,0,,,1,,,Cast iron Plate B,,Gonzo Gear
+Cast iron Plate D,Structure,,0,,,1,,,Cast iron Plate C,,Gonzo Gear
+Light Ceramic Plate,Structure,,1,,,4,,,,,Miniatures Set 2
+Light Steel Plate,Structure,,1,,,4,,,,,Miniatures Set 3
+Carbon Laminate,Structure,,2,,,4,,,,,Miniatures Set 1
+Light Plastic Cladding,Structure,,2,,,4,,,,,Miniatures Set 1
+Standard Ceramic Plate,Structure,,2,,,4,,,,,Miniatures Set 2
+Standard Steel Plate,Structure,,2,,,4,,,,,Core
+Experimental Ablative Cladding,Structure,,3,,,4,,,,,Miniatures Set 1
+Heavy Ceramic Plate,Structure,,3,,,4,,,,,Miniatures Set 1
+Heavy Plastic Cladding,Structure,,3,,,4,,,,,Miniatures Set 4
+Heavy Steel Plate,Structure,,3,,,4,,,,,Miniatures Set 3
+Ramplate,Structure,,3,,,1,,f,,,Miniatures Set 3
+Standard Composite Plate,Structure,,3,,,4,,,,,Miniatures Set 4
+The Slab,Structure,,3,,,1,,b,,,Dropped Weapons
+Titanium Laminate,Structure,,3,,,4,,,,,Miniatures Set 3
+Ballistic Shell,Structure,,4,,,4,,,,,Playmat 1
+Heavy Composite Plate,Structure,,4,,,4,,,,,Miniatures Set 2
+Kinetic Diffuser,Structure,,4,,,4,,,,,Road Tiles
+Super Heavy Ceramic Plate,Structure,,4,,,4,,,,,Miniatures Set 3
+Super Heavy Steel Plate,Structure,,4,,,4,,,,,Miniatures Set 4
+Fake Passenger,Upgrade,,0,,,1,,,,,Gonzo Gear
+Weapons Locker,Upgrade,,1,1,,1,,,,,Sonic Strike
+Bumper Spikes,Upgrade,Frame,1,,,1,,,,,Miniatures Set 1
+Chassis Brace,Upgrade,Frame,1,,,1,,,,,Core
+Flame Jets,Upgrade,Frame,1,,,1,,,,,Miniatures Set 4
+Punchbumper,Upgrade,Frame,1,,,1,,,,,Dropped Weapons
+Roll Bar,Upgrade,Frame,1,,,1,,,,,Miniatures Set 2
+Reinforced Weapon Brackets,Upgrade,Mount,1,,,1,,,,,Miniatures Set 2
+Airless Tires,Upgrade,Wheels,1,,,1,,,,,Miniatures Set 1
+Off-Road Tires,Upgrade,Wheels,1,,,1,,,,,Playmat 1
+Racing Slicks,Upgrade,Wheels,1,,,1,,,,,Gonzo Gear
+Advanced Targeting Computer,Upgrade,,1,,,1,,,Targeting Computer,,Gonzo Gear
+Defibrillator,Upgrade,,1,,,1,,,,,Gonzo Gear
+Gyroscopic Stabilizer,Upgrade,,1,,,1,,,,,Miniatures Set 4
+Stability Controller,Upgrade,,1,-1,,1,,,,,Crew
+Wheel Guards,Upgrade,,1,,,1,,,,,Miniatures Set 4
+Active Camouflage,Upgrade,Coating,2,,,1,,,,,Uncle Al's Upgrade
+Safety Cage,Upgrade,Frame,2,,,1,,,,,Core
+Strengthened Undercarriage,Upgrade,Frame,2,,,1,,,,,Core
+High Density Radials,Upgrade,Wheels,2,,,1,,,,,Core
+Run-Flat System,Upgrade,Wheels,2,,,1,,,,,Miniatures Set 2
+Sticky Rubber,Upgrade,Wheels,2,,,1,,,,,Gonzo Gear
+Cadmium Alloy Fasteners,Upgrade,,2,,,1,,,,,Uncle Al's Upgrade
+Power Plant Shielding,Upgrade,,2,,,1,,,,,Uncle Al's Upgrade
+Wheel Hubs,Upgrade,,2,,,1,,,,,Miniatures Set 1
+EM Distortion Field,Upgrade,Coating,3,,,1,,,,,Armory
+Fire-Resistant Coating,Upgrade,Coating,3,,,1,,,,,Uncle Al's Upgrade
+Laser-Reflective Coating,Upgrade,Coating,3,,,1,,,,,Uncle Al's Upgrade
+Reactive Defense System,Upgrade,,3,,,1,,,,,Uncle Al's Upgrade
+Simple Concealment System,Upgrade,,4,,,1,,,,,Uncle Al's Upgrade
+Complex Concealment System,Upgrade,,8,,,1,,,,,Uncle Al's Upgrade
+Armor Piercing Rocket,Weapon,Blast,1,,,2,,,,,Uncle Al's Upgrade
+Firecracker,Weapon,Blast,1,,,2,,,,,Miniatures Set 2
+Laser-Guided Light Rocket,Weapon,Blast,1,,,2,,,,,Uncle Al's Upgrade
+Light Rocket,Weapon,Blast,1,,2,2,,,,,Miniatures Set 1
+Fake Machine Gun,Weapon,Decoy,1,,2,2,,,,,Gonzo Gear
+Concussion Mine Dropper,Weapon,Drop,1,,,1,,,,Concussion Mine,Dropped Weapons
+Fire Mine Dropper,Weapon,Drop,1,,,1,,,,Fire Mine,Dropped Weapons
+Foam Nozzle,Weapon,Drop,1,,,1,,,,Foam,Dropped Weapons
+Oil Jets,Weapon,Drop,1,,,1,,,,Oil,Dropped Weapons
+Smoke Emitter,Weapon,Drop,1,,,1,,,,Smoke,Dropped Weapons
+Spike Dropper,Weapon,Drop,1,,,1,,,,Spikes,Dropped Weapons
+Light Incendiary Rocket,Weapon,Fire,1,,,2,,,,,Uncle Al's Upgrade
+Brushcutter,Weapon,Melee,1,,,2,,,,,Miniatures Set 3
+Light Machine Gun,Weapon,Shred,1,,,2,,,,,Core
+Peppermill,Weapon,Shred,1,,,2,,,,,Miniatures Set 1
+Wasp,Weapon,Shred,1,,,2,,,,,Miniatures Set 4
+Light Recoilless Rifle,Weapon,Slug,1,,,2,,,,,Armory
+Slingshot,Weapon,Slug,1,,,2,,,,,Miniatures Set 4
+Flamethrower,Weapon,Fire,2,,,2,,,,,Core
+Electrolaser,Weapon,Laser,2,,,2,,,,,Miniatures Set 3
+Linked Brushcutters,Weapon,Melee,2,,,2,,,,,Linked Weapons
+Electrostatic Beam,Weapon,Shock,2,,,2,,,,Overload,Sonic Strike
+Joy Buzzer,Weapon,Shock,2,,,2,,,,,Sonic Strike
+Armored Machine Gun,Weapon,Shred,2,,,2,,,,,Uncle Al's Upgrade
+Linked Shotguns,Weapon,Shred,2,,,2,,,,,Linked Weapons
+Standard Machine Gun,Weapon,Shred,2,,,2,,,,,Armory
+Stinger,Weapon,Shred,2,,,2,,,,,Miniatures Set 4
+Armored Recoilless Rifle,Weapon,Slug,2,,,2,,,,,Sonic Strike
+Javelin,Weapon,Slug,2,,,2,,,,,Miniatures Set 1
+Standard Recoilless Rifle,Weapon,Slug,2,,,2,,,,,Core
+Whistler,Weapon,Sonic,2,,,2,,,,,Sonic Strike
+Anti-Power Plant Rocket,Weapon,Blast,3,,,1,y,,,,Uncle Al's Upgrade
+Standard Rocket,Weapon,Blast,3,,2,2,,,,,Core
+Turreted Light Rocket,Weapon,Blast,3,,,1,y,t,,,Linked Weapons
+Turreted Micro-Missile,Weapon,Blast,3,,,1,y,t,,,Uncle Al's Upgrade
+Armored Firebolt,Weapon,Fire,3,,,2,,,,,Sonic Strike
+Linked Flamethrowers,Weapon,Fire,3,,,2,,,,,Linked Weapons
+Standard Incendiary Rocket,Weapon,Fire,3,,,2,,,,,Sonic Strike
+Turreted Flamethrower,Weapon,Fire,3,,,1,y,t,,,Armory
+Armored Particle Beam,Weapon,Laser,3,,,2,,,,,Gonzo Gear
+Particle Beam,Weapon,Laser,3,,,2,,,,,Miniatures Set 4
+Turreted Particle Beam,Weapon,Laser,3,,,1,y,t,,,Linked Weapons
+Bonesaw,Weapon,Melee,3,,,2,,,,,Miniatures Set 1
+Armored Disruptor,Weapon,Shock,3,,,2,,,,,Sonic Strike
+Disruptor,Weapon,Shock,3,,,2,,,,,Miniatures Set 2
+Turreted Arc Rifle,Weapon,Shock,3,,,1,y,t,,,Linked Weapons
+Heavy Machine Gun,Weapon,Shred,3,,,2,,,,,Core
+Light Machine Gun Incendiary Rounds,Weapon,Shred,3,,,2,,,,,Miniatures Set 3
+Scatter Gun,Weapon,Shred,3,,,2,,,,,Miniatures Set 1
+Spike Gun,Weapon,Shred,3,,,2,,,,,Uncle Al's Upgrade
+Standard Machine Gun Tracer Rounds,Weapon,Shred,3,,,2,,,,,Uncle Al's Upgrade
+Turreted Machine Gun,Weapon,Shred,3,,,1,y,t,,,Armory
+Turreted Shotgun,Weapon,Shred,3,,,1,y,t,,,Linked Weapons
+Heavy Recoilless Rifle,Weapon,Slug,3,,,2,,,,,Armory
+Jackhammer,Weapon,Slug,3,,,2,,,,,Miniatures Set 3
+Standard Recoilless Rifle Explosive Rounds,Weapon,Slug,3,,,2,,,,,Uncle Al's Upgrade
+Turreted Recoilless Rifle,Weapon,Slug,3,,,1,y,t,,,Armory
+Ol' Yeller,Weapon,Sonic,3,,,2,,,,,Sonic Strike
+Mako,Weapon,Blast,4,,,2,,,,,Gonzo Gear
+Fire Lance,Weapon,Fire,4,,,2,,,,,Miniatures Set 2
+Rapid-Cycle Laser,Weapon,Laser,4,,,2,,,,,Miniatures Set 2
+Flamesaw,Weapon,Melee,4,,,2,,,,,Gonzo Gear
+Arc Rifle,Weapon,Shock,4,,,2,,,,,Miniatures Set 2
+Linked Standard Machine Guns,Weapon,Shred,4,,,2,,,,,Linked Weapons
+Standard Machine Gun Incendiary Rounds,Weapon,Shred,4,,,2,,,,,Miniatures Set 2
+Vulcan,Weapon,Shred,4,,,2,,,,,Armory
+Anti-Tank Gun,Weapon,Slug,4,,,2,,,,,Core
+Stovepipe,Weapon,Slug,4,,,2,,,,,Miniatures Set 3
+Roman Candle,Weapon,Blast,5,,,2,,,,,Gonzo Gear
+Pulse Laser,Weapon,Laser,5,,,2,,,,,Miniatures Set 1
+Twin Laser,Weapon,Laser,5,,,2,,,,,Uncle Al's Upgrade
+Flail,Weapon,Melee,5,,,2,,,,,Gonzo Gear
+Betatron,Weapon,Shock,5,,,2,,,,,Miniatures Set 4
+Linked Disruptors,Weapon,Shock,5,,,2,,,,,Linked Weapons
+Heavy Machine Gun Incendiary Rounds,Weapon,Shred,5,,,2,,,,,Miniatures Set 4
+Longbow,Weapon,Shred,5,,,2,,,,,Uncle Al's Upgrade
+Ravager,Weapon,Shred,5,,,2,,,,,Miniatures Set 3
+Thresher,Weapon,Shred,5,,,2,,,,,Core
+Gator,Weapon,Slug,5,,,2,,,,,Miniatures Set 2
+Gauss Cannon,Weapon,Slug,5,,,2,,,,,Armory
+Howler,Weapon,Sonic,5,,,2,,,,,Sonic Strike
+Hammerhead,Weapon,Blast,6,,,2,,fb,,,Miniatures Set 3
+Heat Saber,Weapon,Fire,6,,,2,,fb,,,Core
+Supercooled Laser,Weapon,Laser,6,,,2,,fb,,,Miniatures Set 2
+Wrecking Ball,Weapon,Melee,6,,,2,,,,Shaken,Gonzo Gear
+Thundergun,Weapon,Shock,6,,,2,,fb,,,Miniatures Set 4
+Autocannon,Weapon,Shred,6,,,2,,fb,,,Armory
+Buffalo Gun,Weapon,Slug,6,,,2,,fb,,,Core
+Linked Jackhammers,Weapon,Slug,6,,,2,,fb,,,Linked Weapons
+Mass Driver,Weapon,Slug,6,,,2,,fb,,,Miniatures Set 4
+Big Whoop,Weapon,Sonic,6,,,2,,,,,Sonic Strike
+Linked Pulse Lasers,Weapon,Laser,7,,,2,,fb,,,Linked Weapons
+Quad Laser,Weapon,Laser,7,,,2,,fb,,,Miniatures Set 4
+Lightning Scythe,Weapon,Shock,7,,,2,,fb,,,Miniatures Set 2
+Grapeshot Cannon,Weapon,Shred,7,,,2,,fb,,,Dropped Weapons
+Hellfire,Weapon,Shred,7,,,2,,fb,,,Core
+Railgun,Weapon,Slug,7,,,2,,fb,,,Armory
+The Anvil,Weapon,Slug,7,,,2,,fb,,,Miniatures Set 1
+Banshee,Weapon,Sonic,7,,,2,,,,,Sonic Strike
+Heavy Rocket,Weapon,Blast,8,,2,2,,fb,,,Core
+Linked Hammerheads,Weapon,Blast,8,,,2,,fb,,,Linked Weapons
+Turreted Heavy Rocket,Weapon,Blast,8,,,1,y,t,,,Uncle Al's Upgrade
+Plasma Cannon,Weapon,Fire,8,,,2,,fb,,,Miniatures Set 4
+Solid-State Laser,Weapon,Laser,8,,,2,,fb,,,Miniatures Set 2
+Shockwave Cannon,Weapon,Shock,8,,,2,,fb,,,Miniatures Set 3
+Minigun,Weapon,Shred,8,,,2,,fb,,,Armory
+Devastator,Weapon,Slug,8,,,2,,fb,,,Core
+Dreadnaught,Weapon,Slug,8,,,2,,fb,,,Miniatures Set 1
