@@ -79,6 +79,7 @@ interface CardValidationResult {
     | 'exclusive_limit_reached'
     | 'missing_prerequisite'
     | 'has_dependent_cards'
+    | 'number_allowed_exceeded'
     | 'invalid_side';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
@@ -86,6 +87,8 @@ interface CardValidationResult {
   weaponCost?: number;
   pointLimit?: number;
   invalidSide?: string;
+  currentCount?: number;
+  maxAllowed?: number;
 }
 
 interface CardStore {

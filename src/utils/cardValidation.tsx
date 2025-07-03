@@ -46,6 +46,7 @@ export interface CardValidationResult {
     | 'exclusive_limit_reached'
     | 'missing_prerequisite'
     | 'has_dependent_cards'
+    | 'number_allowed_exceeded'
     | 'invalid_side';
   conflictingCard?: Card;
   crewType?: 'Driver' | 'Gunner';
@@ -53,6 +54,35 @@ export interface CardValidationResult {
   weaponCost?: number;
   pointLimit?: number;
   invalidSide?: string;
+  currentCount?: number;
+  maxAllowed?: number;
+}
+
+/**
+ * Check if adding a card would exceed the number allowed limit
+ * @param card The card to check
+ * @param deckCards Current cards in the deck
+ * @returns Object with warning info if limit would be exceeded, null otherwise
+ */
+export function checkNumberAllowedWarning(
+  card: Card,
+  deckCards: Card[]
+): { currentCount: number; maxAllowed: number } | null {
+  if (card.numberAllowed > 0) {
+    // Count how many cards with the same name are already in the deck
+    const currentCount = deckCards.filter(
+      c => c.name.toLowerCase() === card.name.toLowerCase()
+    ).length;
+
+    // If adding this card would exceed the limit
+    if (currentCount >= card.numberAllowed) {
+      return {
+        currentCount,
+        maxAllowed: card.numberAllowed,
+      };
+    }
+  }
+  return null;
 }
 
 /**
@@ -82,6 +112,9 @@ export function validateCardForDeck(
       };
     }
   }
+
+  // Note: numberAllowed is now handled separately as a warning, not a blocking validation
+  // See checkNumberAllowedWarning function
 
   // Calculate available points
   const availablePoints = {
@@ -382,6 +415,7 @@ export function useCardValidationErrors() {
           showToast(`Cannot add ${cardName}. It requires a prerequisite card.`, 'error');
         }
         break;
+      // number_allowed_exceeded is now handled as a warning with confirmation, not a blocking error
       case 'duplicate_gear':
         showToast(`You can only equip one copy of each gear card.`, 'error');
         break;
@@ -483,7 +517,7 @@ export function validateAndAddCard(
     cardType: string,
     cardSubtype?: string
   ) => void
-): boolean {
+): Promise<boolean> {
   // Extra validation for Turret area - only cards with 't' in sides can go there
   if (targetArea === CardArea.Turret) {
     if (!card.sides || !card.sides.toLowerCase().includes('t')) {
@@ -493,21 +527,24 @@ export function validateAndAddCard(
           'error'
         );
       }
-      return false;
+      return Promise.resolve(false);
     }
   }
 
   // Use the central validation function - pass the target area to ensure structure limits are checked
   const validationResult = canAddCardToDeck(card, targetArea);
 
-  // If validation passes, add the card
+  // If validation passes, check for numberAllowed warnings
   if (validationResult.allowed) {
-    // Pass the original card ID to addToDeck which will now generate a unique ID internally
+    // Note: numberAllowed warnings are now handled directly in the Card component
+    // so we don't need to check for them here
+
+    // No warning or no confirmation function, add the card directly
     addToDeck(card.id, targetArea, true);
     if (showToast) {
       showToast(`Added ${card.name} to your vehicle`, 'success');
     }
-    return true;
+    return Promise.resolve(true);
   } else {
     // Use the validation error handler if available
     if (handleValidationError) {
@@ -516,7 +553,7 @@ export function validateAndAddCard(
       // Fallback if no handler is provided but we have toast
       showToast(`Cannot add ${card.name} to your vehicle`, 'error');
     }
-    return false;
+    return Promise.resolve(false);
   }
 }
 

@@ -10,8 +10,13 @@ import {
   CardArea,
   CardType as CardTypeEnum,
 } from '@/types/types';
-import { useCardValidationErrors, validateAndAddCard } from '@/utils/cardValidation';
+import {
+  useCardValidationErrors,
+  validateAndAddCard,
+  checkNumberAllowedWarning,
+} from '@/utils/cardValidation';
 import { deleteCardImage } from '@/utils/cardDelete';
+import { useConfirmationDialog } from './useConfirmationDialog';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCaretDown,
@@ -58,14 +63,21 @@ export function Card({
   onMouseEnter,
   onMouseLeave,
 }: CardProps) {
-  const { removeFromCollection, removeFromDeck, addToDeck, canAddCardToDeck, canRemoveFromDeck } =
-    useCardStore();
+  const {
+    removeFromCollection,
+    removeFromDeck,
+    addToDeck,
+    canAddCardToDeck,
+    canRemoveFromDeck,
+    currentDeck,
+  } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showQuickAdd] = useState(false);
   const [associatedCard, setAssociatedCard] = useState<CardType | null>(null);
   const [showingAssociatedCard, setShowingAssociatedCard] = useState(false);
   const { showToast } = useToast();
   const { handleValidationError } = useCardValidationErrors();
+  const { confirm, dialog: confirmationDialog } = useConfirmationDialog();
 
   const [{ isDragging }, dragRef] = useDrag<DragItem, unknown, { isDragging: boolean }>({
     type: 'CARD',
@@ -81,11 +93,11 @@ export function Card({
 
     if (isInCollection) {
       // When in collection, ask for confirmation as it will remove all instances from the deck too
-      if (
-        confirm(
-          `Are you sure you want to delete the card "${card.name}"? This will also remove any instances from your deck.`
-        )
-      ) {
+      const confirmed = await confirm({
+        message: `Are you sure you want to delete the card "${card.name}"? This will also remove any instances from your deck.`,
+      });
+
+      if (confirmed) {
         console.log('Deleting card from collection:', card);
         try {
           // First delete the physical image file
@@ -132,38 +144,61 @@ export function Card({
   };
 
   // Helper to add multiple copies if needed, but only deduct cost once
-  const addCopiesToDeck = (area?: CardArea) => {
+  const addCopiesToDeck = async (area?: CardArea) => {
     const copiesToAdd = card.copies && card.copies > 1 ? card.copies : 1;
     let added = false;
+
     if (copiesToAdd > 0) {
+      // Check for numberAllowed warning first
+      const deckCards = currentDeck?.cards || [];
+      const warning = checkNumberAllowedWarning(card, deckCards);
+
+      // If adding would exceed the number allowed, show a confirmation dialog
+      if (warning) {
+        const confirmed = await confirm({
+          title: 'Card Limit Warning',
+          message: `You already have ${warning.currentCount} copies of "${card.name}" on your vehicle, but you may only have ${warning.maxAllowed} physical copies of the card. Add anyway?`,
+          confirmText: 'Add Anyway',
+          cancelText: 'Cancel',
+        });
+
+        if (!confirmed) {
+          return false;
+        }
+      }
+
       // First copy: validate and deduct cost
-      const cardAdded = validateAndAddCard(
+      const cardAdded = await validateAndAddCard(
         card,
         { canAddCardToDeck, addToDeck },
         area,
         showToast,
         handleValidationError
       );
-      if (cardAdded) added = true;
-      // Remaining copies: add directly, no cost/validation
-      for (let i = 1; i < copiesToAdd; i++) {
-        // Pass deductCost: false for extra copies (update your store logic to support this)
-        addToDeck(card.id, area, false);
+
+      if (cardAdded) {
+        added = true;
+
+        // Remaining copies: add directly, no cost/validation
+        for (let i = 1; i < copiesToAdd; i++) {
+          // Pass deductCost: false for extra copies
+          addToDeck(card.id, area, false);
+        }
       }
     }
     return added;
   };
 
-  const handleAddToDeck = (e: React.MouseEvent, area?: CardArea) => {
+  const handleAddToDeck = async (e: React.MouseEvent, area?: CardArea) => {
     e.stopPropagation();
-    const added = addCopiesToDeck(area);
+    const added = await addCopiesToDeck(area);
     if (added) {
       setIsPreviewOpen(false); // Close the preview after adding
     }
   };
 
-  const handleQuickAdd = (area: CardArea) => {
-    addCopiesToDeck(area);
+  const handleQuickAdd = async (area: CardArea) => {
+    await addCopiesToDeck(area);
   };
   const openPreview = () => {
     if (!isDragging && !isPreviewOpen) {
@@ -257,6 +292,7 @@ export function Card({
 
   return (
     <>
+      {confirmationDialog}
       <div
         ref={node => {
           if (dragRef) {
