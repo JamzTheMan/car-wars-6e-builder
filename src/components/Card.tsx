@@ -2,7 +2,7 @@
 
 import { useToast } from './Toast';
 import { useCardStore } from '@/store/cardStore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import {
   canCardTypeGoInArea,
@@ -61,6 +61,7 @@ export function Card({
   const { removeFromCollection, removeFromDeck, addToDeck, canAddCardToDeck } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showQuickAdd] = useState(false);
+  const [associatedCard, setAssociatedCard] = useState<CardType | null>(null);
   const { showToast } = useToast();
   const { handleValidationError } = useCardValidationErrors();
 
@@ -150,12 +151,62 @@ export function Card({
   const openPreview = () => {
     if (!isDragging && !isPreviewOpen) {
       setIsPreviewOpen(true);
+
+      // If the card has an associated field, try to find that card's image
+      if (card.associated && card.associated.trim() !== '') {
+        fetchAssociatedCard(card.associated);
+      } else {
+        setAssociatedCard(null);
+      }
+    }
+  };
+
+  // Function to fetch associated card image
+  const fetchAssociatedCard = async (associatedCardName: string) => {
+    try {
+      const response = await fetch('/api/check-card-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cardName: card.name, // Original card name for context
+          associatedName: associatedCardName, // The associated card we're looking for
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.exists) {
+          // Create a simplified card object for the associated card
+          setAssociatedCard({
+            id: `associated-${Date.now()}`,
+            name: associatedCardName,
+            imageUrl: result.imageUrl,
+            type: CardTypeEnum.Accessory, // Default type, doesn't matter for display only
+            subtype: '',
+            buildPointCost: 0,
+            crewPointCost: 0,
+            numberAllowed: 0,
+            source: '',
+            copies: 1,
+            exclusive: false,
+            sides: '',
+          });
+        } else {
+          setAssociatedCard(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching associated card:', error);
+      setAssociatedCard(null);
     }
   };
 
   const closePreview = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsPreviewOpen(false);
+    setAssociatedCard(null);
   };
   // Function to get available areas for a card based on its type
   const getAvailableAreas = (cardType: CardTypeEnum): CardArea[] => {
@@ -369,6 +420,21 @@ export function Card({
                     alt={card.name}
                     className="w-full h-auto object-contain max-h-[77vh] rounded-md shadow-md"
                   />
+
+                  {/* Associated card display */}
+                  {associatedCard && (
+                    <div className="mt-4">
+                      <h4 className="text-lg font-semibold mb-2 text-gray-700">Associated Card:</h4>
+                      <div className="border border-gray-300 rounded-md p-2">
+                        <h5 className="font-medium text-gray-800 mb-1">{associatedCard.name}</h5>
+                        <img
+                          src={associatedCard.imageUrl}
+                          alt={associatedCard.name}
+                          className="w-full h-auto object-contain rounded-md shadow-sm"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="w-full md:w-1/2 flex-shrink-0">
                   <div className="mb-4">

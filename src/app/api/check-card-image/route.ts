@@ -19,9 +19,12 @@ function normalizeForComparison(name: string): string {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { cardName, cardType, cardSubtype } = await request.json();
+    const { cardName, cardType, cardSubtype, associatedName } = await request.json();
+    
+    // If this is a request to check for an associated card, use that name instead
+    const nameToCheck = associatedName || cardName;
 
-    if (!cardName) {
+    if (!nameToCheck) {
       return NextResponse.json({ exists: false });
     }
 
@@ -36,14 +39,14 @@ export async function POST(request: NextRequest) {
     const files = fs.readdirSync(uploadsDir);
 
     // Look for files that match the card name (case insensitive)
-    const cardNameLower = cardName.toLowerCase();
+    const cardNameLower = nameToCheck.toLowerCase();
 
     // Create versions with different space/underscore formats
     const cardNameWithUnderscores = cardNameLower.replace(/ /g, '_');
     const cardNameWithSpaces = cardNameLower.replace(/_/g, ' ');
 
     // Create a normalized version for fuzzy matching
-    const normalizedCardName = normalizeForComparison(cardName);
+    const normalizedCardName = normalizeForComparison(nameToCheck);
 
     // First check for exact matches (with all possible space/underscore variations)
     const exactMatch = files.find(file => {

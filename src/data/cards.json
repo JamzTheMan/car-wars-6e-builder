@@ -11,7 +11,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "484ce3bc-ea5c-4a65-860e-ee19d5e6e05e"
+    "associated": "",
+    "id": "c8927b52-9172-409e-b79b-ec649755a60a"
   },
   {
     "name": "Wingnut",
@@ -25,7 +26,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "752bfe93-6b73-4ffd-8f74-3bffc605f59e"
+    "associated": "",
+    "id": "0ac65205-b368-4811-9d9f-4e86dbb57fee"
   },
   {
     "name": "Ghost",
@@ -39,7 +41,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "c8d6ab98-656a-4066-81a4-5730ef825ffa"
+    "associated": "",
+    "id": "743e472d-af90-4c39-b6ee-48f51a193cea"
   },
   {
     "name": "Mamba",
@@ -53,7 +56,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a10a7a86-e434-4e08-b387-75569b888d5e"
+    "associated": "",
+    "id": "41bca3a1-ac4f-49b5-a7d3-6f5c7fa9a0d7"
   },
   {
     "name": "Slick",
@@ -67,7 +71,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f1bf4ba3-293a-46f0-ad8a-a720a3b15802"
+    "associated": "",
+    "id": "02ed01ba-bce9-44a7-9bcf-91d094721df3"
   },
   {
     "name": "Smokey",
@@ -81,7 +86,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "55021f84-9530-4cb2-8a18-90552909b2b6"
+    "associated": "",
+    "id": "453209cb-278b-4f4e-bd70-925cc8d24273"
   },
   {
     "name": "Amateur",
@@ -95,7 +101,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "da33f0d2-766e-4d19-93ce-1e452ee691e1"
+    "associated": "",
+    "id": "0cb2acd5-e535-46cf-a177-2b6b8cfd710e"
   },
   {
     "name": "Hoon",
@@ -109,7 +116,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fd2aafc2-24da-40f2-8128-df214af1987a"
+    "associated": "",
+    "id": "b71a3021-4f81-445e-bc36-c48a3215e4fb"
   },
   {
     "name": "Leadfoot",
@@ -123,7 +131,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "1e6814bf-c4d9-4862-b188-9020903efb83"
+    "associated": "",
+    "id": "2317db15-64cb-48ee-a732-14fb1b451178"
   },
   {
     "name": "Possum",
@@ -137,7 +146,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ddcfd4dc-6e84-4f9b-9de5-c4040954cdce"
+    "associated": "",
+    "id": "be9a3ef7-d123-40c3-8e35-25318cd70a39"
   },
   {
     "name": "Rhino",
@@ -151,7 +161,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "7b68d32d-195b-4f87-81e3-f0620439658d"
+    "associated": "",
+    "id": "2a73a4cb-4a66-4fbb-8e1e-dbe689cdab3e"
   },
   {
     "name": "Burnout",
@@ -165,7 +176,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "7a322cda-8943-4db2-ae72-17de5e35af49"
+    "associated": "",
+    "id": "65fb6fe0-4a1b-454e-a510-68205e9b567a"
   },
   {
     "name": "Medusa",
@@ -179,7 +191,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f71d823d-7892-4dd1-a64c-e3d6964ec4ff"
+    "associated": "",
+    "id": "dbccad1a-04e3-4cdc-bf0c-2a5c3e7b1f9a"
   },
   {
     "name": "Scorpion",
@@ -193,7 +206,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "32b9811e-4c9f-4318-bac0-de1fbfd0c45e"
+    "associated": "",
+    "id": "76e90686-cd25-47f8-986e-cd68bc4faa23"
   },
   {
     "name": "Bandit",
@@ -207,7 +221,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "87b47ce5-4d51-4aaa-ba57-3181bcf445b8"
+    "associated": "",
+    "id": "ead00ba1-22ee-4d30-ab26-b6fe1ca23c43"
   },
   {
     "name": "Turtle",
@@ -221,7 +236,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "73fbd257-0d33-4a18-8ddd-4840bca1519d"
+    "associated": "",
+    "id": "fcab51f9-8794-4f88-8e68-98c9a71a0233"
   },
   {
     "name": "Veteran",
@@ -235,7 +251,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4df5f592-1918-4d77-a642-cb000af7f1f2"
+    "associated": "",
+    "id": "e34b7e52-6b60-44b8-823b-b61df227295f"
   },
   {
     "name": "Alpine",
@@ -249,7 +266,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b3ca24a4-88a6-459b-9ea5-6b0c7e5a4d13"
+    "associated": "",
+    "id": "7d589788-e409-4322-92c9-504811b94d42"
   },
   {
     "name": "Rockwolf",
@@ -263,7 +281,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "c4104b80-a98f-400b-b234-05bdefde8435"
+    "associated": "",
+    "id": "dbb7ae71-df5d-460a-bdf5-89a1e53ce8ea"
   },
   {
     "name": "Legend",
@@ -277,7 +296,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "1ac57154-c889-4851-82e8-41deb90da45c"
+    "associated": "",
+    "id": "042f25b7-8e5e-493b-99a7-0c9da41f41ff"
   },
   {
     "name": "Ranger",
@@ -291,7 +311,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "feaa13be-5e4a-41fd-a9a0-d521aace16d3"
+    "associated": "",
+    "id": "07e42d3c-9856-4936-8477-9aa4ed8af972"
   },
   {
     "name": "Hound",
@@ -305,7 +326,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "c2c2dec6-7ae1-481f-aed6-1dce01901591"
+    "associated": "",
+    "id": "c118fc4b-22ca-4090-83af-255960e3c764"
   },
   {
     "name": "Rookie",
@@ -319,7 +341,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b92c16cb-75ce-4a96-9680-4248f16a3b85"
+    "associated": "",
+    "id": "d2d9d5ab-f66d-42d9-985f-e61148bf5985"
   },
   {
     "name": "Hacker",
@@ -333,7 +356,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "2d815663-33d8-45be-a257-13556a85a900"
+    "associated": "",
+    "id": "8023b2e0-b9ca-4e35-a786-e3e31fd8446b"
   },
   {
     "name": "Whiplash",
@@ -347,7 +371,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a84f3a03-cbcc-408e-a203-69709056ee75"
+    "associated": "",
+    "id": "3846dc0f-d2d6-4fe6-8042-7a5301c24960"
   },
   {
     "name": "Amateur",
@@ -361,7 +386,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "763f82b4-baa4-4054-8e40-684c94c877fb"
+    "associated": "",
+    "id": "627c1123-3f49-419a-81b6-be7b2431221e"
   },
   {
     "name": "Blitz",
@@ -375,7 +401,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4b7421b9-b61e-44ca-b797-f6ca273f9002"
+    "associated": "",
+    "id": "4c349055-5ba8-4305-9277-6b4ab6579f3e"
   },
   {
     "name": "Machete",
@@ -389,7 +416,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b7b0f9e7-2f08-45f0-a221-31da47389e27"
+    "associated": "",
+    "id": "6c1cf6b3-e8ec-4124-b6a3-9f2a54737e34"
   },
   {
     "name": "Photon",
@@ -403,7 +431,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f0076ca6-c440-49f9-b8da-22bc310ce909"
+    "associated": "",
+    "id": "001f1893-cc35-41bb-9bea-888ace87caee"
   },
   {
     "name": "Pyro",
@@ -417,7 +446,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "cfd51eed-3e94-4af1-b9ad-0b9cb494d1a8"
+    "associated": "",
+    "id": "5fe6186c-a7fb-4a99-829c-2d17f76600ac"
   },
   {
     "name": "Rowdy",
@@ -431,7 +461,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a637db90-2de8-4b71-bc09-f505d2e2c812"
+    "associated": "",
+    "id": "9b6a7e21-4baa-4d20-a07b-987e7ba6954a"
   },
   {
     "name": "Siren",
@@ -445,7 +476,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "1c707a42-2b1e-4b2c-bb7f-55d4d42098ee"
+    "associated": "",
+    "id": "9bc5ba14-06e1-462c-a2b9-cbd773bd1c9c"
   },
   {
     "name": "Striker",
@@ -459,7 +491,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "07b6aa35-9df2-49ce-b705-5a54d0817f9a"
+    "associated": "",
+    "id": "ae75fa46-76e4-4b77-b2dd-ee4cf01c9dfb"
   },
   {
     "name": "Tex",
@@ -473,7 +506,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fe433bb8-4d4d-4a98-9e09-f97dac91a13b"
+    "associated": "",
+    "id": "bf163c33-bc51-4ebb-a95e-f93b49dac7a3"
   },
   {
     "name": "Grendel",
@@ -487,7 +521,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "0a642114-3db9-4562-ac40-9ba831ad7f09"
+    "associated": "",
+    "id": "dcb54ff6-7446-4478-89f6-2570d6e06826"
   },
   {
     "name": "Vandal",
@@ -501,7 +536,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "16e04d59-655a-430f-b1c0-aef38561c6d5"
+    "associated": "",
+    "id": "3b99c275-5cc1-43dd-8945-0598e0f67b82"
   },
   {
     "name": "Monarch",
@@ -515,7 +551,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ce260b62-fb7e-44e9-b9ac-17057bfc907e"
+    "associated": "",
+    "id": "aa00247a-2fa9-47e8-9a6b-ea26a46dcdd4"
   },
   {
     "name": "Veteran",
@@ -529,7 +566,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "302bdded-41ed-4859-a69d-b3cf5f058cab"
+    "associated": "",
+    "id": "723e4299-dcd5-400e-b6db-8404fc354ea8"
   },
   {
     "name": "Hyperion",
@@ -543,7 +581,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fb79c594-9eea-467a-bdb6-7d1258cd67cf"
+    "associated": "",
+    "id": "c94465ee-70d9-484d-b53e-418ddd0667ad"
   },
   {
     "name": "Max",
@@ -557,7 +596,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "19755e7e-d082-483a-a666-96d07e904d73"
+    "associated": "",
+    "id": "71709e5f-283e-4d12-b576-8dd4f8f561f5"
   },
   {
     "name": "Fang",
@@ -571,7 +611,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "6de86061-ea80-449d-a151-19a5c214cbaf"
+    "associated": "",
+    "id": "b5c547ea-d264-4b22-9361-17d51164cb40"
   },
   {
     "name": "Legend",
@@ -585,7 +626,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "90459aaa-4a3e-40c2-86b1-3f1ae9582daa"
+    "associated": "",
+    "id": "449ab267-6292-41cf-9cc8-75ceea0fa840"
   },
   {
     "name": "Hand Cannon",
@@ -599,7 +641,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b88b2df8-a913-4700-abbb-328afe5e6858"
+    "associated": "",
+    "id": "61ccf40f-67ba-4aae-991c-96472061035c"
   },
   {
     "name": "Assault Rifle",
@@ -613,7 +656,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "85498c04-cb95-4e63-9a30-0de2e11a02f0"
+    "associated": "",
+    "id": "00b2b3f3-c38e-4829-8b5a-6274f1a9a996"
   },
   {
     "name": "Blender",
@@ -627,7 +671,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8bdbfb58-5f94-4068-bd40-5767b0940acf"
+    "associated": "",
+    "id": "ed3da73f-0629-4041-9448-c774eb62c1aa"
   },
   {
     "name": "Bug Zapper",
@@ -641,7 +686,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "523fd372-fe73-41ea-95ab-38fe7f5ad41c"
+    "associated": "",
+    "id": "4c08e7df-b247-4594-9ae2-9c13b0a6efe0"
   },
   {
     "name": "Concussion Grenades",
@@ -655,7 +701,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ccc09cb9-c717-4230-93bf-1bcf6930f77b"
+    "associated": "",
+    "id": "d7d53a1a-ed68-4e6c-86c6-86796bf47ece"
   },
   {
     "name": "Doubleshot",
@@ -669,7 +716,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "eed5093a-a568-4e7e-99a4-f967d53e5066"
+    "associated": "",
+    "id": "e05d6999-5e90-43a1-9403-b8ed1844d6f3"
   },
   {
     "name": "Electrostatic Grenade",
@@ -683,7 +731,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4b120189-8ce2-46e5-a7ce-b7a285019a21"
+    "associated": "Overload",
+    "id": "4765b1b8-9788-4dbc-a5e9-36135e40868e"
   },
   {
     "name": "Fragmentation Grenade",
@@ -697,7 +746,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "00e04c87-bb7a-450c-8e7b-7506534e0bd3"
+    "associated": "",
+    "id": "10b2f792-44ac-4d9f-a909-7c4ca3fc8f09"
   },
   {
     "name": "Juicer",
@@ -711,7 +761,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "e8882170-4bd5-4c6a-bd3a-d8a845da4977"
+    "associated": "",
+    "id": "41f465b8-d127-468d-a74d-b107594a31d0"
   },
   {
     "name": "Katana",
@@ -725,7 +776,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8b82e6d5-c566-468e-b288-ce6aee0a7b93"
+    "associated": "",
+    "id": "2ff77ff5-6695-4267-9d3d-e1936f17b5a6"
   },
   {
     "name": "Killstreak",
@@ -739,7 +791,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f6754864-b71f-45cf-ba65-7815adbc340c"
+    "associated": "",
+    "id": "05cc3709-acd9-4734-afff-ca60a32fe0d9"
   },
   {
     "name": "Micro-Rocket Launcher",
@@ -753,7 +806,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "2329dbbc-b048-4281-a680-e92879e8165e"
+    "associated": "Shaken",
+    "id": "3fff8ec0-b6bd-4f1e-96fb-27587af2edcf"
   },
   {
     "name": "Paint Grenades",
@@ -767,7 +821,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "0eb29343-6ac4-41f6-b5e5-53b48932bba3"
+    "associated": "Paint",
+    "id": "b4639dc7-1056-4a3e-bf2c-75f48e3fe626"
   },
   {
     "name": "Radar Transmitter",
@@ -781,7 +836,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "bc85538c-1abe-42b4-bd2c-0bfe9061e0a3"
+    "associated": "",
+    "id": "b9c677ee-e05c-4cab-add5-f4ed8f14f5d6"
   },
   {
     "name": "Rocket-Propelled Grenade",
@@ -795,7 +851,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "736f82f4-9a03-43fe-b7e2-ed1466c8aa2e"
+    "associated": "",
+    "id": "907d6d11-f55b-47b4-872a-8005e4ac6f84"
   },
   {
     "name": "Sawed-Off Shotgun",
@@ -809,7 +866,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "9b6d0982-9e60-4f84-beeb-1d356a55f0ce"
+    "associated": "",
+    "id": "3c44746d-1bb5-469b-8f12-90a25a712e92"
   },
   {
     "name": "Thermite Grenades",
@@ -823,7 +881,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "15268382-a776-4572-8b9b-552c904d9651"
+    "associated": "",
+    "id": "70a18568-c071-48ae-935c-30aff974dfc6"
   },
   {
     "name": "Toaster",
@@ -837,7 +896,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "0133deee-fe11-4b01-8e15-c4a5aea9fce4"
+    "associated": "",
+    "id": "908609b2-934f-4f49-825c-7416016b1f13"
   },
   {
     "name": "Crash Suit",
@@ -851,7 +911,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "9f5740a8-f92c-4f77-ab65-559d6e4a328d"
+    "associated": "",
+    "id": "eedcb4c4-995a-4b44-82b0-7d536630c5ff"
   },
   {
     "name": "Driving Boots",
@@ -865,7 +926,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fce26b29-fd7b-4cdd-9e69-bec483d083ae"
+    "associated": "",
+    "id": "db2c8d11-bd03-4ecf-a135-74b64e466204"
   },
   {
     "name": "First-Aid Kit",
@@ -879,7 +941,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "2a2dd3c9-fd25-4e07-ad1b-22f5dc7046d6"
+    "associated": "",
+    "id": "40413c29-2c16-4ff4-8c01-b24e981528c2"
   },
   {
     "name": "HUD Goggles",
@@ -893,7 +956,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "0598cbb2-00df-41d1-a695-3d5e9bc65429"
+    "associated": "",
+    "id": "db568f82-6640-4a75-8364-3a6954ede032"
   },
   {
     "name": "Steady-Aim Gimbal",
@@ -907,7 +971,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "cbd2327d-974f-485d-b750-7a095b5fcf3c"
+    "associated": "",
+    "id": "dcda265f-5dce-4133-b03c-1f0f6699a155"
   },
   {
     "name": "Taco!",
@@ -921,7 +986,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d87a0d4c-bb45-46c5-8a23-ea7de803bde4"
+    "associated": "",
+    "id": "2b5cd259-b869-46f4-b6f6-848e4abae4cb"
   },
   {
     "name": "Driving Gloves",
@@ -935,7 +1001,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "389fd5e3-30bb-42ad-b5bf-4071a9594f81"
+    "associated": "",
+    "id": "b7dc66ac-3a54-4f5e-bd1e-3b1cc538b7b0"
   },
   {
     "name": "Holographic Sight",
@@ -949,7 +1016,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "09f3ca0d-259b-4d6d-a2e8-cd7a68d308d7"
+    "associated": "",
+    "id": "18d06ed8-9020-4c99-b5c2-ffc400b55b28"
   },
   {
     "name": "Fire Suit",
@@ -963,7 +1031,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ff57da8a-8ded-4cc0-8d57-0f9ca7701f86"
+    "associated": "",
+    "id": "81ac85c5-2341-4517-afe4-cd5efb4c2466"
   },
   {
     "name": "Flak Jacket",
@@ -977,7 +1046,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "2ff748cd-cdef-4586-a08b-10fe74301117"
+    "associated": "",
+    "id": "edff33ce-df8c-4efb-8a35-d051bf6ce6b7"
   },
   {
     "name": "Plated Vest",
@@ -991,7 +1061,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "280ccb08-de1e-4dda-8534-bb169419af24"
+    "associated": "",
+    "id": "d1c2deb8-8d65-4b0a-944c-65dd99313387"
   },
   {
     "name": "Armored Beer Refrigerator",
@@ -1005,7 +1076,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "3706ad88-2e27-485a-a76d-eac4d6a36acf"
+    "associated": "",
+    "id": "dd3e2a43-6023-4de8-b556-827ba2e02087"
   },
   {
     "name": "Grilled Cheese Dispenser",
@@ -1019,7 +1091,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "2ad334cd-4f23-4afe-87f2-384828313e6f"
+    "associated": "",
+    "id": "32cb970a-425c-4f3a-a861-14a3a5a4db24"
   },
   {
     "name": "Advanced Brakes",
@@ -1033,7 +1106,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "b",
-    "id": "2432dcb5-9537-4aa9-840b-ef87223a0c8c"
+    "associated": "",
+    "id": "cd840b82-ec35-43ee-a3ba-1226ffdd22cd"
   },
   {
     "name": "Advanced Firing Interface",
@@ -1047,7 +1121,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b8b1f3e6-af34-4781-b46d-b9c95427ea5a"
+    "associated": "",
+    "id": "278c12ea-c689-44ea-81a5-17651fe75705"
   },
   {
     "name": "Aerodynamic Fairings",
@@ -1061,7 +1136,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fd87ea0d-78c0-47dc-b97b-a61088b716b7"
+    "associated": "",
+    "id": "80a9e7f7-9e06-4a91-9543-c5a055329de3"
   },
   {
     "name": "Automatic Fire Suppressor",
@@ -1075,7 +1151,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "48c57ce2-b4e8-40aa-b7ce-a6dc127bc7ae"
+    "associated": "",
+    "id": "e819d8ec-b601-4ca4-8c1f-914cb160e81a"
   },
   {
     "name": "Autopilot",
@@ -1089,7 +1166,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d93ce9f9-7c0b-4433-8733-96399fe6e2df"
+    "associated": "",
+    "id": "05db6444-7593-41d0-a232-c1ce115edac8"
   },
   {
     "name": "Drag Chute",
@@ -1103,7 +1181,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "b",
-    "id": "e0a5f8c9-6e64-42aa-a044-b234835f4d88"
+    "associated": "",
+    "id": "2426bdee-5851-4f2d-be9a-b3df3f10423b"
   },
   {
     "name": "Fire Extinguisher",
@@ -1117,7 +1196,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "bd0aaaf8-4c00-45d7-b1d5-7fe80d944ab8"
+    "associated": "",
+    "id": "108a31cb-7c28-4fcc-898e-11bf395c44c6"
   },
   {
     "name": "Magnetic Dampers",
@@ -1131,7 +1211,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "86d861fb-aee1-4ad2-9c02-51ce4e53ab9f"
+    "associated": "",
+    "id": "0b95de53-5752-4eb0-b43e-f312a14886c0"
   },
   {
     "name": "Off-Road Suspension",
@@ -1145,7 +1226,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "6bf361e9-f2e2-4a6e-9abe-8e5c891ba735"
+    "associated": "",
+    "id": "2630859d-4183-4edc-8e8c-84adc69f9e69"
   },
   {
     "name": "Power Plant Superconductor",
@@ -1159,7 +1241,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "b",
-    "id": "86565156-9753-4fff-9a8c-5efb7ceae592"
+    "associated": "",
+    "id": "772891ee-8a5d-4999-bd97-23a2ce4a43cf"
   },
   {
     "name": "Radar Detector",
@@ -1173,7 +1256,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "05dfe5ca-4dbc-4dcd-93a7-1afe9c88e38d"
+    "associated": "",
+    "id": "facfb179-22a5-4f65-a975-0189d039ad1d"
   },
   {
     "name": "Regenerative Brakes",
@@ -1187,7 +1271,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ac15d73a-12dc-4a57-8aad-d403aaaf9a5c"
+    "associated": "",
+    "id": "659a8644-7b9d-4e63-9c1d-29724c976f18"
   },
   {
     "name": "Sharkfin Aero Package",
@@ -1201,7 +1286,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fade02f5-8409-48ad-a5e9-191644edf35f"
+    "associated": "",
+    "id": "ac86e361-8456-4d7c-869e-afe7261053c9"
   },
   {
     "name": "Splitter",
@@ -1215,7 +1301,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "f",
-    "id": "9d0bba84-fb0d-46e9-aa5a-84efda22ea64"
+    "associated": "",
+    "id": "eef55d86-2dff-4125-8c3b-94ad85a76906"
   },
   {
     "name": "Spoiler",
@@ -1229,7 +1316,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "408a588c-ba83-47b6-ab5b-e81c25410d87"
+    "associated": "",
+    "id": "550d30a6-a3e9-4fcf-b01b-f9cbcdc1c444"
   },
   {
     "name": "Superbooster",
@@ -1243,7 +1331,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "f",
-    "id": "74c918d9-c031-46e7-bda5-5beeb7bcfac9"
+    "associated": "",
+    "id": "78aa62f2-4ffe-4cac-8d31-caca448b9110"
   },
   {
     "name": "Targeting Computer",
@@ -1257,7 +1346,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "eaf28df8-0a65-4e6b-b107-c5b2cede9a6f"
+    "associated": "",
+    "id": "1e3e0976-ddf2-436b-a04a-9c20c1b7885e"
   },
   {
     "name": "Boost Cell",
@@ -1271,7 +1361,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f9b21eae-7c85-4a22-a898-e96d3eeee03c"
+    "associated": "",
+    "id": "e05c922c-3bd0-40dd-bab0-42417f8e91f7"
   },
   {
     "name": "Dynamic Suspension",
@@ -1285,7 +1376,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ffe28ea1-3491-4fe9-899d-b18c7af177d2"
+    "associated": "",
+    "id": "815cc57c-3b2c-4922-9e82-f1a46cbd643c"
   },
   {
     "name": "High-Torque Differential",
@@ -1299,7 +1391,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4f0363fd-3436-4af2-bc59-c4ecda80e100"
+    "associated": "",
+    "id": "022740b1-6b30-4303-8b83-5c65c30f21df"
   },
   {
     "name": "Radar Jammer",
@@ -1313,7 +1406,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b343bf59-311b-449f-bc7c-a6870733f3ba"
+    "associated": "",
+    "id": "3ba4f3c2-233c-4f7e-a8d8-efdc6433708d"
   },
   {
     "name": "Rugged Suspension",
@@ -1327,7 +1421,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "c45c61c4-00e2-44a2-9e72-661903117eea"
+    "associated": "",
+    "id": "a83a5cd9-02a3-4e48-ba24-d0c12bd17b42"
   },
   {
     "name": "Supplemental Power Cell",
@@ -1341,7 +1436,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ca8b41f2-a13b-47d0-9207-f79a91e9cccd"
+    "associated": "",
+    "id": "b1753866-0a6e-45be-8db7-4f90a326249d"
   },
   {
     "name": "Thundercat Battery",
@@ -1355,7 +1451,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "f",
-    "id": "7cb9482c-15b7-4ea7-9aca-dcd585301547"
+    "associated": "",
+    "id": "077947e1-ea47-4ea5-b0ed-1c134ed12db9"
   },
   {
     "name": "Fake Passenger",
@@ -1369,7 +1466,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a14eac15-ea30-4b1c-901c-347443426f7d"
+    "associated": "",
+    "id": "fc6a9bed-5956-4dc2-ba12-29454985335b"
   },
   {
     "name": "Advanced Targeting Computer",
@@ -1383,7 +1481,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "0129c5c8-4f05-4c90-8777-0b20f0f114ad"
+    "associated": "",
+    "id": "7577c894-063d-4e4e-a69a-47076345f46a"
   },
   {
     "name": "Defibrillator",
@@ -1397,7 +1496,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "c2c645cf-d45f-40c7-b351-3efb4d116902"
+    "associated": "",
+    "id": "853f1472-0633-492d-b102-873c33b162d6"
   },
   {
     "name": "Gyroscopic Stabilizer",
@@ -1411,7 +1511,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "3e5329af-00d1-461c-bf4e-0e338f406fa8"
+    "associated": "",
+    "id": "f324d4e1-240a-4b62-bc63-2c9fe9ba1658"
   },
   {
     "name": "Stability Controller",
@@ -1425,7 +1526,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ce006e96-8506-4b0a-b621-6015c7351caa"
+    "associated": "",
+    "id": "cad5bae5-cf9a-49f3-a57e-23daf9bb5a67"
   },
   {
     "name": "Weapons Locker",
@@ -1439,7 +1541,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8c56088e-a91c-4b5e-b06d-056893a98d8c"
+    "associated": "",
+    "id": "699c04e2-df76-42d5-ae95-c624c8bc2a88"
   },
   {
     "name": "Wheel Guards",
@@ -1453,7 +1556,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "e788c7a8-6bc8-479f-ae0c-a754d91078d7"
+    "associated": "",
+    "id": "bfab730d-8111-4ccd-9da0-c8de5d1344ea"
   },
   {
     "name": "Cadmium Alloy Fasteners",
@@ -1467,7 +1571,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4bbbbf3b-4732-4336-890b-92493980ed06"
+    "associated": "",
+    "id": "1d3032cf-4e9b-4923-96a2-f03e982fb90b"
   },
   {
     "name": "Power Plant Shielding",
@@ -1481,7 +1586,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "cedc5ee9-91ba-40a6-8c86-a6ecf5fb6d39"
+    "associated": "",
+    "id": "57c19eae-0a19-4f9c-8145-b7eed58704c4"
   },
   {
     "name": "Wheel Hubs",
@@ -1495,7 +1601,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "5c6920b3-c492-4864-98a6-962f8be67c8d"
+    "associated": "",
+    "id": "0a66f348-5c5d-429f-96d6-26d40919d4d1"
   },
   {
     "name": "Reactive Defense System",
@@ -1509,7 +1616,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d47b2b8c-97a3-49bf-88ee-deee7a6f9beb"
+    "associated": "",
+    "id": "1f09608e-df4e-476e-af0f-22772b455f3b"
   },
   {
     "name": "Simple Concealment System",
@@ -1523,7 +1631,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b834962c-0280-492e-b502-c0de5985df96"
+    "associated": "",
+    "id": "df15b24e-97d5-4e59-b8e8-77692736382c"
   },
   {
     "name": "Complex Concealment System",
@@ -1537,7 +1646,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "de3af726-a584-4703-9980-32424b37dd47"
+    "associated": "",
+    "id": "0e8197c8-73eb-46cd-9bbe-45be55b5ddd9"
   },
   {
     "name": "Active Camouflage",
@@ -1551,7 +1661,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "320c147d-2828-4582-a999-12765becd1ab"
+    "associated": "",
+    "id": "230dd9a5-631a-42b0-9b82-af72427f058f"
   },
   {
     "name": "EM Distortion Field",
@@ -1565,7 +1676,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a57cdb19-a4a2-4c13-8a1a-15a8c294f914"
+    "associated": "",
+    "id": "2f14d711-053f-4694-866a-bccb3cf249ff"
   },
   {
     "name": "Fire-Resistant Coating",
@@ -1579,7 +1691,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8eaa8a51-11e5-4d47-a3ec-e29c046bb616"
+    "associated": "",
+    "id": "15f23f17-ebb0-411b-8452-937568944333"
   },
   {
     "name": "Laser-Reflective Coating",
@@ -1593,7 +1706,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "e6139a3f-5b67-4bfb-92be-4c37d5103133"
+    "associated": "",
+    "id": "b688351f-e7bc-4360-9dfc-daaf25bd807a"
   },
   {
     "name": "Bumper Spikes",
@@ -1607,7 +1721,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "65434a90-3fda-4cca-a77e-cca5dacc37c6"
+    "associated": "",
+    "id": "7a7cc77f-34b8-4fd9-9a1d-a43144edb32b"
   },
   {
     "name": "Chassis Brace",
@@ -1621,7 +1736,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "92b2f054-0d29-49ad-8203-418eaa2fddb8"
+    "associated": "",
+    "id": "9c4fd95e-7c2b-40cd-a68d-3694adba2383"
   },
   {
     "name": "Flame Jets",
@@ -1635,7 +1751,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b262dc39-a4fb-46af-b9fa-47d8fcd4b206"
+    "associated": "",
+    "id": "febd65d1-d962-466d-8359-1f7d62664e58"
   },
   {
     "name": "Punchbumper",
@@ -1649,7 +1766,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "32646ea7-b129-4367-87e9-347a7262ee61"
+    "associated": "",
+    "id": "39f4f521-1307-4f11-bb57-d09a4f8b10e9"
   },
   {
     "name": "Roll Bar",
@@ -1663,7 +1781,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "749939c0-c3c8-45ac-a309-57494cb3f6ef"
+    "associated": "",
+    "id": "19c0a537-74d7-4acb-a757-daa6279bec75"
   },
   {
     "name": "Safety Cage",
@@ -1677,7 +1796,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "2e09b169-254d-4d93-ae5f-23b74d1288af"
+    "associated": "",
+    "id": "c32589e7-5717-42ff-8b54-831501b134bd"
   },
   {
     "name": "Strengthened Undercarriage",
@@ -1691,7 +1811,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "30c3f85d-451f-4ea6-b22d-1ae2dcfde07f"
+    "associated": "",
+    "id": "25255d21-8065-41b1-a437-346dcef45061"
   },
   {
     "name": "Reinforced Weapon Brackets",
@@ -1705,7 +1826,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "636bd2eb-f01d-462a-b142-c6f99cee41b9"
+    "associated": "",
+    "id": "c8e636a6-9e25-43be-a45b-8b567536ad9b"
   },
   {
     "name": "Airless Tires",
@@ -1719,7 +1841,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "dd61d567-45e4-468e-94d4-72a3eab28cd7"
+    "associated": "",
+    "id": "a0826d5d-af27-4487-8384-86487e74ab45"
   },
   {
     "name": "Off-Road Tires",
@@ -1733,7 +1856,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d0d5ee50-4a7b-4f4c-b297-2b236d04f006"
+    "associated": "",
+    "id": "9afea03b-d49b-49a8-9acc-ac3571ba09ff"
   },
   {
     "name": "Racing Slicks",
@@ -1747,7 +1871,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f7538aa9-7b7b-430a-bbdf-ff8ae1749f3e"
+    "associated": "",
+    "id": "3be644d3-ce6e-4aa3-ab41-71a80bb7bc1a"
   },
   {
     "name": "High Density Radials",
@@ -1761,7 +1886,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "55d0e8db-2031-40cf-8445-83eda283e868"
+    "associated": "",
+    "id": "3f1dfa7c-a560-49fe-8e29-8bcdc64f8ea1"
   },
   {
     "name": "Run-Flat System",
@@ -1775,7 +1901,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "accc1ef2-b467-4e87-b706-35969d2bacab"
+    "associated": "",
+    "id": "d50349b8-dc1a-49b8-b6df-2583c8269f01"
   },
   {
     "name": "Sticky Rubber",
@@ -1789,7 +1916,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d45dc353-3628-42ae-a3ba-499b0814c2e0"
+    "associated": "",
+    "id": "c73460e3-3e28-4777-bb37-6df218157a92"
   },
   {
     "name": "Cast Iron Plate A",
@@ -1803,7 +1931,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "7906a6e2-48c8-43c1-a052-4b7637f6b535"
+    "associated": "",
+    "id": "1fa9b820-d967-487c-8eed-6cb65a5082a5"
   },
   {
     "name": "Cast Iron Plate B",
@@ -1817,7 +1946,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "2fa76527-a7e0-450a-adf3-9204b5440239"
+    "associated": "",
+    "id": "db099deb-2257-4d3d-bdf0-f27629dd5176"
   },
   {
     "name": "Cast Iron Plate C",
@@ -1831,7 +1961,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "5f2f7fdf-27e1-4adf-b82a-a164e4e882f8"
+    "associated": "",
+    "id": "c951e8f7-3b13-47fa-9249-bcfb1bfb6a14"
   },
   {
     "name": "Cast iron Plate D",
@@ -1845,7 +1976,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f2f00243-16c6-4ac4-8232-69fe7124d009"
+    "associated": "",
+    "id": "9692d363-8f2c-414b-9b7a-603f72d738f2"
   },
   {
     "name": "Light Ceramic Plate",
@@ -1859,7 +1991,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "782d65f5-8fb0-47e2-b1fd-24d138fa288a"
+    "associated": "",
+    "id": "6a62edf5-33d6-4792-a52f-c74f283f442f"
   },
   {
     "name": "Light Steel Plate",
@@ -1873,7 +2006,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "11e825ef-8b33-4514-b6f8-cbb390c957b4"
+    "associated": "",
+    "id": "8b7743e1-5c06-4c95-9945-a54249ec4b53"
   },
   {
     "name": "Carbon Laminate",
@@ -1887,7 +2021,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a48161c0-37c5-4d63-a3a4-f6eea07eec16"
+    "associated": "",
+    "id": "f10d585b-66bb-4eac-92f0-cd3367791ffa"
   },
   {
     "name": "Light Plastic Cladding",
@@ -1901,7 +2036,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4e754837-243d-4ef5-a8b6-733e3b0d01ef"
+    "associated": "",
+    "id": "400e613d-ac29-41a4-899e-9faa0e6fa060"
   },
   {
     "name": "Standard Ceramic Plate",
@@ -1915,7 +2051,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4691e4e2-4138-4a66-86f7-ea9003fc3709"
+    "associated": "",
+    "id": "3908b736-d211-44d7-a443-449e3b3fda63"
   },
   {
     "name": "Standard Steel Plate",
@@ -1929,7 +2066,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b562130d-b33e-466b-be98-76aa112eafd3"
+    "associated": "",
+    "id": "66d058c3-d46c-4e76-931c-1903aa9b1af7"
   },
   {
     "name": "Experimental Ablative Cladding",
@@ -1943,7 +2081,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "e1003d30-17f0-4820-a17a-1e4706c33c17"
+    "associated": "",
+    "id": "85fe19f0-b227-430f-9181-8d3b127963e7"
   },
   {
     "name": "Heavy Ceramic Plate",
@@ -1957,7 +2096,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b0acd16b-bb9b-42ec-8bd1-e0d11c7597eb"
+    "associated": "",
+    "id": "762d43d9-a7fd-45ae-93ee-382550a92eac"
   },
   {
     "name": "Heavy Plastic Cladding",
@@ -1971,7 +2111,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "bafbef87-cbf6-40ce-92ca-ae2db48c354d"
+    "associated": "",
+    "id": "6ffd6052-a84c-424d-b861-a21a6e5694d7"
   },
   {
     "name": "Heavy Steel Plate",
@@ -1985,7 +2126,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "281709d2-bc26-480d-8f40-3a73243b8009"
+    "associated": "",
+    "id": "2ee8f106-a567-4363-8e3f-8921de4db3e6"
   },
   {
     "name": "Ramplate",
@@ -1999,7 +2141,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "f",
-    "id": "bbf310b7-0c87-48d9-98b6-8b71721ec522"
+    "associated": "",
+    "id": "146945b0-3510-4d5e-9b55-eb4452ac8d9f"
   },
   {
     "name": "Standard Composite Plate",
@@ -2013,7 +2156,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "1cb4112d-deb8-47f1-883c-e5a639ed06fd"
+    "associated": "",
+    "id": "de3509e7-1a2b-43a3-b0e5-7c68b7c91594"
   },
   {
     "name": "The Slab",
@@ -2027,7 +2171,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "b",
-    "id": "759cdf33-c1e6-4937-bb05-7401ed56130e"
+    "associated": "",
+    "id": "252cab80-9211-4cbe-a42d-ab42230248d8"
   },
   {
     "name": "Titanium Laminate",
@@ -2041,7 +2186,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "98758e7a-92a9-4686-ac6f-99862bb5b2ad"
+    "associated": "",
+    "id": "ba7ca374-35be-4adf-a6ef-7d335451e527"
   },
   {
     "name": "Ballistic Shell",
@@ -2055,7 +2201,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "3a2992ff-4b4f-4de0-9322-5ee56ab9b238"
+    "associated": "",
+    "id": "c2ed3c5f-983d-4f5a-854c-2a2ef964ac06"
   },
   {
     "name": "Heavy Composite Plate",
@@ -2069,7 +2216,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "c77392f5-0849-4645-9582-883b19a4c679"
+    "associated": "",
+    "id": "8ab71d06-726d-4abc-b421-8f36a0ef76cd"
   },
   {
     "name": "Kinetic Diffuser",
@@ -2083,7 +2231,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a9a732ff-870b-40fb-96d1-07faee393e9b"
+    "associated": "",
+    "id": "81984739-f172-41a4-aec0-f6cee1358ef4"
   },
   {
     "name": "Super Heavy Ceramic Plate",
@@ -2097,7 +2246,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "88cc0fac-2ac1-4d14-b549-b8d25c26c827"
+    "associated": "",
+    "id": "ec73041c-cb95-4efd-8dd3-a842e95f1359"
   },
   {
     "name": "Super Heavy Steel Plate",
@@ -2111,7 +2261,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ba0711fd-9a71-4606-a324-b829e9fc7727"
+    "associated": "",
+    "id": "6bad0331-efa1-4541-8658-4e9423ae2128"
   },
   {
     "name": "Armor Piercing Rocket",
@@ -2125,7 +2276,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b5e2fe16-e60b-46ef-81c8-5e27919a7f1c"
+    "associated": "",
+    "id": "51a68720-7ccd-4cc5-a42a-091480ef940f"
   },
   {
     "name": "Firecracker",
@@ -2139,7 +2291,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "2544ada6-3ce7-4714-84ef-8698205bb110"
+    "associated": "",
+    "id": "d655ad51-dd0f-4d9e-8ddb-2253cbe2f9c6"
   },
   {
     "name": "Laser-Guided Light Rocket",
@@ -2153,7 +2306,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "5c64fb20-64db-403e-82e4-29f3529be118"
+    "associated": "",
+    "id": "aaddec17-0290-4eaf-b465-c99156c66385"
   },
   {
     "name": "Light Rocket",
@@ -2167,7 +2321,8 @@
     "copies": 2,
     "exclusive": false,
     "sides": "",
-    "id": "c7e04de5-a979-4f09-b401-15ea6d27df0c"
+    "associated": "",
+    "id": "8293fd91-ea47-470f-a369-e720af449cdd"
   },
   {
     "name": "Fake Machine Gun",
@@ -2181,7 +2336,8 @@
     "copies": 2,
     "exclusive": false,
     "sides": "",
-    "id": "ee0944be-057f-4169-91b4-8b6b038870a8"
+    "associated": "",
+    "id": "3cfd28a9-4e44-4f41-84a7-90d53ca2a9eb"
   },
   {
     "name": "Concussion Mine Dropper",
@@ -2195,7 +2351,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "bf535619-4500-40e3-ae37-445a3c7e514c"
+    "associated": "Concussion Mine",
+    "id": "2303e16c-836f-410f-b178-dcbd812cb25c"
   },
   {
     "name": "Fire Mine Dropper",
@@ -2209,7 +2366,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "ad695ecc-32ba-459b-9206-47b44cb56aa4"
+    "associated": "Fire Mine",
+    "id": "84c761f8-0a5b-45bf-abee-0e02fc5ac0e6"
   },
   {
     "name": "Foam Nozzle",
@@ -2223,7 +2381,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4899067f-d4f1-4a4b-9965-e4ce6901dd2e"
+    "associated": "Foam",
+    "id": "fba33238-5311-4754-bdf5-762ff0c68839"
   },
   {
     "name": "Oil Jets",
@@ -2237,7 +2396,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "9ea4154b-e6f6-4e22-95a1-cb2f6ee8e409"
+    "associated": "Oil",
+    "id": "609731d4-fc5e-412a-8104-1d2535116c66"
   },
   {
     "name": "Smoke Emitter",
@@ -2251,7 +2411,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "dcd2839f-3c51-4d69-8c54-11e71e5fe4e1"
+    "associated": "Smoke",
+    "id": "ef62d158-c729-4305-8b2c-91ea3d561923"
   },
   {
     "name": "Spike Dropper",
@@ -2265,7 +2426,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "185b55b9-8816-4f44-abbf-eb34943a5670"
+    "associated": "Spikes",
+    "id": "1e6b9563-d7b0-402e-a8f5-37aa384834e3"
   },
   {
     "name": "Light Incendiary Rocket",
@@ -2279,7 +2441,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "12a84b8c-7dce-4097-a5e5-49990c55cbaf"
+    "associated": "",
+    "id": "ea45b562-500e-4fc5-b7e4-2d36dea47750"
   },
   {
     "name": "Brushcutter",
@@ -2293,7 +2456,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8cabbf9a-6a54-4a37-83b4-5d62f88c9462"
+    "associated": "",
+    "id": "0b7710ec-2015-4db7-af88-034b963ac546"
   },
   {
     "name": "Light Machine Gun",
@@ -2307,7 +2471,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "184038a4-85a8-4450-8425-33fa53dd5fae"
+    "associated": "",
+    "id": "f0f14096-1d7f-43b2-b0f2-ab86bb635348"
   },
   {
     "name": "Peppermill",
@@ -2321,7 +2486,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8052d262-0168-41a6-b695-39af6070f43d"
+    "associated": "",
+    "id": "5b8ff180-9e2e-4d69-9272-477199d76aa0"
   },
   {
     "name": "Wasp",
@@ -2335,7 +2501,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "84d78132-c97d-42a0-9d6c-db3cef4e414c"
+    "associated": "",
+    "id": "0c158767-ee7b-4e30-b9d5-81ee98b23ed0"
   },
   {
     "name": "Light Recoilless Rifle",
@@ -2349,7 +2516,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "62c49fa6-899b-4f0b-8e35-4332d73e7db9"
+    "associated": "",
+    "id": "fa6ea574-c7f5-434f-83b8-0a3fd8cff35d"
   },
   {
     "name": "Slingshot",
@@ -2363,7 +2531,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "6b014690-65d3-4004-9d4a-7839a61bb510"
+    "associated": "",
+    "id": "9771d44d-d741-4c3a-a1fe-7f451c2299ce"
   },
   {
     "name": "Flamethrower",
@@ -2377,7 +2546,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "16a9efdc-5145-4bb4-8fc8-2d38a6783fef"
+    "associated": "",
+    "id": "25e1974b-2a0b-43b0-b40a-42504aac81b7"
   },
   {
     "name": "Electrolaser",
@@ -2391,7 +2561,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "be01946f-4920-457b-97e2-140411719e08"
+    "associated": "",
+    "id": "5129ee27-be44-4273-8b4c-1ef61855bc47"
   },
   {
     "name": "Linked Brushcutters",
@@ -2405,7 +2576,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "26a8975f-7e9a-4a88-9a76-8b848c0e2b46"
+    "associated": "",
+    "id": "dba7efed-ac0d-4dda-a8df-c0959565dcb8"
   },
   {
     "name": "Electrostatic Beam",
@@ -2419,7 +2591,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "9f24ad34-3f35-41f1-a884-b31e33d2cf29"
+    "associated": "Overload",
+    "id": "9ec7aa8e-cbd4-4141-aa11-96e3d57fe067"
   },
   {
     "name": "Joy Buzzer",
@@ -2433,7 +2606,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "cffb62f4-1096-4efe-90f8-859fba987bf4"
+    "associated": "",
+    "id": "143b0ab0-9069-49de-aed1-433ba14f53ce"
   },
   {
     "name": "Armored Machine Gun",
@@ -2447,7 +2621,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "54237770-44fa-41a4-a2e3-d2a6f8c8d4cc"
+    "associated": "",
+    "id": "6e316202-7ce0-4a7b-af55-ecb3d6c26bc5"
   },
   {
     "name": "Linked Shotguns",
@@ -2461,7 +2636,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fc42e12c-63f6-48b1-986d-a58d81221e1d"
+    "associated": "",
+    "id": "4a4123da-41d6-44d0-888a-90ce8d95547d"
   },
   {
     "name": "Standard Machine Gun",
@@ -2475,7 +2651,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d045b5d8-5708-45cf-91cb-a95514571786"
+    "associated": "",
+    "id": "970b0a14-a76e-4f3c-bb2a-b76a7354c727"
   },
   {
     "name": "Stinger",
@@ -2489,7 +2666,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "4e3314c9-a8bd-45ac-881a-465e4a2b23c1"
+    "associated": "",
+    "id": "a89610b8-7519-4024-ab68-94f7f2311cc3"
   },
   {
     "name": "Armored Recoilless Rifle",
@@ -2503,7 +2681,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "5e72ee3b-344e-4e91-8d68-d9eee46e9758"
+    "associated": "",
+    "id": "2a70a158-a3c6-4cba-909f-56c9874b4fce"
   },
   {
     "name": "Javelin",
@@ -2517,7 +2696,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "45b747f8-26e4-4221-9b79-05879462bea8"
+    "associated": "",
+    "id": "b80858b9-c3d7-4c45-9b99-704005c3314f"
   },
   {
     "name": "Standard Recoilless Rifle",
@@ -2531,7 +2711,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "6ba0ae2f-d774-4ec4-99a7-932748c0c7ac"
+    "associated": "",
+    "id": "edf143d9-8560-4456-ac1c-68a7a41574c4"
   },
   {
     "name": "Whistler",
@@ -2545,7 +2726,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a5e47215-7c18-43c5-9ee1-79e46e12c4d3"
+    "associated": "",
+    "id": "95819718-4fd7-4f5c-97a5-e24aaf89e0fe"
   },
   {
     "name": "Anti-Power Plant Rocket",
@@ -2559,7 +2741,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "",
-    "id": "9c971a18-24f1-4047-b41e-b0809af0458c"
+    "associated": "",
+    "id": "08544397-1396-4f11-aec0-b04d2cc883c6"
   },
   {
     "name": "Standard Rocket",
@@ -2573,7 +2756,8 @@
     "copies": 2,
     "exclusive": false,
     "sides": "",
-    "id": "f6f9d4be-4e70-44f8-8b67-0e5fc09d2a89"
+    "associated": "",
+    "id": "ecc581f9-915b-4c6e-bf97-d85f35144e20"
   },
   {
     "name": "Turreted Light Rocket",
@@ -2587,7 +2771,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "8c13d4ee-ad52-4e97-9f22-630d597cca7d"
+    "associated": "",
+    "id": "d3e793dd-c14f-4b55-94d3-12f5ec621901"
   },
   {
     "name": "Turreted Micro-Missile",
@@ -2601,7 +2786,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "a03775cd-fd02-4637-bb4c-065553aa5b68"
+    "associated": "",
+    "id": "30df95bd-a9a7-4977-92b1-61efe580fd0a"
   },
   {
     "name": "Armored Firebolt",
@@ -2615,7 +2801,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "7673c504-ea91-4b3f-b474-eb5e660caa7e"
+    "associated": "",
+    "id": "8a3d68d5-4d02-4ad4-a938-d72c336dd88f"
   },
   {
     "name": "Linked Flamethrowers",
@@ -2629,7 +2816,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "69deb5d2-93a2-421c-91a4-951cfdb7d08a"
+    "associated": "",
+    "id": "988adfb2-bc8a-4336-aecd-4fcd19bc5091"
   },
   {
     "name": "Standard Incendiary Rocket",
@@ -2643,7 +2831,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fdb1c2c4-f0b8-44b5-adbf-5e6c1ded2584"
+    "associated": "",
+    "id": "0eafab73-6a0f-4db5-a01b-25abb36c3f15"
   },
   {
     "name": "Turreted Flamethrower",
@@ -2657,7 +2846,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "f69c46b9-ce78-4364-9c08-a4af313d9e68"
+    "associated": "",
+    "id": "41d2540c-7dd1-49d4-a2b8-31106644622e"
   },
   {
     "name": "Armored Particle Beam",
@@ -2671,7 +2861,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "97233d4d-9b11-4eb4-8100-f7f914621f41"
+    "associated": "",
+    "id": "7cffd92e-b0f4-4a2d-8344-349ce45ea152"
   },
   {
     "name": "Particle Beam",
@@ -2685,7 +2876,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "c4143b9e-4829-4300-b4fd-156198b27c9c"
+    "associated": "",
+    "id": "b60e9aab-80c9-4194-9d7d-e13ddb248906"
   },
   {
     "name": "Turreted Particle Beam",
@@ -2699,7 +2891,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "f1d72a3e-fb3b-432b-a1c1-43f379fa334d"
+    "associated": "",
+    "id": "038b8dce-64e7-4d66-9585-73b70acc6c1e"
   },
   {
     "name": "Bonesaw",
@@ -2713,7 +2906,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d159322d-a412-4a0a-905b-948df57db856"
+    "associated": "",
+    "id": "9f11e1db-a1bd-4686-bce2-2308b338596a"
   },
   {
     "name": "Armored Disruptor",
@@ -2727,7 +2921,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8b5db1d8-b9ea-4be8-b55b-8d3419c62a43"
+    "associated": "",
+    "id": "824c621f-301b-434a-a54c-4c182754db81"
   },
   {
     "name": "Disruptor",
@@ -2741,7 +2936,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f1d9831d-50b3-4685-9227-c363a27208c8"
+    "associated": "",
+    "id": "8f2cf451-d4e7-40a3-ad01-3e7320abee7e"
   },
   {
     "name": "Turreted Arc Rifle",
@@ -2755,7 +2951,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "e4ec8f75-03dd-45ff-9451-fe3a40ba19d4"
+    "associated": "",
+    "id": "297f4609-5d97-4d61-8818-8239ed40f956"
   },
   {
     "name": "Heavy Machine Gun",
@@ -2769,7 +2966,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "3de7e326-01f1-452e-aecd-44b1c82965ba"
+    "associated": "",
+    "id": "872c129e-ae2e-4357-a2dc-dbe2205ac625"
   },
   {
     "name": "Light Machine Gun Incendiary Rounds",
@@ -2783,7 +2981,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "429dce77-994c-42ed-aa29-fa13204d8255"
+    "associated": "",
+    "id": "7eb8f544-52eb-42fb-a87f-7f831345e975"
   },
   {
     "name": "Scatter Gun",
@@ -2797,7 +2996,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "900c557c-6372-4944-b2a6-83c3e4b7516a"
+    "associated": "",
+    "id": "7d977aa2-8f9f-4d4f-8e31-93800323d676"
   },
   {
     "name": "Spike Gun",
@@ -2811,7 +3011,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "00a877d0-5fdf-423b-9f9e-4c33f56f2100"
+    "associated": "",
+    "id": "fad2df33-7604-43e0-8c2b-714ea5d3da9b"
   },
   {
     "name": "Standard Machine Gun Tracer Rounds",
@@ -2825,7 +3026,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "265c20d4-82f3-4bdf-ba74-77a6166a7499"
+    "associated": "",
+    "id": "fd0299dd-8f50-4d5f-a118-eb635893d5f5"
   },
   {
     "name": "Turreted Machine Gun",
@@ -2839,7 +3041,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "35d7aa2f-6896-41b7-9486-60b58364153b"
+    "associated": "",
+    "id": "c226506b-97e6-4761-a250-8d1d72c6de30"
   },
   {
     "name": "Turreted Shotgun",
@@ -2853,7 +3056,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "12af634e-d250-4a0a-9f7a-b2921137e958"
+    "associated": "",
+    "id": "9d38413c-e3fb-4080-982d-e5619a751887"
   },
   {
     "name": "Heavy Recoilless Rifle",
@@ -2867,7 +3071,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "14614a9f-39d4-485d-9df0-1ef38f3395f4"
+    "associated": "",
+    "id": "d98e52e9-2814-4919-bfc4-0e437c802362"
   },
   {
     "name": "Jackhammer",
@@ -2881,7 +3086,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8757b3b4-0275-41c0-a591-f670dd21af82"
+    "associated": "",
+    "id": "2039dd2b-9ffd-4ece-a749-0bea2d2fc7ba"
   },
   {
     "name": "Standard Recoilless Rifle Explosive Rounds",
@@ -2895,7 +3101,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "9178c6ad-91b6-4ccc-ba12-daf3b03d4ff2"
+    "associated": "",
+    "id": "e9689c5f-96f3-488f-82b4-4be340092b0c"
   },
   {
     "name": "Turreted Recoilless Rifle",
@@ -2909,7 +3116,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "b570079f-2760-4f2e-8131-a79fcef2151a"
+    "associated": "",
+    "id": "a87aff55-6d4b-4ec8-815c-75c90190098e"
   },
   {
     "name": "Ol' Yeller",
@@ -2923,7 +3131,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "99dad4fc-cae6-4ed9-875b-53ea3fb0e771"
+    "associated": "",
+    "id": "efeb1fc2-baac-4931-8994-da772722ce42"
   },
   {
     "name": "Mako",
@@ -2937,7 +3146,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d18602d1-9cd0-4b49-b4d3-302a6292e327"
+    "associated": "",
+    "id": "489c3b65-9a2a-45c2-ade4-30a7ecd6402b"
   },
   {
     "name": "Fire Lance",
@@ -2951,7 +3161,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "fb63d2ae-0980-41c2-8fe4-8f96f231a9cd"
+    "associated": "",
+    "id": "d06e097a-0f70-4f82-907c-d9dfd4074568"
   },
   {
     "name": "Rapid-Cycle Laser",
@@ -2965,7 +3176,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "b9db0afd-448f-4531-ad57-165dcfe1152b"
+    "associated": "",
+    "id": "66a60fcd-ea7f-48eb-9d56-014898384e04"
   },
   {
     "name": "Flamesaw",
@@ -2979,7 +3191,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "bde01316-f8a5-4f08-b8b1-3d66ff82f0fb"
+    "associated": "",
+    "id": "c9b8dfbf-8b26-4978-bd74-a28320edb711"
   },
   {
     "name": "Arc Rifle",
@@ -2993,7 +3206,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "977d95c3-9bce-4178-b7bc-dac31a36bdaf"
+    "associated": "",
+    "id": "2e293278-8630-4e47-932d-63745bea78c5"
   },
   {
     "name": "Linked Standard Machine Guns",
@@ -3007,7 +3221,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f27113f5-493b-49c5-bc6d-6a22f66e6e75"
+    "associated": "",
+    "id": "e394e22d-1af3-49e8-a63d-bce6185a8656"
   },
   {
     "name": "Standard Machine Gun Incendiary Rounds",
@@ -3021,7 +3236,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "949b5cc5-e2f4-44ee-9584-3297077a274d"
+    "associated": "",
+    "id": "d0a1035f-4ac6-4941-9eac-23b8ea1e0e0c"
   },
   {
     "name": "Vulcan",
@@ -3035,7 +3251,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "dd7f5488-ddae-45dc-9aff-4747b0f516fd"
+    "associated": "",
+    "id": "563abd52-7365-4963-bc3c-15cf3d3abf94"
   },
   {
     "name": "Anti-Tank Gun",
@@ -3049,7 +3266,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "74085283-2fab-4186-8cf2-cf92db46f70f"
+    "associated": "",
+    "id": "278c2918-1821-4f53-983f-ca324d800091"
   },
   {
     "name": "Stovepipe",
@@ -3063,7 +3281,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a439a61f-2b2e-4666-a28b-4e1235eba09b"
+    "associated": "",
+    "id": "fd1ae0f2-0345-4934-b803-49a7b19ef91c"
   },
   {
     "name": "Roman Candle",
@@ -3077,7 +3296,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "3a8de76b-2843-4117-b7f9-b8529d71fe2e"
+    "associated": "",
+    "id": "c5652a87-b657-4386-b109-dce3b3f8e953"
   },
   {
     "name": "Pulse Laser",
@@ -3091,7 +3311,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "19b5cf53-e173-42d7-840b-056e2a3640bf"
+    "associated": "",
+    "id": "c8d8363f-4fd1-4814-b026-49fbb06412ef"
   },
   {
     "name": "Twin Laser",
@@ -3105,7 +3326,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a05e4c20-fc28-41c7-84f4-2b1db6a9f1dd"
+    "associated": "",
+    "id": "30e74881-96b5-49bf-9ef0-d5afc2c2c9f4"
   },
   {
     "name": "Flail",
@@ -3119,7 +3341,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "d20fcb39-f9ff-4e77-8704-f230ff000f39"
+    "associated": "",
+    "id": "e3d77f05-0589-41e2-9b76-7b39f5245168"
   },
   {
     "name": "Betatron",
@@ -3133,7 +3356,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "5ebad81d-0f37-4964-a869-f36d41f81b80"
+    "associated": "",
+    "id": "7e39cd74-328d-492d-bd17-fb09c5000954"
   },
   {
     "name": "Linked Disruptors",
@@ -3147,7 +3371,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "1288e611-1f5e-448c-8b1f-b5c5ddea1994"
+    "associated": "",
+    "id": "d73ce490-bb8c-4f09-9532-4cea5eaba4b1"
   },
   {
     "name": "Heavy Machine Gun Incendiary Rounds",
@@ -3161,7 +3386,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "8d517922-fc38-4241-9c17-51c583a0c3d1"
+    "associated": "",
+    "id": "7216e725-690c-4242-832f-4b4560ab41d5"
   },
   {
     "name": "Longbow",
@@ -3175,7 +3401,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "e244f850-1c86-48a5-980f-37847219828a"
+    "associated": "",
+    "id": "d8d583e8-9ee5-42f8-ab72-386de1c89005"
   },
   {
     "name": "Ravager",
@@ -3189,7 +3416,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "e83ae273-d3e8-424b-aa63-198ba35b14a0"
+    "associated": "",
+    "id": "2c05a4aa-9728-42ae-a0fa-f594123863f5"
   },
   {
     "name": "Thresher",
@@ -3203,7 +3431,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "7d73d619-5f18-4346-a242-7f825854ce0e"
+    "associated": "",
+    "id": "b4f9b696-e35b-46a1-89eb-c76967e4dc8c"
   },
   {
     "name": "Gator",
@@ -3217,7 +3446,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "f14a6cd4-4694-4e5f-a417-37ca04f5880e"
+    "associated": "",
+    "id": "77649bc7-56d7-45bc-afb9-9a6536da980b"
   },
   {
     "name": "Gauss Cannon",
@@ -3231,7 +3461,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "a756bb07-e086-4d0f-89ee-99d2959886fd"
+    "associated": "",
+    "id": "8b9f4441-40a8-4d5a-928a-d0f07b3e5681"
   },
   {
     "name": "Howler",
@@ -3245,7 +3476,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "29cce63a-6e19-4fd8-b4b6-fbffbff389b7"
+    "associated": "",
+    "id": "2243390b-d588-4d5b-8aee-09ea629a5fdd"
   },
   {
     "name": "Hammerhead",
@@ -3259,7 +3491,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "d48daf16-fcda-46d3-b0d5-5c9260004fc0"
+    "associated": "",
+    "id": "cc280d42-0979-4963-982e-08f432483ddf"
   },
   {
     "name": "Heat Saber",
@@ -3273,7 +3506,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "93a8ac3d-c9a3-42db-a58d-9b9cd967b0e5"
+    "associated": "",
+    "id": "26fdedf7-5555-49bf-8ff4-37ac672aae72"
   },
   {
     "name": "Supercooled Laser",
@@ -3287,7 +3521,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "74f7afcc-3be7-4c25-bc66-1d202bd60da1"
+    "associated": "",
+    "id": "68a41aa5-6138-4a66-ab66-d7a32a43aa0d"
   },
   {
     "name": "Wrecking Ball",
@@ -3301,7 +3536,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "63028bca-cf4d-4681-a808-f949836e3e22"
+    "associated": "Shaken",
+    "id": "081313a2-81b3-4c3d-9c41-49741b13492d"
   },
   {
     "name": "Thundergun",
@@ -3315,7 +3551,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "e91bbcd4-e6c8-4e0d-be4f-c77a0057a9b8"
+    "associated": "",
+    "id": "cb3e8459-d08d-41e9-a510-99bf3acea967"
   },
   {
     "name": "Autocannon",
@@ -3329,7 +3566,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "7ebeade9-0882-40df-a43e-8144afb98345"
+    "associated": "",
+    "id": "738bec88-9574-4e58-b310-2369d73e5855"
   },
   {
     "name": "Buffalo Gun",
@@ -3343,7 +3581,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "e9ec3c61-ca42-4b5b-acff-5bde67fb6c3d"
+    "associated": "",
+    "id": "46366378-d6fb-4645-a2fe-b7d3b3795adb"
   },
   {
     "name": "Linked Jackhammers",
@@ -3357,7 +3596,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "68e18c3f-5bd1-445b-b10b-c197b1664aff"
+    "associated": "",
+    "id": "613fb00b-193c-414f-be21-d2063f245332"
   },
   {
     "name": "Mass Driver",
@@ -3371,7 +3611,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "51e26b99-6885-4b34-aa58-af5fcf127a8b"
+    "associated": "",
+    "id": "60c25aef-4730-423d-b934-f1c438e077ae"
   },
   {
     "name": "Big Whoop",
@@ -3385,7 +3626,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "768ec952-738f-4fb4-9e27-d14471577057"
+    "associated": "",
+    "id": "1fb169d8-f69f-4dbd-af72-dc3f3e7c7585"
   },
   {
     "name": "Linked Pulse Lasers",
@@ -3399,7 +3641,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "fe6f366a-dbcd-4004-b2fc-10519c5c8bdd"
+    "associated": "",
+    "id": "33f67cd0-a5a2-4a07-b6d5-31795cf322e5"
   },
   {
     "name": "Quad Laser",
@@ -3413,7 +3656,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "70ada35c-fbcb-4ef8-b2b9-b5bf0cbf33d5"
+    "associated": "",
+    "id": "29f87f07-0be6-4081-808f-597444d6735d"
   },
   {
     "name": "Lightning Scythe",
@@ -3427,7 +3671,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "e311aa1b-3bcf-4606-b2d2-ebe8efa399d1"
+    "associated": "",
+    "id": "5dc38c46-72b9-46ea-ad50-f04e77e8050c"
   },
   {
     "name": "Grapeshot Cannon",
@@ -3441,7 +3686,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "1110a16e-ebba-41cd-a0c0-92b6dc53c7ff"
+    "associated": "",
+    "id": "34867921-28a6-4071-9e5c-fb65b98cfde7"
   },
   {
     "name": "Hellfire",
@@ -3455,7 +3701,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "0afb8caf-2907-4a7d-ab6c-ee8726b8bea9"
+    "associated": "",
+    "id": "f89dad4d-c448-401a-89b4-b296c88a82a1"
   },
   {
     "name": "Railgun",
@@ -3469,7 +3716,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "b7de5104-e581-4963-aefe-16e9f7b9bd74"
+    "associated": "",
+    "id": "4cf1726a-d4a5-4761-97f0-d28972f8a0ae"
   },
   {
     "name": "The Anvil",
@@ -3483,7 +3731,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "35d71ae3-09f1-4e1c-b542-4c858b44f84d"
+    "associated": "",
+    "id": "92d183c7-0764-4716-8942-4cf7aec0a57b"
   },
   {
     "name": "Banshee",
@@ -3497,7 +3746,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "",
-    "id": "6cbec654-b35d-4cba-94bc-737e752ee133"
+    "associated": "",
+    "id": "818fce22-34e6-4864-b99c-9836856adfd0"
   },
   {
     "name": "Heavy Rocket",
@@ -3511,7 +3761,8 @@
     "copies": 2,
     "exclusive": false,
     "sides": "fb",
-    "id": "6651401c-6d39-4c47-b77d-75005e2c931b"
+    "associated": "",
+    "id": "0fcd9b3f-5044-4122-ac8b-a906b9846f8f"
   },
   {
     "name": "Linked Hammerheads",
@@ -3525,7 +3776,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "24f5c68a-9339-4abe-a343-ad683607c563"
+    "associated": "",
+    "id": "3934883d-c6e6-4781-b45a-a46ec5f309d2"
   },
   {
     "name": "Turreted Heavy Rocket",
@@ -3539,7 +3791,8 @@
     "copies": 1,
     "exclusive": true,
     "sides": "t",
-    "id": "458081f1-d690-4d04-9b22-aa66b9c3a558"
+    "associated": "",
+    "id": "aac2d401-e4b5-4bc0-87ff-b99385da8be9"
   },
   {
     "name": "Plasma Cannon",
@@ -3553,7 +3806,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "3c28e679-2688-45b8-bc08-adcac9821c08"
+    "associated": "",
+    "id": "4be148ad-b262-4955-b12f-4461c6ea5012"
   },
   {
     "name": "Solid-State Laser",
@@ -3567,7 +3821,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "825d5ac3-0473-40ec-805f-f37f1ce2acda"
+    "associated": "",
+    "id": "94a8ddd9-384b-4585-bb01-e209cdc91544"
   },
   {
     "name": "Shockwave Cannon",
@@ -3581,7 +3836,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "17ace2c0-156c-49ef-af63-3730be92ff7e"
+    "associated": "",
+    "id": "0e1cbd9f-b972-4bc2-aa7a-c53be13c33a6"
   },
   {
     "name": "Minigun",
@@ -3595,7 +3851,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "b29c7cd4-e8d0-4981-946b-f47b0aed97af"
+    "associated": "",
+    "id": "e22000fe-53ed-4b72-a356-3ba5e1bd93b8"
   },
   {
     "name": "Devastator",
@@ -3609,7 +3866,8 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "1d6f6899-ee4a-4605-833e-486a844a3ffe"
+    "associated": "",
+    "id": "599e1613-4519-4182-9fe6-e5c247674c5f"
   },
   {
     "name": "Dreadnaught",
@@ -3623,6 +3881,7 @@
     "copies": 1,
     "exclusive": false,
     "sides": "fb",
-    "id": "bfed9ff7-a653-412d-9b36-b29ad8427da9"
+    "associated": "",
+    "id": "586ca808-59e9-42f2-ace3-fa6bf45d2c5f"
   }
 ]
