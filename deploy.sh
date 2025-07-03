@@ -77,9 +77,9 @@ docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
 echo "Saving image to tar file..."
 docker save ${IMAGE_NAME}:${IMAGE_TAG} | gzip > ${IMAGE_NAME}.tar.gz
 
-# Copy to VM (optional, only if not using registry) with progress
+# Copy to VM (optional, only if not using registry) with progress indicator
 echo "Copying image to VM..."
-scp -v ${IMAGE_NAME}.tar.gz ${VM_SSH_CONNECTION}:/tmp/
+scp -p ${IMAGE_NAME}.tar.gz ${VM_SSH_CONNECTION}:/tmp/
 
 # SSH into VM and load the image (optional, only if not using registry)
 echo "Loading image on VM..."

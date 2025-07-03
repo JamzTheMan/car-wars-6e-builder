@@ -37,6 +37,7 @@ interface CardProps {
   card: CardType;
   isDraggable?: boolean;
   isInCollection?: boolean;
+  isDebug?: boolean;
   onClick?: () => void;
   zoomed?: boolean;
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
@@ -58,6 +59,7 @@ export function Card({
   card,
   isDraggable = true,
   isInCollection = true,
+  isDebug = false,
   onClick,
   zoomed = false,
   onMouseEnter,
@@ -422,13 +424,15 @@ export function Card({
           </div>
         )}
         {/* Delete button only visible on hover, always bottom right */}
-        <button
-          onClick={handleDelete}
-          className="absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded p-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          title={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
-        >
-          <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
-        </button>{' '}
+        {(!isInCollection || isDebug) && (
+          <button
+            onClick={handleDelete}
+            className="absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded p-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            title={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
+          >
+            <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+          </button>
+        )}{' '}
         {/* Add to Deck button for cards that don't have side placement options */}
         {isInCollection && !canBePlacedOnSides(card.type) && (
           <button onClick={handleAddToDeck} className="card-add-button" title="Add to deck">

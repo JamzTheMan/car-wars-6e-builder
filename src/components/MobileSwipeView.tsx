@@ -10,9 +10,13 @@ import { VehicleName } from '@/components/DeckLayout';
 
 interface MobileSwipeViewProps {
   collectionCards: any[];
+  onOpenSavedVehicles?: () => void;
 }
 
-const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({ collectionCards }) => {
+const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
+  collectionCards,
+  onOpenSavedVehicles,
+}) => {
   const mobileView = useCardStore(state => state.mobileView);
   const cycleMobileView = useCardStore(state => state.cycleMobileView);
   const filterProps = useCardCollectionFilters(collectionCards);
@@ -48,7 +52,7 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({ collectionCards }) =>
           <div className="bg-gray-900 p-2 border-b border-gray-700">
             <div className="flex items-center">
               <div className="w-full flex-shrink-0">
-                <VehicleName />
+                <VehicleName onOpenSavedVehicles={onOpenSavedVehicles} />
                 <CardCollectionFilters {...filterProps} />
               </div>
             </div>

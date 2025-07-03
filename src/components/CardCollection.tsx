@@ -53,6 +53,7 @@ export function CardCollection({
       height: 16px;
       border-radius: 50%;
       background: #3b82f6;
+      background: #3b82f6;
       cursor: pointer;
       margin-top: -6px;
       z-index: 1;
@@ -69,7 +70,10 @@ export function CardCollection({
       height: 16px;
       border-radius: 50%;
       background: #3b82f6;
+      background: #3b82f6;
       cursor: pointer;
+      border: none;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
       border: none;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
     }
@@ -85,6 +89,7 @@ export function CardCollection({
     newSource,
   } = useCardUpload();
   const [isUploading, setIsUploading] = useState(false);
+  const [isDebug, setIsDebug] = useState(false);
   const { confirm, dialog } = useConfirmationDialog();
 
   const {
@@ -102,6 +107,13 @@ export function CardCollection({
   useEffect(() => {
     loadCollection();
   }, [loadCollection]);
+
+  // Check for debug mode in localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsDebug(localStorage.getItem('debug') === 'true');
+    }
+  }, []);
 
   // Get unique subtypes organized by their corresponding card type
   const subtypesByCardTypeMemo = useMemo(() => {
@@ -477,7 +489,9 @@ export function CardCollection({
           }`}
         >
           {filteredCards.length > 0 ? (
-            filteredCards.map(card => <Card key={card.id} card={card} isInCollection={true} />)
+            filteredCards.map(card => (
+              <Card key={card.id} card={card} isInCollection={true} isDebug={isDebug} />
+            ))
           ) : (
             <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400 border-2 border-dashed border-gray-700 rounded-lg">
               <div className="flex flex-col items-center">
