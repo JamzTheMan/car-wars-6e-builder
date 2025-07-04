@@ -609,39 +609,64 @@ export function Card({
                     <div className="mt-4">
                       <h4 className="text-lg font-semibold mb-2 text-gray-700">Add to Car:</h4>
                       {(() => {
-                        // Only show buttons for valid sides, similar to quick add overlay
-                        const sides =
-                          card.sides && card.sides.trim() !== ''
-                            ? card.sides.toUpperCase()
-                            : 'FLRB';
-                        const areaMap: { [key: string]: CardArea } = {
-                          F: CardArea.Front,
-                          L: CardArea.Left,
-                          R: CardArea.Right,
-                          B: CardArea.Back,
-                          T: CardArea.Turret,
-                        };
-                        const validAreas = Object.entries(areaMap)
-                          .filter(([side]) => sides.includes(side))
-                          .map(([, area]) => area);
-                        // If no valid sides, fallback to all available areas
-                        const areasToShow =
-                          validAreas.length > 0 ? validAreas : getAvailableAreas(card.type);
+                        // Get the available areas based on card type
+                        const availableAreas = getAvailableAreas(card.type);
+
+                        // For cards that can be placed on sides (weapons, accessories, structures)
+                        // filter by the specified sides
+                        if (canBePlacedOnSides(card.type)) {
+                          const sides =
+                            card.sides && card.sides.trim() !== ''
+                              ? card.sides.toUpperCase()
+                              : 'FLRB';
+                          const areaMap: { [key: string]: CardArea } = {
+                            F: CardArea.Front,
+                            L: CardArea.Left,
+                            R: CardArea.Right,
+                            B: CardArea.Back,
+                            T: CardArea.Turret,
+                          };
+                          const validSideAreas = Object.entries(areaMap)
+                            .filter(([side]) => sides.includes(side))
+                            .map(([, area]) => area);
+
+                          if (validSideAreas.length > 0) {
+                            // If we have valid sides, show those
+                            return (
+                              <div className="flex flex-col gap-2">
+                                {validSideAreas.map(area => (
+                                  <button
+                                    key={area}
+                                    onClick={e => handleAddToDeck(e, area)}
+                                    className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded flex items-center justify-center gap-2 w-auto inline-flex max-w-[180px]"
+                                  >
+                                    <FontAwesomeIcon icon={faClone} />
+                                    {area.charAt(0).toUpperCase() + area.slice(1)}
+                                  </button>
+                                ))}
+                              </div>
+                            );
+                          }
+                        }
+
+                        // For crew, sidearms, gear, and upgrades - show the appropriate area buttons
                         return (
                           <div className="flex flex-col gap-2">
-                            {areasToShow.map(area => (
+                            {availableAreas.map(area => (
                               <button
                                 key={area}
                                 onClick={e => handleAddToDeck(e, area)}
                                 className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded flex items-center justify-center gap-2 w-auto inline-flex max-w-[180px]"
                               >
                                 <FontAwesomeIcon icon={faClone} />
-                                {area === 'gearupgrade'
+                                {area === CardArea.GearUpgrade
                                   ? 'Gear & Upgrades'
-                                  : area.charAt(0).toUpperCase() + area.slice(1)}
+                                  : area === CardArea.Crew
+                                    ? 'Crew & Sidearms'
+                                    : area.charAt(0).toUpperCase() + area.slice(1)}
                               </button>
                             ))}
-                            {areasToShow.length === 0 && (
+                            {availableAreas.length === 0 && (
                               <button
                                 onClick={e => handleAddToDeck(e)}
                                 className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded flex items-center justify-center gap-2 w-auto inline-flex max-w-[180px]"
