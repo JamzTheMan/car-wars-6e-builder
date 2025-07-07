@@ -226,9 +226,16 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
 
   // Dialog title and caption based on the view mode
   const dialogTitle = viewMode === 'saved' ? 'Saved Vehicles' : 'Stock Vehicles';
-  const dialogCaption = viewMode === 'saved' 
-    ? 'Your saved vehicles collection' 
-    : 'Pre-configured vehicles ready to use';
+  const dialogCaption =
+    viewMode === 'saved'
+      ? 'Your saved vehicles collection'
+      : 'Pre-configured vehicles ready to use';
+
+  // CSS classes for the title based on view mode
+  const titleClasses =
+    viewMode === 'saved'
+      ? 'text-xl font-semibold text-gray-100'
+      : 'text-xl font-semibold text-blue-200';
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -247,24 +254,32 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
         download="vehicle.json"
         aria-label="Export vehicle to JSON file"
       ></a>
-      
-      <div className="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col"
-           aria-labelledby="vehicle-dialog-title">
-        <div className="p-4 border-b border-gray-700">
+
+      <div
+        className={`${
+          viewMode === 'saved' ? 'bg-gray-800' : 'bg-blue-950'
+        } rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col`}
+        aria-labelledby="vehicle-dialog-title"
+      >
+        <div
+          className={`p-4 border-b ${viewMode === 'saved' ? 'border-gray-700' : 'border-blue-800'} 
+              ${viewMode === 'saved' ? 'bg-gray-800' : 'bg-blue-900/40'}`}
+        >
           <div className="flex justify-between items-center">
             <div className="flex flex-col">
-              <h2 id="vehicle-dialog-title" className="text-xl font-semibold text-gray-100">
-                {dialogTitle}
-              </h2>
-              <p className="text-xs text-gray-400">{dialogCaption}</p>
-              <button
-                onClick={() => setViewMode(viewMode === 'saved' ? 'stock' : 'saved')}
-                className="ml-3 text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
-                title={`Switch to ${viewMode === 'saved' ? 'stock' : 'saved'} vehicles`}
-              >
-                <FontAwesomeIcon icon={faExchangeAlt} className="h-4 w-4" />
-                <span className="text-sm hidden sm:inline">{viewMode === 'saved' ? 'Stock' : 'Saved'}</span>
-              </button>
+              <div className="flex items-center">
+                <h2 id="vehicle-dialog-title" className={titleClasses}>
+                  {dialogTitle}
+                </h2>
+                {viewMode === 'stock' && (
+                  <span className="ml-2 px-1.5 py-0.5 bg-blue-700/60 text-blue-200 text-xs rounded-md">
+                    Official
+                  </span>
+                )}
+              </div>
+              <p className={`text-xs ${viewMode === 'saved' ? 'text-gray-400' : 'text-blue-300'}`}>
+                {dialogCaption}
+              </p>
             </div>
             <div className="flex items-center gap-2">
               {viewMode === 'saved' && (
@@ -277,7 +292,17 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                   <span className="text-sm">Import</span>
                 </button>
               )}
+              <button
+                onClick={() => setViewMode(viewMode === 'saved' ? 'stock' : 'saved')}
+                className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-3 py-1.5 rounded hover:bg-gray-700"
+                title={`Switch to ${viewMode === 'saved' ? 'stock' : 'saved'} vehicles`}
+              >
+                <span className="text-sm">
+                  <FontAwesomeIcon icon={faExchangeAlt} className="h-4 w-4 ml-1" />
 
+                  {viewMode === 'saved' ? ' Stock Vehicles' : ' Saved Vehicles'}
+                </span>
+              </button>
               <button
                 onClick={() => setSortByDivisionFirst(prev => !prev)}
                 className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
@@ -317,7 +342,7 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
             </div>
           ) : vehicles.length === 0 ? (
             <p className="text-gray-400 text-center py-4">
-              {viewMode === 'saved' 
+              {viewMode === 'saved'
                 ? 'No saved vehicles found. Add some vehicles to your collection!'
                 : 'No stock vehicles found. Check the server configuration.'}
             </p>
@@ -326,7 +351,11 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
               {vehicles.map(vehicle => (
                 <div
                   key={vehicle.storageKey}
-                  className="w-full text-left bg-gray-700 hover:bg-gray-600 rounded-lg p-4 flex items-center justify-between group relative transition-colors"
+                  className={`w-full text-left ${
+                    viewMode === 'stock'
+                      ? 'bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/40'
+                      : 'bg-gray-700 hover:bg-gray-600'
+                  } rounded-lg p-4 flex items-center justify-between group relative transition-colors`}
                   role="listitem"
                 >
                   <div
@@ -392,7 +421,7 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                       // For stock vehicles, just show a save button that would save a copy to local storage
                       <div className="flex gap-2">
                         <button
-                          onClick={async (e) => {
+                          onClick={async e => {
                             e.stopPropagation();
                             setIsLoading(true);
                             try {
@@ -409,10 +438,10 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                               setIsLoading(false);
                             }
                           }}
-                          className="text-gray-400 hover:text-blue-500 p-1 rounded transition-colors"
+                          className="flex items-center gap-1 text-blue-300 hover:text-blue-100 hover:text-green-500 px-2 py-1 rounded transition-colors"
                           title="Save to your collection"
                         >
-                          <FontAwesomeIcon icon={faDownload} className="h-4 w-4" />
+                          <FontAwesomeIcon icon={faUpload} className="h-4 w-4" />
                         </button>
                       </div>
                     )}
@@ -423,11 +452,18 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
           )}
         </div>
 
-        <div className="p-4 border-t border-gray-700">
+        <div
+          className={`p-4 border-t ${viewMode === 'saved' ? 'border-gray-700' : 'border-blue-800'} 
+             ${viewMode === 'saved' ? 'bg-gray-800' : 'bg-blue-900/40'}`}
+        >
           <div className="flex justify-between items-center mb-2">
             <button
               onClick={onClose}
-              className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+              className={`w-full px-4 py-2 ${
+                viewMode === 'saved'
+                  ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                  : 'bg-blue-700 hover:bg-blue-600 text-blue-100'
+              } rounded transition-colors`}
             >
               Close
             </button>
