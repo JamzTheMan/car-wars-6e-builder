@@ -110,5 +110,6 @@ ssh ${VM_SSH_CONNECTION} "docker load < /tmp/${IMAGE_NAME}.tar.gz"
 echo "Image size is $(du -h ${IMAGE_NAME}.tar.gz | cut -f1)"
 
 echo "Cleaning up local files..."
+rm -f ${IMAGE_NAME}.tar.gz
 
 echo "Deployment prepared! Now login to Portainer and update your container."
