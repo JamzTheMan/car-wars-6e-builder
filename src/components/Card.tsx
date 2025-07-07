@@ -157,9 +157,16 @@ export function Card({
 
       // If adding would exceed the number allowed, show a confirmation dialog
       if (warning) {
+        let message = `You already have ${warning.currentCount} copies of "${card.name}" on your vehicle, but you may only have ${warning.maxAllowed} physical copies of the card. Add anyway?`;
+
+        // Enhanced message for crew cards to include subtype
+        if (card.type === 'Crew' && card.subtype) {
+          message = `You already have ${warning.currentCount} copies of "${card.name}" (${card.subtype}) on your vehicle, but you may only have ${warning.maxAllowed} physical copies of this card. Add anyway?`;
+        }
+
         const confirmed = await confirm({
           title: 'Card Limit Warning',
-          message: `You already have ${warning.currentCount} copies of "${card.name}" on your vehicle, but you may only have ${warning.maxAllowed} physical copies of the card. Add anyway?`,
+          message,
           confirmText: 'Add Anyway',
           cancelText: 'Cancel',
         });

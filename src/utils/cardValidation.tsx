@@ -69,10 +69,21 @@ export function checkNumberAllowedWarning(
   deckCards: Card[]
 ): { currentCount: number; maxAllowed: number } | null {
   if (card.numberAllowed > 0) {
-    // Count how many cards with the same name are already in the deck
-    const currentCount = deckCards.filter(
-      c => c.name.toLowerCase() === card.name.toLowerCase()
-    ).length;
+    // For Crew cards, we need to check both name AND subtype
+    // This is because there can be crew cards with the same name but different subtypes (Driver/Gunner)
+    let currentCount = 0;
+
+    if (card.type === 'Crew') {
+      // Count cards with same name AND same subtype
+      currentCount = deckCards.filter(
+        c =>
+          c.name.toLowerCase() === card.name.toLowerCase() &&
+          c.subtype?.toLowerCase() === card.subtype?.toLowerCase()
+      ).length;
+    } else {
+      // For other cards, just check the name as before
+      currentCount = deckCards.filter(c => c.name.toLowerCase() === card.name.toLowerCase()).length;
+    }
 
     // If adding this card would exceed the limit
     if (currentCount >= card.numberAllowed) {

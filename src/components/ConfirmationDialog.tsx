@@ -22,7 +22,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-6 w-80">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
         {title && <h2 className="text-lg font-bold mb-2 text-white">{title}</h2>}
         <p className="text-gray-200 mb-4">{message}</p>
         <div className="flex justify-end gap-2">
