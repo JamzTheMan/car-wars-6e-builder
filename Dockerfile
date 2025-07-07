@@ -1,40 +1,52 @@
 # Build stage
-FROM node:20-alpine AS build
+FROM node:20-alpine AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
+# Install dependencies only when needed
+COPY package.json package-lock.json* ./
 RUN npm ci
 
 # Copy all files
 COPY . .
 
+# Next.js collects completely anonymous telemetry data about general usage
+# Learn more here: https://nextjs.org/telemetry
+# Disable telemetry during the build
+ENV NEXT_TELEMETRY_DISABLED 1
+
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine AS production
-
+# Production stage with minimal footprint
+FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Set environment variables
-ENV NODE_ENV=production
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# Copy from build stage
-COPY --from=build /app/package*.json ./
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/public ./public
-COPY --from=build /app/next.config.ts ./
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-# Install only production dependencies
-RUN npm ci --omit=dev
+# Copy only necessary files from build stage
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Set proper permissions
+USER nextjs
 
 # Expose port
 EXPOSE 3000
 
+# Set the correct environment variables
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
 # Start the application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
