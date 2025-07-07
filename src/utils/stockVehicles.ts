@@ -1,7 +1,7 @@
 import type { DeckLayout } from '@/types/types';
 import { SavedVehicleInfo } from './savedVehicles';
 
-const STOCK_VEHICLES_PATH = '/assets/stock-cars/';
+const STOCK_VEHICLES_PATH = '/stock-vehicles/';
 
 // Get a list of all stock vehicles
 export async function getStockVehicles(): Promise<SavedVehicleInfo[]> {

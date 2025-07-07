@@ -5,7 +5,7 @@ import path from 'path';
 export async function GET() {
   try {
     // Get the path to the stock cars directory
-    const stockCarsDir = path.join(process.cwd(), 'public', 'assets', 'stock-cars');
+    const stockCarsDir = path.join(process.cwd(), 'public', 'stock-vehicles');
     
     // Read all files in the directory
     const files = fs.readdirSync(stockCarsDir);
