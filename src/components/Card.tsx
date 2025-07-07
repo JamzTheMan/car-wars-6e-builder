@@ -151,7 +151,17 @@ export function Card({
     let added = false;
 
     if (copiesToAdd > 0) {
-      // Check for numberAllowed warning first
+      // First, check if the card can be added at all (before showing any warnings)
+      // Use canAddCardToDeck directly to check if the card would pass validation
+      const validationResult = canAddCardToDeck(card, area);
+
+      if (!validationResult.allowed) {
+        // If validation fails, handle the error and return early
+        handleValidationError(validationResult, card.name, card.type, card.subtype);
+        return false;
+      }
+
+      // Only after passing basic validation, check for numberAllowed warning
       const deckCards = currentDeck?.cards || [];
       const warning = checkNumberAllowedWarning(card, deckCards);
 
@@ -176,23 +186,16 @@ export function Card({
         }
       }
 
-      // First copy: validate and deduct cost
-      const cardAdded = await validateAndAddCard(
-        card,
-        { canAddCardToDeck, addToDeck },
-        area,
-        showToast,
-        handleValidationError
-      );
+      // At this point validation has passed and warnings have been confirmed
+      // Add the card to the deck
+      addToDeck(card.id, area, true);
+      showToast(`Added ${card.name} to your vehicle`, 'success');
+      added = true;
 
-      if (cardAdded) {
-        added = true;
-
-        // Remaining copies: add directly, no cost/validation
-        for (let i = 1; i < copiesToAdd; i++) {
-          // Pass deductCost: false for extra copies
-          addToDeck(card.id, area, false);
-        }
+      // Remaining copies: add directly, no cost/validation
+      for (let i = 1; i < copiesToAdd; i++) {
+        // Pass deductCost: false for extra copies
+        addToDeck(card.id, area, false);
       }
     }
     return added;

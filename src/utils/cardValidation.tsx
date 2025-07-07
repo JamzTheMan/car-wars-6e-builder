@@ -545,12 +545,8 @@ export function validateAndAddCard(
   // Use the central validation function - pass the target area to ensure structure limits are checked
   const validationResult = canAddCardToDeck(card, targetArea);
 
-  // If validation passes, check for numberAllowed warnings
+  // If validation passes, add the card to the deck
   if (validationResult.allowed) {
-    // Note: numberAllowed warnings are now handled directly in the Card component
-    // so we don't need to check for them here
-
-    // No warning or no confirmation function, add the card directly
     addToDeck(card.id, targetArea, true);
     if (showToast) {
       showToast(`Added ${card.name} to your vehicle`, 'success');
