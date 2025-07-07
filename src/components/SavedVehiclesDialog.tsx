@@ -6,6 +6,7 @@ import {
   loadVehicle,
   saveVehicle,
 } from '@/utils/savedVehicles';
+import { getStockVehicles, loadStockVehicle } from '@/utils/stockVehicles';
 import { useCardStore } from '@/store/cardStore';
 import { useToast } from '@/components/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,6 +16,7 @@ import {
   faSort,
   faUpload,
   faDownload,
+  faExchangeAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import type { DeckLayout } from '@/types/types';
 
@@ -27,6 +29,7 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
   const [vehicles, setVehicles] = useState<SavedVehicleInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sortByDivisionFirst, setSortByDivisionFirst] = useState(false);
+  const [viewMode, setViewMode] = useState<'saved' | 'stock'>('saved');
   const { setDeck } = useCardStore();
   const { showToast } = useToast();
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -38,38 +41,62 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
     }
   }, [isOpen]);
 
-  const refreshVehicleList = () => {
-    const savedVehicles = getSavedVehicles();
-    setVehicles(
-      savedVehicles.sort((a, b) => {
-        if (sortByDivisionFirst) {
-          // First sort by division
-          const divisionCompare = a.division.localeCompare(b.division);
-          if (divisionCompare !== 0) return divisionCompare;
-
-          // Then by name
-          return a.name.localeCompare(b.name);
-        } else {
-          // First sort by name
-          const nameCompare = a.name.localeCompare(b.name);
-          if (nameCompare !== 0) return nameCompare;
-
-          // Then by division
-          return a.division.localeCompare(b.division);
-        }
-      })
-    );
-  };
-
-  // Refresh the list when sort order changes
+  // Refresh the list when sort order or view mode changes
   useEffect(() => {
-    refreshVehicleList();
-  }, [sortByDivisionFirst]);
+    if (isOpen) {
+      refreshVehicleList();
+    }
+  }, [sortByDivisionFirst, viewMode, isOpen]);
 
-  const handleLoadVehicle = (storageKey: string) => {
+  const refreshVehicleList = async () => {
     setIsLoading(true);
     try {
-      const vehicle = loadVehicle(storageKey);
+      let vehicleList: SavedVehicleInfo[];
+
+      if (viewMode === 'saved') {
+        vehicleList = getSavedVehicles();
+      } else {
+        vehicleList = await getStockVehicles();
+      }
+
+      setVehicles(
+        vehicleList.sort((a, b) => {
+          if (sortByDivisionFirst) {
+            // First sort by division
+            const divisionCompare = a.division.localeCompare(b.division);
+            if (divisionCompare !== 0) return divisionCompare;
+
+            // Then by name
+            return a.name.localeCompare(b.name);
+          } else {
+            // First sort by name
+            const nameCompare = a.name.localeCompare(b.name);
+            if (nameCompare !== 0) return nameCompare;
+
+            // Then by division
+            return a.division.localeCompare(b.division);
+          }
+        })
+      );
+    } catch (error) {
+      console.error('Error refreshing vehicle list:', error);
+      showToast('Failed to load vehicles', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoadVehicle = async (storageKey: string) => {
+    setIsLoading(true);
+    try {
+      let vehicle: DeckLayout | null = null;
+
+      if (viewMode === 'saved') {
+        vehicle = loadVehicle(storageKey);
+      } else {
+        vehicle = await loadStockVehicle(storageKey);
+      }
+
       if (vehicle) {
         setDeck(vehicle);
         showToast('Vehicle loaded successfully', 'success');
@@ -78,6 +105,7 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
         showToast('Failed to load vehicle', 'error');
       }
     } catch (error) {
+      console.error('Error loading vehicle:', error);
       showToast('Error loading vehicle', 'error');
     } finally {
       setIsLoading(false);
@@ -196,29 +224,60 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
 
   if (!isOpen) return null;
 
+  // Dialog title and caption based on the view mode
+  const dialogTitle = viewMode === 'saved' ? 'Saved Vehicles' : 'Stock Vehicles';
+  const dialogCaption = viewMode === 'saved' 
+    ? 'Your saved vehicles collection' 
+    : 'Pre-configured vehicles ready to use';
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
+      {/* Hidden elements for file operations */}
+      <input
+        ref={importInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleImportFile}
+        className="hidden"
+        aria-label="Import vehicle from JSON file"
+      />
+      <a
+        ref={exportInputRef}
+        className="hidden"
+        download="vehicle.json"
+        aria-label="Export vehicle to JSON file"
+      ></a>
+      
+      <div className="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col"
+           aria-labelledby="vehicle-dialog-title">
         <div className="p-4 border-b border-gray-700">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-100">Saved Vehicles</h2>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col">
+              <h2 id="vehicle-dialog-title" className="text-xl font-semibold text-gray-100">
+                {dialogTitle}
+              </h2>
+              <p className="text-xs text-gray-400">{dialogCaption}</p>
               <button
-                onClick={handleImportClick}
-                className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
-                title="Import vehicle from file"
+                onClick={() => setViewMode(viewMode === 'saved' ? 'stock' : 'saved')}
+                className="ml-3 text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
+                title={`Switch to ${viewMode === 'saved' ? 'stock' : 'saved'} vehicles`}
               >
-                <FontAwesomeIcon icon={faUpload} className="h-4 w-4" />
-                <span className="text-sm">Import</span>
+                <FontAwesomeIcon icon={faExchangeAlt} className="h-4 w-4" />
+                <span className="text-sm hidden sm:inline">{viewMode === 'saved' ? 'Stock' : 'Saved'}</span>
               </button>
-              <input
-                ref={importInputRef}
-                type="file"
-                accept=".json"
-                onChange={handleImportFile}
-                className="hidden"
-                aria-label="Import vehicle from JSON file"
-              />
+            </div>
+            <div className="flex items-center gap-2">
+              {viewMode === 'saved' && (
+                <button
+                  onClick={handleImportClick}
+                  className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
+                  title="Import vehicle from file"
+                >
+                  <FontAwesomeIcon icon={faUpload} className="h-4 w-4" />
+                  <span className="text-sm">Import</span>
+                </button>
+              )}
+
               <button
                 onClick={() => setSortByDivisionFirst(prev => !prev)}
                 className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-700"
@@ -251,8 +310,17 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
         </div>
 
         <div className="overflow-y-auto flex-1 p-4">
-          {vehicles.length === 0 ? (
-            <p className="text-gray-400 text-center py-4">No saved vehicles found</p>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <FontAwesomeIcon icon={faSpinner} className="h-6 w-6 animate-spin text-blue-400" />
+              <span className="ml-2 text-gray-300">Loading vehicles...</span>
+            </div>
+          ) : vehicles.length === 0 ? (
+            <p className="text-gray-400 text-center py-4">
+              {viewMode === 'saved' 
+                ? 'No saved vehicles found. Add some vehicles to your collection!'
+                : 'No stock vehicles found. Check the server configuration.'}
+            </p>
           ) : (
             <div className="space-y-2" role="list">
               {vehicles.map(vehicle => (
@@ -276,8 +344,18 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                     <h3 className="text-gray-100 font-medium">{vehicle.name}</h3>
                     <div className="text-sm text-gray-400 space-x-2">
                       <span>Division: {vehicle.division}</span>
-                      <span>•</span>
-                      <span>Last saved: {new Date(vehicle.lastSaved).toLocaleString()}</span>
+                      {viewMode === 'saved' && (
+                        <>
+                          <span>•</span>
+                          <span>Last saved: {new Date(vehicle.lastSaved).toLocaleString()}</span>
+                        </>
+                      )}
+                      {viewMode === 'stock' && (
+                        <>
+                          <span>•</span>
+                          <span>Stock vehicle</span>
+                        </>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -287,28 +365,57 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
                         className="h-4 w-4 animate-spin mr-2 text-blue-400"
                       />
                     ) : null}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleExportVehicle(vehicle);
-                        }}
-                        className="text-gray-400 hover:text-green-500 p-1 rounded transition-colors"
-                        title="Export vehicle"
-                      >
-                        <FontAwesomeIcon icon={faDownload} className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleDeleteVehicle(vehicle.storageKey, vehicle.name);
-                        }}
-                        className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
-                        title="Delete vehicle"
-                      >
-                        <FontAwesomeIcon icon={faTrash} className="h-4 w-4" />
-                      </button>
-                    </div>
+                    {viewMode === 'saved' ? (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleExportVehicle(vehicle);
+                          }}
+                          className="text-gray-400 hover:text-green-500 p-1 rounded transition-colors"
+                          title="Export vehicle"
+                        >
+                          <FontAwesomeIcon icon={faDownload} className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleDeleteVehicle(vehicle.storageKey, vehicle.name);
+                          }}
+                          className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
+                          title="Delete vehicle"
+                        >
+                          <FontAwesomeIcon icon={faTrash} className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      // For stock vehicles, just show a save button that would save a copy to local storage
+                      <div className="flex gap-2">
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            setIsLoading(true);
+                            try {
+                              const stockVehicle = await loadStockVehicle(vehicle.storageKey);
+                              if (stockVehicle && saveVehicle(stockVehicle)) {
+                                showToast('Vehicle saved to your collection', 'success');
+                              } else {
+                                showToast('Failed to save vehicle to your collection', 'error');
+                              }
+                            } catch (error) {
+                              console.error('Error saving stock vehicle:', error);
+                              showToast('Failed to save vehicle to your collection', 'error');
+                            } finally {
+                              setIsLoading(false);
+                            }
+                          }}
+                          className="text-gray-400 hover:text-blue-500 p-1 rounded transition-colors"
+                          title="Save to your collection"
+                        >
+                          <FontAwesomeIcon icon={faDownload} className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
