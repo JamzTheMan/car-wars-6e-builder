@@ -161,6 +161,7 @@ export const CardCollectionFilters: React.FC<CardCollectionFiltersProps> = ({
                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     value={filterCardName}
                     onChange={e => updateFilterCardName(e.target.value)}
+                    onFocus={e => e.target.select()}
                   />
                   {filterCardName && (
                     <button
