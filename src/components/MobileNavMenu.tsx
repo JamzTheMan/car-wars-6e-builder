@@ -8,6 +8,8 @@ import {
   faUserGroup,
   faArrowUp,
   faArrowDown,
+  faArrowLeft,
+  faArrowRight,
   faRotate,
   faTableCells,
 } from '@fortawesome/free-solid-svg-icons';
@@ -15,12 +17,12 @@ import { useCardStore } from '@/store/cardStore';
 
 // Define the navigation items
 const navItems = [
-  { id: 'collection', label: 'Collection', icon: faLayerGroup },
-  { id: 'left', label: 'Left', icon: faCarSide },
+  { id: 'collection', label: 'Cards', icon: faLayerGroup },
+  { id: 'left', label: 'Left', icon: faArrowLeft },
   { id: 'front', label: 'Front', icon: faArrowUp },
-  { id: 'right', label: 'Right', icon: faCarSide },
+  { id: 'right', label: 'Right', icon: faArrowRight },
   { id: 'back', label: 'Back', icon: faArrowDown },
-  { id: 'turret', label: 'Turret', icon: faRotate },
+  { id: 'turret', label: 'Turret', icon: faCircleDot },
   { id: 'crew', label: 'Crew', icon: faUserGroup },
   { id: 'gear', label: 'Gear', icon: faGear },
   { id: 'deck', label: 'Deck', icon: faTableCells },
@@ -51,7 +53,6 @@ const MobileNavMenu: React.FC<MobileNavMenuProps> = ({ compact = false }) => {
             <FontAwesomeIcon
               icon={item.icon}
               className={compact ? 'text-sm' : 'text-lg'}
-              flip={item.id === 'right' ? 'horizontal' : undefined}
             />
             <span className={`text-xs mt-1 ${compact ? 'sr-only' : ''}`}>{item.label}</span>
             {mobileView === item.id && (
