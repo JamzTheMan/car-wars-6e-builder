@@ -321,8 +321,10 @@ export function Card({
   // Touch handling variables
   const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 });
   const [hasMoved, setHasMoved] = useState(false);
+  const [lastTapTime, setLastTapTime] = useState(0);
+  const doubleTapDelay = 300; // milliseconds
 
-  // Handle long press for preview in mobile view
+  // Handle touch start for double tap detection and long press in mobile view
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!isMobile) return;
 
@@ -342,17 +344,17 @@ export function Card({
       clearTimeout(longPressTimer);
     }
 
-    // Set new timer for long press (show preview)
+    // We'll rely on double-tap for preview instead of long press
+    // but keep a reduced long press timer for accessibility
     const timer = setTimeout(() => {
       if (!isDragging && !hasMoved) {
+        // Only trigger on very long press (more than double the normal long press time)
         setShowQuickAdd(false);
-        openPreview();
       }
-    }, 600); // 600ms long press for better distinction from taps
+    }, 1200); // Increased to 1200ms to avoid accidental triggers
 
     setLongPressTimer(timer);
   };
-
   const handleTouchEnd = (e: React.TouchEvent) => {
     // Clear the timer if touch ends before long press threshold
     if (longPressTimer) {
@@ -360,21 +362,35 @@ export function Card({
       setLongPressTimer(null);
     }
 
-    // Check if the touch target is the delete button or its children
+    // Check if the touch target is the delete button, quick add button, or their children
     const target = e.target as Element;
     const isDeleteButton = target.closest('.delete-button') !== null;
+    const isQuickAddButton = target.closest('.quick-add-button') !== null;
 
-    // Only prevent default if not clicking the delete button
-    if (!isDeleteButton) {
+    // Only prevent default if not clicking a button that needs to work
+    if (!isDeleteButton && !isQuickAddButton) {
       e.preventDefault();
 
       // Only register as tap if the user hasn't moved significantly
-      if (isMobile && !isPreviewOpen && !hasMoved) {
-        // If this is a collection card, show quick add overlay
-        if (isInCollection) {
-          setShowQuickAdd(prev => !prev); // Toggle quick add overlay
+      if (isMobile && !hasMoved) {
+        const now = Date.now();
+
+        // Double tap detection
+        if (now - lastTapTime < doubleTapDelay) {
+          // This is a double tap - open preview
+          setShowQuickAdd(false);
+          openPreview();
+          // Reset tap tracking
+          setLastTapTime(0);
+        } else {
+          // This is a single tap
+          setLastTapTime(now);
+
+          // If this is a collection card, show quick add overlay on single tap
+          if (isInCollection && !isPreviewOpen) {
+            setShowQuickAdd(prev => !prev); // Toggle quick add overlay
+          }
         }
-        // For non-collection views, let the click handler work
       }
     }
   };
@@ -458,7 +474,7 @@ export function Card({
           isInCollection ? 'in-collection' : ''
         } ${
           card.position ? 'card-positioned' : ''
-        } ${zoomed ? 'z-[100] scale-400 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
+        } ${isPreviewOpen ? 'card-preview-open' : ''} ${zoomed ? 'z-[100] scale-400 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
         data-card-type={card.type}
         data-x={card.position?.x ?? undefined}
         data-y={card.position?.y ?? undefined}
@@ -494,10 +510,9 @@ export function Card({
                 showQuickAdd ? 'opacity-100' : 'opacity-0'
               } ${isMobile ? 'mobile-overlay' : ''}`}
               onClick={e => {
-                e.stopPropagation(); // Prevent clicks from bubbling up
-                if (isMobile) {
-                  e.preventDefault(); // Prevent default touch behavior
-                }
+                // Only stop propagation, don't prevent default
+                // This allows button clicks inside to work
+                e.stopPropagation();
               }}
             >
               <div className="quick-add-container">
@@ -511,7 +526,17 @@ export function Card({
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            handleQuickAdd(CardArea.Front);
+                            // Only handle click for desktop
+                            if (!isMobile) {
+                              handleQuickAdd(CardArea.Front);
+                            }
+                          }}
+                          onTouchEnd={e => {
+                            // For mobile touch support
+                            e.stopPropagation();
+                            if (isMobile) {
+                              handleQuickAdd(CardArea.Front);
+                            }
                           }}
                           className="quick-add-button front"
                           title="Add to Front"
@@ -523,7 +548,17 @@ export function Card({
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            handleQuickAdd(CardArea.Left);
+                            // Only handle click for desktop
+                            if (!isMobile) {
+                              handleQuickAdd(CardArea.Left);
+                            }
+                          }}
+                          onTouchEnd={e => {
+                            // For mobile touch support
+                            e.stopPropagation();
+                            if (isMobile) {
+                              handleQuickAdd(CardArea.Left);
+                            }
                           }}
                           className="quick-add-button left"
                           title="Add to Left"
@@ -535,7 +570,17 @@ export function Card({
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            handleQuickAdd(CardArea.Right);
+                            // Only handle click for desktop
+                            if (!isMobile) {
+                              handleQuickAdd(CardArea.Right);
+                            }
+                          }}
+                          onTouchEnd={e => {
+                            // For mobile touch support
+                            e.stopPropagation();
+                            if (isMobile) {
+                              handleQuickAdd(CardArea.Right);
+                            }
                           }}
                           className="quick-add-button right"
                           title="Add to Right"
@@ -547,7 +592,17 @@ export function Card({
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            handleQuickAdd(CardArea.Back);
+                            // Only handle click for desktop
+                            if (!isMobile) {
+                              handleQuickAdd(CardArea.Back);
+                            }
+                          }}
+                          onTouchEnd={e => {
+                            // For mobile touch support
+                            e.stopPropagation();
+                            if (isMobile) {
+                              handleQuickAdd(CardArea.Back);
+                            }
                           }}
                           className="quick-add-button rear"
                           title="Add to Rear"
@@ -607,12 +662,30 @@ export function Card({
             title={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
             aria-label={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
           >
-            <FontAwesomeIcon icon={faTrash}  />
+            <FontAwesomeIcon icon={faTrash} />
           </button>
         )}{' '}
         {/* Add to Deck button for cards that don't have side placement options */}
         {isInCollection && !canBePlacedOnSides(card.type) && (
-          <button onClick={handleAddToDeck} className="card-add-button" title="Add to deck">
+          <button
+            onClick={e => {
+              e.stopPropagation();
+              // Only handle click for desktop
+              if (!isMobile) {
+                handleAddToDeck(e);
+              }
+            }}
+            onTouchEnd={e => {
+              // For mobile touch support
+              e.stopPropagation();
+              if (isMobile) {
+                // Use addCopiesToDeck directly since it doesn't require the event object
+                addCopiesToDeck();
+              }
+            }}
+            className="card-add-button"
+            title="Add to deck"
+          >
             <FontAwesomeIcon icon={faClone} className="w-6 h-6" />
           </button>
         )}
@@ -623,7 +696,17 @@ export function Card({
             <button
               onClick={e => {
                 e.stopPropagation();
-                handleQuickAdd(CardArea.Turret);
+                // Only handle click for desktop
+                if (!isMobile) {
+                  handleQuickAdd(CardArea.Turret);
+                }
+              }}
+              onTouchEnd={e => {
+                // For mobile touch support
+                e.stopPropagation();
+                if (isMobile) {
+                  handleQuickAdd(CardArea.Turret);
+                }
               }}
               className="card-add-button"
               title="Add to turret"
