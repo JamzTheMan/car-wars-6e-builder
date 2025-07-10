@@ -118,7 +118,6 @@ interface CardStore {
   reorderCardInArea: (draggedId: string, targetId: string | null, area: CardArea) => void;
   mobileView: 'collection' | 'left' | 'front' | 'right' | 'back' | 'turret' | 'crew' | 'gear' | 'deck';
   setMobileView: (view: CardStore['mobileView']) => void;
-  cycleMobileView: (direction: 'left' | 'right' | 'up' | 'down') => void;
 }
 
 // Set up localStorage only in browser
@@ -695,23 +694,6 @@ export const useCardStore = create<CardStore>()(
       },
 
       setMobileView: (view) => set({ mobileView: view }),
-      cycleMobileView: (direction) => {
-        // New order: left, right, front, back, turret, gear, crew, collection
-        const order: CardStore['mobileView'][] = [
-          'left', 'right', 'front', 'back', 'turret', 'gear', 'crew', 'collection'
-        ];
-        const current = get().mobileView;
-        if (direction === 'left' || direction === 'right') {
-          const idx = order.indexOf(current);
-          if (idx !== -1) {
-            let newIdx = direction === 'left' ? idx - 1 : idx + 1;
-            if (newIdx < 0) newIdx = order.length - 1;
-            if (newIdx >= order.length) newIdx = 0;
-            set({ mobileView: order[newIdx] });
-          }
-        }
-        // Up/down swiping is now disabled
-      },
 
       // For development: remove all data
       devReset: () => {

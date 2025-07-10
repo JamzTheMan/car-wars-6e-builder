@@ -1,12 +1,12 @@
 import React from 'react';
-import { useSwipeable } from 'react-swipeable';
 import { useCardStore } from '@/store/cardStore';
 import { CardCollection } from '@/components/CardCollection';
 import { DeckLayout } from '@/components/DeckLayout';
 import { useCardCollectionFilters } from '@/app/CardCollectionFiltersWrapper';
 import { CardCollectionFilters } from '@/components/CardCollectionFilters';
 import { CardArea } from '@/types/types';
-import { VehicleName } from '@/components/DeckLayout';
+
+import MobileNavMenu from '@/components/MobileNavMenu';
 
 interface MobileSwipeViewProps {
   collectionCards: any[];
@@ -18,9 +18,7 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
   onOpenSavedVehicles,
 }) => {
   const mobileView = useCardStore(state => state.mobileView);
-  const cycleMobileView = useCardStore(state => state.cycleMobileView);
   const filterProps = useCardCollectionFilters(collectionCards);
-  const [showVehicleName, setShowVehicleName] = React.useState(false);
   const [showFilters, setShowFilters] = React.useState(filterProps.filterPanelOpen);
 
   // Keep local showFilters in sync with filterProps
@@ -28,20 +26,7 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
     setShowFilters(filterProps.filterPanelOpen);
   }, [filterProps.filterPanelOpen]);
 
-  // Helper to open vehicle name and close filters
-  const handleOpenVehicleName = () => {
-    setShowVehicleName(true);
-    setShowFilters(false);
-    filterProps.updateFilterPanelOpen(false);
-  };
-
-  const handlers = useSwipeable({
-    onSwipedLeft: () => cycleMobileView('right'),
-    onSwipedRight: () => cycleMobileView('left'),
-    onSwipedUp: () => cycleMobileView('up'),
-    onSwipedDown: () => cycleMobileView('down'),
-    trackMouse: true, // for desktop testing
-  });
+  // No additional state needed for non-swipeable version
 
   // Render the appropriate view based on mobileView
   let content: React.ReactNode = null;
@@ -49,14 +34,6 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
     case 'collection':
       content = (
         <div className="h-full flex flex-col">
-          <div className="bg-gray-900 p-2 border-b border-gray-700">
-            <div className="flex items-center">
-              <div className="w-full flex-shrink-0">
-                <VehicleName onOpenSavedVehicles={onOpenSavedVehicles} />
-                <CardCollectionFilters {...filterProps} />
-              </div>
-            </div>
-          </div>
           <div className="flex-1 overflow-y-auto">
             <CardCollection {...filterProps} />
           </div>
@@ -91,20 +68,15 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
       content = <CardCollection {...filterProps} />;
   }
 
-  // Simple dot indicator for navigation
-  const views = ['collection', 'left', 'front', 'right', 'back', 'turret', 'crew', 'gear', 'deck'];
-
   return (
-    <div {...handlers} className="w-full h-full overflow-hidden flex flex-col">
-      <div className="flex-1 min-h-0">{content}</div>
-      <div className="flex justify-center gap-2 py-2">
-        {views.map(view => (
-          <span
-            key={view}
-            className={`w-2 h-2 rounded-full ${mobileView === view ? 'bg-yellow-400' : 'bg-gray-600'}`}
-          />
-        ))}
+    <div className="w-full h-full overflow-hidden flex flex-col">
+      {/* Main content area - no animations */}
+      <div className="flex-1 min-h-0 relative">
+        <div className="absolute inset-0">{content}</div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      <MobileNavMenu />
     </div>
   );
 };

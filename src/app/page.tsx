@@ -168,6 +168,10 @@ export default function Home() {
   const [isSavedVehiclesOpen, setIsSavedVehiclesOpen] = useState(false);
   const [showPrintOptions, setShowPrintOptions] = useState(false);
   const [printMode, setPrintMode] = useState<'full' | 'simple' | null>(null);
+  // Mobile responsive state
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth <= 768
+  );
 
   // Use the custom hook to manage filter state and logic
   const filterProps = useCardCollectionFilters(collectionCards);
@@ -274,6 +278,22 @@ export default function Home() {
     }
   }, [isStoreHydrated, setDeck, currentDeck]);
 
+  // Handle window resize for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Set initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Show a loading state while hydrating
   if (!isStoreHydrated) {
     return (
@@ -283,8 +303,7 @@ export default function Home() {
     );
   }
 
-  // Responsive: use mobile swipe view for small screens
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  // Mobile detection is handled by window resize only
 
   if (isMobile) {
     return (
@@ -373,41 +392,10 @@ export default function Home() {
         isOpen={isSavedVehiclesOpen}
         onClose={() => setIsSavedVehiclesOpen(false)}
       />
-      {showPrintOptions && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-xl">
-            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Print Options</h2>
-            <div className="flex flex-col gap-4">
-              <button
-                onClick={() => {
-                  setPrintMode('full');
-                  setShowPrintOptions(false);
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              >
-                Full Layout (Images)
-              </button>
-              <button
-                onClick={() => {
-                  setPrintMode('simple');
-                  setShowPrintOptions(false);
-                }}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-              >
-                Simple Layout (Text Only)
-              </button>
-              <button
-                onClick={() => setShowPrintOptions(false)}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {printMode && <PrintView printMode={printMode} onClose={() => setPrintMode(null)} />}
       {confirmationDialog}
+      {showPrintOptions && (
+        <PrintView printMode={printMode} onClose={() => setShowPrintOptions(false)} />
+      )}
     </>
   );
 }
