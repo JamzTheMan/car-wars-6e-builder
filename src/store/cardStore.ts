@@ -95,9 +95,13 @@ interface CardStore {
   collectionCards: Card[];
   currentDeck: DeckLayout | null;
   isLoading: boolean;
+  mobileCardZoom: 'single' | 'double';
   loadCollection: () => Promise<void>;
   addToCollection: (card: Omit<Card, 'id'>) => Promise<void>;
   addToCollectionWithId: (card: Card) => Promise<void>;
+  toggleMobileCardZoom: () => void;
+  setMobileCardZoomIn: () => void;
+  setMobileCardZoomOut: () => void;
   removeFromCollection: (id: string) => Promise<void>;
   clearCollection: () => Promise<void>;
   addToDeck: (cardId: string, area?: CardArea, deductCost?: boolean) => void;
@@ -171,6 +175,7 @@ export const useCardStore = create<CardStore>()(
       currentDeck: null,
       isLoading: true,
       mobileView: 'collection',
+      mobileCardZoom: 'double', // Default to showing 2 cards per row (double)
 
       // Load the global card collection from the API
       loadCollection: async () => {
@@ -694,6 +699,19 @@ export const useCardStore = create<CardStore>()(
       },
 
       setMobileView: (view) => set({ mobileView: view }),
+      
+      // Mobile card zoom functions
+      toggleMobileCardZoom: () => set((state) => ({
+        mobileCardZoom: state.mobileCardZoom === 'double' ? 'single' : 'double',
+      })),
+      
+      setMobileCardZoomIn: () => set(() => ({
+        mobileCardZoom: 'single',
+      })),
+      
+      setMobileCardZoomOut: () => set(() => ({
+        mobileCardZoom: 'double',
+      })),
 
       // For development: remove all data
       devReset: () => {

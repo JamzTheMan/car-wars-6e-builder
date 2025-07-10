@@ -96,6 +96,9 @@ export function CardCollection({
     typeof window !== 'undefined' && window.innerWidth <= 768
   );
 
+  // Get mobile card zoom level from the store
+  const mobileCardZoom = useCardStore(state => state.mobileCardZoom);
+
   // Update mobile state on window resize
   useEffect(() => {
     const handleResize = () => {
@@ -506,7 +509,9 @@ export function CardCollection({
         <div
           className={`grid gap-1 ${
             isMobile
-              ? 'grid-cols-2' // Mobile view - exactly 2 cards per row
+              ? mobileCardZoom === 'single'
+                ? 'grid-cols-1' // Mobile view - 1 card per row (zoomed in)
+                : 'grid-cols-2' // Mobile view - 2 cards per row (default)
               : 'grid-cols-[repeat(auto-fit,minmax(clamp(138px,15vw,155px),1fr))]' // Desktop view
           } ${isUploading ? 'opacity-50' : ''}`}
         >

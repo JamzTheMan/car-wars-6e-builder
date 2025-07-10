@@ -10,6 +10,7 @@ import MobileNavMenu from '@/components/MobileNavMenu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { MobilePointsSummary } from '@/components/MobilePointsSummary';
+import MobileZoomHandler from '@/components/MobileZoomHandler';
 
 interface MobileSwipeViewProps {
   collectionCards: any[];
@@ -52,7 +53,9 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
             </div>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <CardCollection {...filterProps} />
+            <MobileZoomHandler>
+              <CardCollection {...filterProps} />
+            </MobileZoomHandler>
           </div>
         </div>
       );
