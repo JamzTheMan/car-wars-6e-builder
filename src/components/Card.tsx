@@ -75,7 +75,8 @@ export function Card({
     mobileView, // Get the mobile view state to check if we're in mobile mode
   } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [showQuickAdd] = useState(false);
+  const [showQuickAdd, setShowQuickAdd] = useState(false); // Initially hidden
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
   const [associatedCard, setAssociatedCard] = useState<CardType | null>(null);
   const [showingAssociatedCard, setShowingAssociatedCard] = useState(false);
   const { showToast } = useToast();
@@ -286,6 +287,7 @@ export function Card({
     setIsPreviewOpen(false);
     setAssociatedCard(null);
     setShowingAssociatedCard(false);
+    setShowQuickAdd(false); // Also reset quick add when closing preview
   };
   const swapCards = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -316,6 +318,131 @@ export function Card({
     return baseClasses;
   };
 
+  // Touch handling variables
+  const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 });
+  const [hasMoved, setHasMoved] = useState(false);
+
+  // Handle long press for preview in mobile view
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isMobile) return;
+
+    // Record touch start position
+    if (e.touches[0]) {
+      setTouchStartPos({
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+      });
+    }
+
+    // Reset moved flag
+    setHasMoved(false);
+
+    // Clear any existing timer
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+    }
+
+    // Set new timer for long press (show preview)
+    const timer = setTimeout(() => {
+      if (!isDragging && !hasMoved) {
+        setShowQuickAdd(false);
+        openPreview();
+      }
+    }, 600); // 600ms long press for better distinction from taps
+
+    setLongPressTimer(timer);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    // Clear the timer if touch ends before long press threshold
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+
+    // Check if the touch target is the delete button or its children
+    const target = e.target as Element;
+    const isDeleteButton = target.closest('.delete-button') !== null;
+
+    // Only prevent default if not clicking the delete button
+    if (!isDeleteButton) {
+      e.preventDefault();
+
+      // Only register as tap if the user hasn't moved significantly
+      if (isMobile && !isPreviewOpen && !hasMoved) {
+        // If this is a collection card, show quick add overlay
+        if (isInCollection) {
+          setShowQuickAdd(prev => !prev); // Toggle quick add overlay
+        }
+        // For non-collection views, let the click handler work
+      }
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    // Cancel the long press if the user starts moving their finger
+    if (longPressTimer && e.touches[0]) {
+      const moveThreshold = 10; // pixels
+      const xDiff = Math.abs(e.touches[0].clientX - touchStartPos.x);
+      const yDiff = Math.abs(e.touches[0].clientY - touchStartPos.y);
+
+      // If moved more than threshold, mark as moved and cancel long press
+      if (xDiff > moveThreshold || yDiff > moveThreshold) {
+        setHasMoved(true);
+        clearTimeout(longPressTimer);
+        setLongPressTimer(null);
+      }
+    }
+  };
+
+  // Long press handler for mobile devices
+  const handleLongPress = (callback: () => void) => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    } else {
+      const timer = setTimeout(() => {
+        callback();
+        setLongPressTimer(null);
+      }, 500); // 500ms for long press
+      setLongPressTimer(timer);
+    }
+  };
+
+  // Effect to handle clicking outside of the card to dismiss quick add in mobile
+  useEffect(() => {
+    if (!isMobile || !showQuickAdd) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      // Only if we're in mobile and showing quick add
+      const target = e.target as Node;
+      const cardElements = document.querySelectorAll('.card-container');
+
+      // Check if the click was outside any card
+      let clickedOutside = true;
+      cardElements.forEach(card => {
+        if (card.contains(target)) {
+          clickedOutside = false;
+        }
+      });
+
+      // Only close if clicked outside cards
+      if (clickedOutside && isMobile && showQuickAdd) {
+        setShowQuickAdd(false);
+      }
+    };
+
+    // Add event listener to document with a small delay to prevent immediate closing
+    const timer = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isMobile, showQuickAdd]);
+
   return (
     <>
       {confirmationDialog}
@@ -325,9 +452,11 @@ export function Card({
             dragRef(node);
           }
         }}
-        className={`relative w-39 rounded-lg shadow-lg overflow-hidden transition-transform ${
+        className={`relative w-39 rounded-lg shadow-lg overflow-hidden transition-transform card-container ${
           isDragging ? 'opacity-50' : ''
         } ${isDraggable && !isPreviewOpen ? 'cursor-move' : 'cursor-default'} group ${
+          isInCollection ? 'in-collection' : ''
+        } ${
           card.position ? 'card-positioned' : ''
         } ${zoomed ? 'z-[100] scale-400 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
         data-card-type={card.type}
@@ -339,17 +468,38 @@ export function Card({
                 e.stopPropagation();
                 onClick();
               }
-            : openPreview
+            : isMobile
+              ? e => {
+                  e.stopPropagation();
+                  if (!isInCollection) {
+                    // For non-collection views, use desktop behavior on click
+                    openPreview();
+                  }
+                }
+              : openPreview
         }
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
         style={zoomed ? { pointerEvents: 'auto' } : {}}
       >
         {/* For regular side-placement cards */}
         {isInCollection &&
           canBePlacedOnSides(card.type) &&
           (!canBePlacedInTurret(card) || card.sides.length > 1) && (
-            <div className={`quick-add-overlay z-20 ${showQuickAdd ? 'opacity-100' : 'opacity-0'}`}>
+            <div
+              className={`quick-add-overlay z-20 ${
+                showQuickAdd ? 'opacity-100' : 'opacity-0'
+              } ${isMobile ? 'mobile-overlay' : ''}`}
+              onClick={e => {
+                e.stopPropagation(); // Prevent clicks from bubbling up
+                if (isMobile) {
+                  e.preventDefault(); // Prevent default touch behavior
+                }
+              }}
+            >
               <div className="quick-add-container">
                 {/* Only show buttons for valid placement options, default to FLRB if sides is empty */}
                 {(() => {
@@ -447,14 +597,17 @@ export function Card({
             </div>
           </div>
         )}
-        {/* Delete button only visible on hover, always bottom right */}
+        {/* Delete button only visible on hover on desktop, always visible on mobile */}
         {(!isInCollection || isDebug) && (
           <button
             onClick={handleDelete}
-            className="absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded p-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            className={`absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded z-30 
+              ${isMobile && !isInCollection ? 'mobile-delete-button' : 'opacity-0 group-hover:opacity-100 p-1'} 
+              transition-opacity duration-200 delete-button`}
             title={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
+            aria-label={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
           >
-            <FontAwesomeIcon icon={faTrash} className="w-3 h-3" />
+            <FontAwesomeIcon icon={faTrash}  />
           </button>
         )}{' '}
         {/* Add to Deck button for cards that don't have side placement options */}

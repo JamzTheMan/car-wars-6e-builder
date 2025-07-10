@@ -141,8 +141,18 @@ body {
   opacity: 0;
 }
 
-.group:hover .quick-add-overlay {
-  opacity: 1;
+/* Only show on hover for desktop */
+@media (min-width: 769px) {
+  .group:hover .quick-add-overlay {
+    opacity: 1;
+  }
+}
+
+/* Always show quick add overlay when active in mobile */
+@media (max-width: 768px) {
+  .quick-add-overlay.mobile-overlay.opacity-100 {
+    opacity: 1 !important;
+  }
 }
 
 .quick-add-container {
@@ -580,7 +590,7 @@ body {
     min-width: 44px;
   }
 
-    /* Mobile-specific card styles */
+  /* Mobile-specific card styles */
   .grid-cols-1 > div {
     width: 99%;  /* Make each card take full width of its grid cell */
     max-width: 100%;  /* Ensure cards don't exceed their container */
@@ -591,7 +601,6 @@ body {
     width: 100%;  /* Make each card take full width of its grid cell */
     max-width: 100%;  /* Ensure cards don't exceed their container */
   }
-
 
   /* Adjust quick add overlay size for mobile */
   .grid-cols-2 .quick-add-container {
@@ -611,6 +620,113 @@ body {
     font-size: 0.9rem;
     min-width: 1.8rem;
     min-height: 1.8rem;
+  }
+
+  /* Override the hover-only behavior for mobile */
+  .mobile-overlay {
+    transition: opacity 0.3s;
+    background-color: rgba(0, 0, 0, 0.5); /* Darker overlay for better contrast */
+    z-index: 30; /* Higher z-index to ensure visibility */
+  }
+  
+  /* Add a subtle indication that the card is tappable */
+  .card-add-button {
+    opacity: 0.8; /* Higher opacity for better visibility */
+    transform: scale(1.1); /* Slightly larger buttons on mobile */
+  }
+  
+  /* Visual feedback when tapping cards */
+  .card-container:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 0 2px #ffbb00; /* Highlight border on tap */
+  }
+  
+  /* Enhanced mobile delete button for better tap targets */
+  .mobile-delete-button {
+    font-size: xx-large;
+    transform: scale(0.5);
+    margin-right: -0.5rem;
+    margin-bottom: -0.5rem;
+    opacity: .85;
+    box-shadow: 0 0 3px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+
+  }
+  
+  /* Improved visual feedback for tapping delete button */
+  .mobile-delete-button:active {
+    transform: scale(0.75);
+    background-color: #b91c1c !important;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.3);
+  }
+  
+  /* Ensure delete button has higher z-index than quick-add overlays */
+  .delete-button {
+    z-index: 40 !important;
+  }
+  
+  /* Add a mobile-specific active state for cards */
+  .card-container:active {
+    transform: scale(0.98);
+  }
+  
+  /* Mobile-specific quick add button styles */
+  .quick-add-button {
+    width: 2.5rem !important; /* Larger buttons on mobile */
+    height: 2.5rem !important;
+    border-width: 3px !important; /* More visible border */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5) !important; /* Add shadow for depth */
+  }
+  
+  .quick-add-icon {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+  }
+  
+  /* Ensure the buttons are more spread out for easier tapping */
+  .quick-add-container {
+    width: 8.5rem !important; /* Larger container on mobile */
+    height: 8.5rem !important;
+  }
+}
+
+/* Style to indicate card is tappable in mobile */
+.group {
+  position: relative;
+}
+
+/* Add subtle indication for cards with long-press previews */
+.group:active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+/* Tap animation for mobile users */
+@keyframes tapPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 187, 0, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(255, 187, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 187, 0, 0); }
+}
+
+@media (max-width: 768px) {
+  .in-collection.group {
+    animation: tapPulse 1.5s infinite;
+    animation-delay: 5s; /* Show after 5 seconds of inactivity */
+    animation-play-state: paused;
+  }
+  
+  .in-collection.group:not(:active):not(:hover) {
+    animation-play-state: running;
+  }
+  
+  /* Pause animation on any user interaction */
+  .in-collection.group:active,
+  .in-collection.group:hover,
+  .quick-add-overlay.opacity-100 ~ .in-collection.group {
+    animation-play-state: paused;
   }
 }
 
