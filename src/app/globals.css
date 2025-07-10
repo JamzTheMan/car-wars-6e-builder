@@ -135,16 +135,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, pointer-events 0.2s;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 20;
   opacity: 0;
+  pointer-events: none; /* Default to no pointer events when hidden */
 }
 
 /* Only show on hover for desktop */
 @media (min-width: 769px) {
   .group:hover .quick-add-overlay {
     opacity: 1;
+    pointer-events: auto; /* Enable pointer events when visible */
   }
 }
 
@@ -152,6 +154,7 @@ body {
 @media (max-width: 768px) {
   .quick-add-overlay.mobile-overlay.opacity-100 {
     opacity: 1 !important;
+    pointer-events: auto !important; /* Ensure pointer events work when visible on mobile */
   }
 }
 

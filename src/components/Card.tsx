@@ -507,7 +507,7 @@ export function Card({
           (!canBePlacedInTurret(card) || card.sides.length > 1) && (
             <div
               className={`quick-add-overlay z-20 ${
-                showQuickAdd ? 'opacity-100' : 'opacity-0'
+                showQuickAdd ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
               } ${isMobile ? 'mobile-overlay' : ''}`}
               onClick={e => {
                 // Only stop propagation, don't prevent default
@@ -655,12 +655,22 @@ export function Card({
         {/* Delete button only visible on hover on desktop, always visible on mobile */}
         {(!isInCollection || isDebug) && (
           <button
-            onClick={handleDelete}
+            onClick={e => {
+              // Only allow delete when not in preview mode
+              if (!isPreviewOpen) {
+                handleDelete(e);
+              } else {
+                // Just stop propagation to prevent closing the preview
+                e.stopPropagation();
+              }
+            }}
             className={`absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded z-30 
               ${isMobile && !isInCollection ? 'mobile-delete-button' : 'opacity-0 group-hover:opacity-100 p-1'} 
+              ${isPreviewOpen ? 'pointer-events-none opacity-0' : ''}
               transition-opacity duration-200 delete-button`}
             title={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
             aria-label={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
+            disabled={isPreviewOpen}
           >
             <FontAwesomeIcon icon={faTrash} />
           </button>
@@ -670,21 +680,22 @@ export function Card({
           <button
             onClick={e => {
               e.stopPropagation();
-              // Only handle click for desktop
-              if (!isMobile) {
+              // Only handle click for desktop and when not in preview
+              if (!isMobile && !isPreviewOpen) {
                 handleAddToDeck(e);
               }
             }}
             onTouchEnd={e => {
               // For mobile touch support
               e.stopPropagation();
-              if (isMobile) {
+              if (isMobile && !isPreviewOpen) {
                 // Use addCopiesToDeck directly since it doesn't require the event object
                 addCopiesToDeck();
               }
             }}
-            className="card-add-button"
+            className={`card-add-button ${isPreviewOpen ? 'pointer-events-none opacity-50' : ''}`}
             title="Add to deck"
+            disabled={isPreviewOpen}
           >
             <FontAwesomeIcon icon={faClone} className="w-6 h-6" />
           </button>
@@ -696,20 +707,21 @@ export function Card({
             <button
               onClick={e => {
                 e.stopPropagation();
-                // Only handle click for desktop
-                if (!isMobile) {
+                // Only handle click for desktop and when not in preview
+                if (!isMobile && !isPreviewOpen) {
                   handleQuickAdd(CardArea.Turret);
                 }
               }}
               onTouchEnd={e => {
                 // For mobile touch support
                 e.stopPropagation();
-                if (isMobile) {
+                if (isMobile && !isPreviewOpen) {
                   handleQuickAdd(CardArea.Turret);
                 }
               }}
-              className="card-add-button"
+              className={`card-add-button ${isPreviewOpen ? 'pointer-events-none opacity-50' : ''}`}
               title="Add to turret"
+              disabled={isPreviewOpen}
             >
               <FontAwesomeIcon icon={faClone} className="w-6 h-6" />
             </button>
