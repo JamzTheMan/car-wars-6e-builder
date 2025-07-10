@@ -37,15 +37,15 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
     case 'collection':
       content = (
         <div className="h-full flex flex-col">
-          <div className="bg-gray-800 border-b border-gray-700 flex flex-col gap-2 p-2">
+          <div className="bg-gray-800 border-b border-gray-700 flex flex-col gap-1">
             {/* Vehicle Name with Save/Load */}
-            <div className="flex items-center justify-between">
+            <div>
               <VehicleName onOpenSavedVehicles={onOpenSavedVehicles} />
             </div>
             {/* Points Summary */}
             <div className="flex justify-center">
               <MobilePointsSummary />
-            </div>{' '}
+            </div>
             {/* Filters - directly use the CardCollectionFilters component */}
             <div className="bg-gray-700 rounded">
               <CardCollectionFilters {...filterProps} />
