@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCardStore } from '@/store/cardStore';
 import { CardCollection } from '@/components/CardCollection';
 import { DeckLayout } from '@/components/DeckLayout';
 import { useCardCollectionFilters } from '@/app/CardCollectionFiltersWrapper';
 import { CardCollectionFilters } from '@/components/CardCollectionFilters';
 import { CardArea } from '@/types/types';
-
+import { VehicleName } from '@/components/VehicleName';
 import MobileNavMenu from '@/components/MobileNavMenu';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronUp, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { MobilePointsSummary } from '@/components/MobilePointsSummary';
 
 interface MobileSwipeViewProps {
   collectionCards: any[];
@@ -34,6 +37,20 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
     case 'collection':
       content = (
         <div className="h-full flex flex-col">
+          <div className="bg-gray-800 border-b border-gray-700 flex flex-col gap-2 p-2">
+            {/* Vehicle Name with Save/Load */}
+            <div className="flex items-center justify-between">
+              <VehicleName onOpenSavedVehicles={onOpenSavedVehicles} />
+            </div>
+            {/* Points Summary */}
+            <div className="flex justify-center">
+              <MobilePointsSummary />
+            </div>{' '}
+            {/* Filters - directly use the CardCollectionFilters component */}
+            <div className="bg-gray-700 rounded">
+              <CardCollectionFilters {...filterProps} />
+            </div>
+          </div>
           <div className="flex-1 overflow-y-auto">
             <CardCollection {...filterProps} />
           </div>
