@@ -307,16 +307,26 @@ export default function Home() {
 
   if (isMobile) {
     return (
-      <DndWrapper>
-        <CardUploadProvider>
-          <main className="h-full flex flex-col bg-gray-900">
-            <MobileSwipeView
-              collectionCards={collectionCards}
-              onOpenSavedVehicles={() => setIsSavedVehiclesOpen(true)}
-            />
-          </main>
-        </CardUploadProvider>
-      </DndWrapper>
+      <>
+        <DndWrapper>
+          <CardUploadProvider>
+            <main className="h-full flex flex-col bg-gray-900">
+              <MobileSwipeView
+                collectionCards={collectionCards}
+                onOpenSavedVehicles={() => setIsSavedVehiclesOpen(true)}
+              />
+            </main>
+          </CardUploadProvider>
+        </DndWrapper>
+        <SavedVehiclesDialog
+          isOpen={isSavedVehiclesOpen}
+          onClose={() => setIsSavedVehiclesOpen(false)}
+        />
+        {confirmationDialog}
+        {showPrintOptions && (
+          <PrintView printMode={printMode} onClose={() => setShowPrintOptions(false)} />
+        )}
+      </>
     );
   }
 
