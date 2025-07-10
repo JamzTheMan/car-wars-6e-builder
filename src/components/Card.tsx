@@ -72,6 +72,7 @@ export function Card({
     canAddCardToDeck,
     canRemoveFromDeck,
     currentDeck,
+    mobileView, // Get the mobile view state to check if we're in mobile mode
   } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showQuickAdd] = useState(false);
@@ -80,6 +81,19 @@ export function Card({
   const { showToast } = useToast();
   const { handleValidationError } = useCardValidationErrors();
   const { confirm, dialog: confirmationDialog } = useConfirmationDialog();
+  // Check if we're in mobile view (based on window width)
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth <= 768
+  );
+
+  // Update isMobile state on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const [{ isDragging }, dragRef] = useDrag<DragItem, unknown, { isDragging: boolean }>({
     type: 'CARD',

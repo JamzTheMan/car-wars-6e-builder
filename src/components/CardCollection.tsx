@@ -91,6 +91,26 @@ export function CardCollection({
   const [isUploading, setIsUploading] = useState(false);
   const [isDebug, setIsDebug] = useState(false);
   const { confirm, dialog } = useConfirmationDialog();
+  // Track if we're in mobile view for grid layout
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth <= 768
+  );
+
+  // Update mobile state on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Set initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const {
     collectionCards,
@@ -484,9 +504,11 @@ export function CardCollection({
         )}
         {/* Cards grid with fallback message */}
         <div
-          className={`grid gap-1 grid-cols-[repeat(auto-fit,minmax(clamp(138px,15vw,155px),1fr))] ${
-            isUploading ? 'opacity-50' : ''
-          }`}
+          className={`grid gap-1 ${
+            isMobile
+              ? 'grid-cols-2' // Mobile view - exactly 2 cards per row
+              : 'grid-cols-[repeat(auto-fit,minmax(clamp(138px,15vw,155px),1fr))]' // Desktop view
+          } ${isUploading ? 'opacity-50' : ''}`}
         >
           {filteredCards.length > 0 ? (
             filteredCards.map(card => (
