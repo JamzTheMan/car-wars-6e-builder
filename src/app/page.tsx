@@ -177,10 +177,49 @@ export default function Home() {
 
   // Toggle fullscreen mode
   const toggleFullScreen = () => {
-    setIsFullScreen(!isFullScreen);
+    const newFullScreenState = !isFullScreen;
+    setIsFullScreen(newFullScreenState);
+
+    // Toggle browser fullscreen mode
+    if (typeof document !== 'undefined') {
+      try {
+        if (newFullScreenState) {
+          // Enter browser fullscreen
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if ((document.documentElement as any).mozRequestFullScreen) {
+            // Firefox
+            (document.documentElement as any).mozRequestFullScreen();
+          } else if ((document.documentElement as any).webkitRequestFullscreen) {
+            // Chrome, Safari
+            (document.documentElement as any).webkitRequestFullscreen();
+          } else if ((document.documentElement as any).msRequestFullscreen) {
+            // IE/Edge
+            (document.documentElement as any).msRequestFullscreen();
+          }
+        } else {
+          // Exit browser fullscreen
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if ((document as any).mozCancelFullScreen) {
+            // Firefox
+            (document as any).mozCancelFullScreen();
+          } else if ((document as any).webkitExitFullscreen) {
+            // Chrome, Safari
+            (document as any).webkitExitFullscreen();
+          } else if ((document as any).msExitFullscreen) {
+            // IE/Edge
+            (document as any).msExitFullscreen();
+          }
+        }
+      } catch (err) {
+        console.error('Error toggling fullscreen mode:', err);
+      }
+    }
+
     // Save preference when toggling
     import('../utils/userPreferences').then(({ saveFullScreenMode }) => {
-      saveFullScreenMode(!isFullScreen);
+      saveFullScreenMode(newFullScreenState);
     });
   };
 
@@ -314,6 +353,43 @@ export default function Home() {
     // Cleanup
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Handle browser fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      // Check if the browser is in fullscreen mode
+      const isDocFullscreen =
+        document.fullscreenElement ||
+        (document as any).mozFullScreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).msFullscreenElement;
+
+      // Only update state if it doesn't match the current fullscreen status
+      // This prevents loops when we programmatically change fullscreen
+      if (Boolean(isDocFullscreen) !== isFullScreen) {
+        setIsFullScreen(Boolean(isDocFullscreen));
+
+        // Also update the preference
+        import('../utils/userPreferences').then(({ saveFullScreenMode }) => {
+          saveFullScreenMode(Boolean(isDocFullscreen));
+        });
+      }
+    };
+
+    // Add event listeners for all browser variants
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    // Clean up the listeners when component unmounts
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, [isFullScreen]);
 
   // Show a loading state while hydrating
   if (!isStoreHydrated) {

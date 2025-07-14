@@ -14,8 +14,8 @@ export function FullScreenButton({
     <button
       onClick={toggleFullScreen}
       className="text-gray-400 hover:text-gray-200"
-      title={isFullScreen ? 'Exit Full Screen' : 'Full Screen Deck'}
-      aria-label={isFullScreen ? 'Exit Full Screen' : 'Full Screen Deck'}
+      title={isFullScreen ? 'Exit Full Screen Mode' : 'Full Screen Mode (hides card collection)'}
+      aria-label={isFullScreen ? 'Exit Full Screen Mode' : 'Full Screen Mode'}
     >
       <FontAwesomeIcon icon={isFullScreen ? faCompress : faExpand} className="h-5 w-5" />
     </button>
