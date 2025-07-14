@@ -12,6 +12,7 @@ import { faTrash, faSquareCaretDown, faRotateLeft } from '@fortawesome/free-soli
 import { ToastContext } from '@/components/Toast';
 import { PrintButton } from '@/components/PrintButton';
 import { FullScreenButton } from '@/components/FullScreenButton';
+import { ZoomControls } from '@/components/ZoomControls';
 import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
 import { PrintView } from '@/components/PrintView';
 import { CardCollectionFilters } from '@/components/CardCollectionFilters';
@@ -465,6 +466,7 @@ export default function Home() {
                     </div>
                     {/* Right: Print & Reset absolute */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      <ZoomControls />
                       <FullScreenButton
                         isFullScreen={isFullScreen}
                         toggleFullScreen={toggleFullScreen}
