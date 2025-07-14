@@ -803,3 +803,13 @@ body {
   animation: pinchPulse 2s ease-in-out;
   pointer-events: none;
 }
+
+/* Fullscreen mode */
+.fullscreen-mode .panel-left, 
+.fullscreen-mode .resize-handle {
+  display: none;
+}
+
+.fullscreen-mode .panel-right {
+  width: 100%;
+}

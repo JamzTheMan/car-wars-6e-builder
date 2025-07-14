@@ -12,6 +12,7 @@ export interface UserPreferences {
   // Layout preferences
   layoutPreferences: {
     leftPanelWidth: number; // Percentage width of the left panel
+    isFullScreen: boolean; // Whether the deck layout is in full screen mode
   };
 
   // Filter preferences
@@ -31,6 +32,7 @@ export interface UserPreferences {
 const defaultPreferences: UserPreferences = {
   layoutPreferences: {
     leftPanelWidth: 30, // Default 30% width
+    isFullScreen: false, // Default not full screen
   },
   filterPreferences: {
     filterPanelOpen: false,
@@ -122,6 +124,8 @@ export function saveFilterPreferences(
   });
 }
 
+// Helper functions for specific preferences
+
 // Direct functions to save and get panel width
 export function savePanelWidth(width: number): void {
   if (typeof window === 'undefined') {
@@ -133,7 +137,11 @@ export function savePanelWidth(width: number): void {
     localStorage.setItem('car-wars-6e-builder:panelWidth', width.toString());
 
     // Also update in main preferences
-    saveLayoutPreferences({ leftPanelWidth: width });
+    saveLayoutPreferences({ 
+      leftPanelWidth: width,
+      // Preserve the existing fullscreen setting
+      isFullScreen: getFullScreenMode()
+    });
   } catch (error) {
     console.error('Error saving panel width:', error);
   }
@@ -159,6 +167,48 @@ export function getPanelWidth(): number {
   } catch (error) {
     console.error('Error getting panel width:', error);
     return defaultPreferences.layoutPreferences.leftPanelWidth;
+  }
+}
+
+// Get fullscreen mode setting
+export function getFullScreenMode(): boolean {
+  if (typeof window === 'undefined') {
+    return defaultPreferences.layoutPreferences.isFullScreen;
+  }
+
+  try {
+    // Try to get from direct storage first
+    const storedMode = localStorage.getItem('car-wars-6e-builder:fullScreenMode');
+    if (storedMode !== null) {
+      return storedMode === 'true';
+    }
+
+    // Fall back to full preferences
+    return getUserPreferences().layoutPreferences.isFullScreen;
+  } catch (error) {
+    console.error('Error getting fullscreen mode:', error);
+    return defaultPreferences.layoutPreferences.isFullScreen;
+  }
+}
+
+// Save fullscreen mode setting
+export function saveFullScreenMode(isFullScreen: boolean): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    // Store as a separate item for quick access
+    localStorage.setItem('car-wars-6e-builder:fullScreenMode', isFullScreen.toString());
+
+    // Also update in main preferences
+    saveLayoutPreferences({ 
+      isFullScreen,
+      // Preserve the existing panel width
+      leftPanelWidth: getPanelWidth()
+    });
+  } catch (error) {
+    console.error('Error saving fullscreen mode:', error);
   }
 }
 

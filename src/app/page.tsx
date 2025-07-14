@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faSquareCaretDown, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { ToastContext } from '@/components/Toast';
 import { PrintButton } from '@/components/PrintButton';
+import { FullScreenButton } from '@/components/FullScreenButton';
 import { SavedVehiclesDialog } from '@/components/SavedVehiclesDialog';
 import { PrintView } from '@/components/PrintView';
 import { CardCollectionFilters } from '@/components/CardCollectionFilters';
@@ -168,10 +169,20 @@ export default function Home() {
   const [isSavedVehiclesOpen, setIsSavedVehiclesOpen] = useState(false);
   const [showPrintOptions, setShowPrintOptions] = useState(false);
   const [printMode, setPrintMode] = useState<'full' | 'simple' | null>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   // Mobile responsive state
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' && window.innerWidth <= 768
   );
+
+  // Toggle fullscreen mode
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen);
+    // Save preference when toggling
+    import('../utils/userPreferences').then(({ saveFullScreenMode }) => {
+      saveFullScreenMode(!isFullScreen);
+    });
+  };
 
   // Use the custom hook to manage filter state and logic
   const filterProps = useCardCollectionFilters(collectionCards);
@@ -237,6 +248,16 @@ export default function Home() {
       // Apply saved width
       setLeftPanelWidth(savedWidth);
       document.documentElement.style.setProperty('--panel-width', `${savedWidth}%`);
+    });
+  }, []);
+
+  // Load fullscreen preference on component mount
+  useEffect(() => {
+    // Import is inside useEffect to avoid SSR issues
+    import('../utils/userPreferences').then(({ getFullScreenMode }) => {
+      const savedFullScreenMode = getFullScreenMode();
+      console.log('Loading saved fullscreen mode:', savedFullScreenMode);
+      setIsFullScreen(savedFullScreenMode);
     });
   }, []);
 
@@ -336,7 +357,10 @@ export default function Home() {
         <CardUploadProvider>
           <main className="h-full flex flex-col bg-gray-900">
             <div className="flex-1 min-h-0">
-              <div id="split-container" className="h-full flex gap-2">
+              <div
+                id="split-container"
+                className={`h-full flex gap-2 ${isFullScreen ? 'fullscreen-mode' : ''}`}
+              >
                 <div className="panel-left bg-gray-800 rounded-lg shadow-lg border border-gray-700 flex flex-col min-h-0">
                   <div className="flex items-center justify-between p-2 border-b border-gray-700 flex-shrink-0 min-h-12">
                     <CardCollectionHeader />
@@ -365,6 +389,10 @@ export default function Home() {
                     </div>
                     {/* Right: Print & Reset absolute */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      <FullScreenButton
+                        isFullScreen={isFullScreen}
+                        toggleFullScreen={toggleFullScreen}
+                      />
                       <PrintButton onOpenPrintDialog={() => setShowPrintOptions(true)} />
                       <button
                         onClick={async () => {
