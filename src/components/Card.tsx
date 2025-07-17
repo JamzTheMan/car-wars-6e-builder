@@ -4,6 +4,7 @@ import { useToast } from './Toast';
 import { useCardStore } from '@/store/cardStore';
 import { useState, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
+import { useGesture } from '@use-gesture/react';
 import {
   canCardTypeGoInArea,
   Card as CardType,
@@ -319,63 +320,33 @@ export function Card({
   };
 
   // Touch handling variables
-  const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 });
   const [hasMoved, setHasMoved] = useState(false);
   const [lastTapTime, setLastTapTime] = useState(0);
   const doubleTapDelay = 300; // milliseconds
 
-  // Handle touch start for double tap detection and long press in mobile view
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!isMobile) return;
+  // Using react-gesture instead of manual touch events
+  // Using @use-gesture/react library for better touch gesture support
+  // Benefits:
+  // 1. More consistent and reliable touch detection across devices
+  // 2. Better handling of complex gestures (taps, long presses, drags)
+  // 3. Cleaner code with less boilerplate
+  // 4. Better performance due to optimized event handling
+  const bindGestures = useGesture(
+    {
+      // Handle tap and double tap
+      onClick: ({ event }) => {
+        // Prevent default behavior
+        event.stopPropagation();
 
-    // Record touch start position
-    if (e.touches[0]) {
-      setTouchStartPos({
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      });
-    }
+        if (!isMobile) return;
 
-    // Reset moved flag
-    setHasMoved(false);
-
-    // Clear any existing timer
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-    }
-
-    // We'll rely on double-tap for preview instead of long press
-    // but keep a reduced long press timer for accessibility
-    const timer = setTimeout(() => {
-      if (!isDragging && !hasMoved) {
-        // Only trigger on very long press (more than double the normal long press time)
-        setShowQuickAdd(false);
-      }
-    }, 1200); // Increased to 1200ms to avoid accidental triggers
-
-    setLongPressTimer(timer);
-  };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    // Clear the timer if touch ends before long press threshold
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
-
-    // Check if the touch target is the delete button, quick add button, or their children
-    const target = e.target as Element;
-    const isDeleteButton = target.closest('.delete-button') !== null;
-    const isQuickAddButton = target.closest('.quick-add-button') !== null;
-
-    // Only prevent default if not clicking a button that needs to work
-    if (!isDeleteButton && !isQuickAddButton) {
-      e.preventDefault();
-
-      // Only register as tap if the user hasn't moved significantly
-      if (isMobile && !hasMoved) {
-        const now = Date.now();
+        if (hasMoved) {
+          setHasMoved(false);
+          return;
+        }
 
         // Double tap detection
+        const now = Date.now();
         if (now - lastTapTime < doubleTapDelay) {
           // This is a double tap - open preview
           setShowQuickAdd(false);
@@ -391,39 +362,56 @@ export function Card({
             setShowQuickAdd(prev => !prev); // Toggle quick add overlay
           }
         }
-      }
-    }
-  };
+      },
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    // Cancel the long press if the user starts moving their finger
-    if (longPressTimer && e.touches[0]) {
-      const moveThreshold = 10; // pixels
-      const xDiff = Math.abs(e.touches[0].clientX - touchStartPos.x);
-      const yDiff = Math.abs(e.touches[0].clientY - touchStartPos.y);
+      // Handle press (replaces longPress which isn't a standard handler)
+      onPointerDown: ({ event, pressed }) => {
+        if (!isMobile || isDragging || isPreviewOpen) return;
 
-      // If moved more than threshold, mark as moved and cancel long press
-      if (xDiff > moveThreshold || yDiff > moveThreshold) {
-        setHasMoved(true);
-        clearTimeout(longPressTimer);
-        setLongPressTimer(null);
-      }
-    }
-  };
+        if (pressed) {
+          // Start timer for long press
+          const timer = setTimeout(() => {
+            if (!hasMoved) {
+              setShowQuickAdd(true);
+            }
+          }, 500); // 500ms for long press
 
-  // Long press handler for mobile devices
-  const handleLongPress = (callback: () => void) => {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    } else {
-      const timer = setTimeout(() => {
-        callback();
-        setLongPressTimer(null);
-      }, 500); // 500ms for long press
-      setLongPressTimer(timer);
+          // Store timer so it can be cleared if needed
+          setLongPressTimer(timer);
+        }
+      },
+
+      onPointerUp: () => {
+        // Clear long press timer when touch ends
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          setLongPressTimer(null);
+        }
+      },
+
+      // Handle drag movement detection
+      onDrag: ({ movement: [mx, my], first, active }) => {
+        if (first && isMobile) {
+          // On first movement, mark as moved to prevent tap actions
+          if (Math.abs(mx) > 5 || Math.abs(my) > 5) {
+            setHasMoved(true);
+
+            // Also clear any long press timer
+            if (longPressTimer) {
+              clearTimeout(longPressTimer);
+              setLongPressTimer(null);
+            }
+          }
+        }
+      },
+    },
+    {
+      // Configure gesture options
+      drag: {
+        threshold: 10, // Minimum distance before drag is detected
+      },
     }
-  };
+  );
 
   // Effect to handle clicking outside of the card to dismiss quick add in mobile
   useEffect(() => {
@@ -468,6 +456,7 @@ export function Card({
             dragRef(node);
           }
         }}
+        {...bindGestures()}
         className={`relative w-39 rounded-lg shadow-lg overflow-hidden transition-transform card-container ${
           isDragging ? 'opacity-50' : ''
         } ${isDraggable && !isPreviewOpen ? 'cursor-move' : 'cursor-default'} group ${
@@ -485,20 +474,11 @@ export function Card({
                 onClick();
               }
             : isMobile
-              ? e => {
-                  e.stopPropagation();
-                  if (!isInCollection) {
-                    // For non-collection views, use desktop behavior on click
-                    openPreview();
-                  }
-                }
+              ? undefined // Handled by gesture now
               : openPreview
         }
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchMove={handleTouchMove}
         style={zoomed ? { pointerEvents: 'auto' } : {}}
       >
         {/* For regular side-placement cards */}
@@ -531,6 +511,8 @@ export function Card({
                               handleQuickAdd(CardArea.Front);
                             }
                           }}
+                          // Using gesture library for touch handling in the main card,
+                          // but keeping direct handlers for specific buttons
                           onTouchEnd={e => {
                             // For mobile touch support
                             e.stopPropagation();
