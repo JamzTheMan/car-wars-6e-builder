@@ -834,6 +834,8 @@ button:disabled {
   cursor: pointer;
   pointer-events: auto; /* Ensure it can be clicked */
   transition: opacity 0.3s ease, transform 0.3s ease;
+  width: 45px; /* Match the new size of damage-value */
+  height: 45px; /* Match the new size of damage-value */
 }
 
 /* Enhance damage counter visibility */
@@ -881,8 +883,8 @@ button:disabled {
 
 /* Preview damage counter in modal */
 .preview-damage-counter {
-  width: 36px;
-  height: 36px;
+  width: 54px; /* Increased by 50% from 36px */
+  height: 54px; /* Increased by 50% from 36px */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -895,13 +897,13 @@ button:disabled {
   background-color: transparent;
   color: #000;
   font-weight: bold;
-  font-size: 18px;
-  width: 36px;
-  height: 36px;
+  font-size: 27px; /* Increased by 50% from 18px */
+  width: 54px; /* Increased by 50% from 36px */
+  height: 54px; /* Increased by 50% from 36px */
   display: flex;
   justify-content: center;
   align-items: flex-end; /* Align text to the bottom of the triangle */
-  padding-bottom: 3px; /* Fine-tune position */
+  padding-bottom: 5px; /* Adjusted for the larger size */
   transition: transform 0.1s ease;
 }
 
@@ -922,14 +924,14 @@ button:disabled {
 .preview-damage-counter .preview-damage-value::after {
   content: '';
   position: absolute;
-  top: 2px; /* Border thickness */
-  left: 2px;
-  right: 2px;
-  bottom: 1px; /* Reduced to balance with sides */
+  top: 3px; /* Border thickness, adjusted for larger size */
+  left: 3px;
+  right: 3px;
+  bottom: 2px; /* Reduced to balance with sides */
   background-color: #ffda44; /* Yellow color */
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   z-index: -1;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .preview-damage-counter:hover .preview-damage-value {
@@ -955,13 +957,13 @@ button:disabled {
   background-color: transparent;
   color: #000;
   font-weight: bold;
-  font-size: 16px; /* Increased from 14px */
-  width: 30px; /* Increased by 20% from 24px */
-  height: 30px; /* Increased by 20% from 24px */
+  font-size: 24px; /* Increased by 50% from 16px */
+  width: 45px; /* Increased by 50% from 30px */
+  height: 45px; /* Increased by 50% from 30px */
   display: flex;
   justify-content: center;
   align-items: flex-end; /* Align text to the bottom of the triangle */
-  padding-bottom: 1px; /* Adjusted for the border change */
+  padding-bottom: 2px; /* Adjusted for the larger size */
   line-height: 1;
   transition: transform 0.1s ease;
 }
@@ -983,10 +985,10 @@ button:disabled {
 .damage-counter .damage-value::after {
   content: '';
   position: absolute;
-  top: 5px; /* Border thickness */
-  left: 4px;
-  right: 4px;
-  bottom: 2px; /* Reduced to balance with sides */
+  top: 6px; /* Border thickness, adjusted for larger size */
+  left: 6px;
+  right: 6px;
+  bottom: 3px; /* Reduced to balance with sides */
   background-color: #ffda44; /* Yellow color */
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   z-index: -1;
