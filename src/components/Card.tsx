@@ -73,13 +73,16 @@ export function Card({
     canAddCardToDeck,
     canRemoveFromDeck,
     currentDeck,
-    mobileView, // Get the mobile view state to check if we're in mobile mode
+    mobileView,
+    addDamage,
+    removeDamage,
   } = useCardStore();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false); // Initially hidden
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
   const [associatedCard, setAssociatedCard] = useState<CardType | null>(null);
   const [showingAssociatedCard, setShowingAssociatedCard] = useState(false);
+  const [isHovered, setIsHovered] = useState(false); // Track hover state
   const { showToast } = useToast();
   const { handleValidationError } = useCardValidationErrors();
   const { confirm, dialog: confirmationDialog } = useConfirmationDialog();
@@ -477,8 +480,14 @@ export function Card({
               ? undefined // Handled by gesture now
               : openPreview
         }
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        onMouseEnter={e => {
+          setIsHovered(true);
+          if (onMouseEnter) onMouseEnter(e);
+        }}
+        onMouseLeave={e => {
+          setIsHovered(false);
+          if (onMouseLeave) onMouseLeave(e);
+        }}
         style={zoomed ? { pointerEvents: 'auto' } : {}}
       >
         {/* For regular side-placement cards */}
@@ -626,6 +635,29 @@ export function Card({
               <span>{card.name}</span>
             </div>
           ))}
+        {/* Damage Counter - always show in deck, not in collection */}
+        {!isInCollection && !isPreviewOpen && (
+          <div
+            className={`damage-counter ${card.damage && card.damage > 0 ? 'visible' : isHovered ? 'hover-visible' : 'invisible'}`}
+            onClick={e => {
+              e.stopPropagation();
+              if (onClick) {
+                // If card has a click handler (like in DeckLayout), we need to prevent the default
+                // behavior of opening the preview
+                e.preventDefault();
+              }
+              addDamage(card.id);
+            }}
+            onContextMenu={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              removeDamage(card.id);
+            }}
+            title="Left click to add damage, Right click to remove"
+          >
+            <div className="damage-value">{card.damage || 0}</div>
+          </div>
+        )}
         {/* Card type and subtype at the bottom, only if using a placeholder or no image */}
         {(!card.imageUrl || card.imageUrl.includes('Blank_')) && (
           <div className="absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-90 text-gray-100 p-2">
@@ -708,6 +740,7 @@ export function Card({
               <FontAwesomeIcon icon={faClone} className="w-6 h-6" />
             </button>
           )}
+        {/* No damage counter for collection cards */}
       </div>{' '}
       {/* Card Preview Modal */}
       {isPreviewOpen && (
@@ -846,6 +879,34 @@ export function Card({
                             <span className="font-medium">Exclusive:</span> Yes
                           </p>
                         )}
+
+                        {/* Display damage info for cards in deck */}
+                        {!isInCollection && (
+                          <div className="mt-3 flex items-center gap-2">
+                            <span className="font-medium text-gray-600">Damage:</span>
+                            <div className="flex items-center gap-4">
+                              <div
+                                className={`preview-damage-counter ${card.damage && card.damage > 0 ? 'visible' : 'invisible'}`}
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  addDamage(card.id);
+                                }}
+                                onContextMenu={e => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  removeDamage(card.id);
+                                }}
+                                title="Left click to add damage, Right click to remove"
+                              >
+                                <div className="preview-damage-value">{card.damage || 0}</div>
+                              </div>
+                              <span className="text-sm text-gray-500">
+                                (Left click to add, Right click to remove)
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
                         {/* Description for main card if available */}
                         {card.description && (
                           <div className="mt-4">

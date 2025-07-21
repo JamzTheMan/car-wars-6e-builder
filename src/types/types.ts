@@ -56,6 +56,7 @@ export interface Card {
     x: number;
     y: number;
   };
+  damage?: number; // Track damage on cards (from 0 to 9)
 }
 
 export interface PointLimits {

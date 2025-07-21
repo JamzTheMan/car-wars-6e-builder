@@ -820,3 +820,181 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Damage Counter Styles */
+.damage-counter {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px; /* Increased by 20% from 26px */
+  height: 32px; /* Increased by 20% from 26px */
+  z-index: 30; /* Increase z-index to ensure visibility */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto; /* Ensure it can be clicked */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Enhance damage counter visibility */
+.card-container .damage-counter {
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+}
+
+/* Animation for damage counter discoverability */
+@keyframes subtlePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.card-container:hover .damage-counter.invisible .damage-value {
+  animation: subtlePulse 2s ease-in-out infinite;
+}
+
+/* Damage counter visibility */
+.damage-counter.invisible {
+  opacity: 0; /* Start completely invisible */
+}
+
+.damage-counter.hover-visible {
+  opacity: 1; /* Very visible when card is hovered */
+}
+
+.damage-counter.hover-visible .damage-value {
+  animation: subtlePulse 1.5s ease-in-out infinite; /* Pulse when hovering */
+}
+
+.damage-counter.invisible:hover {
+  opacity: 1; /* Full opacity on direct hover */
+}
+
+.damage-counter.visible {
+  opacity: 1;
+}
+
+/* Show damage counter when hovering over the card */
+.card-container:hover .damage-counter.invisible {
+  opacity: 0.9; /* Almost full opacity when hovering the card */
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Preview damage counter in modal */
+.preview-damage-counter {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 0 4px;
+}
+
+.preview-damage-counter .preview-damage-value {
+  position: relative;
+  background-color: transparent;
+  color: #000;
+  font-weight: bold;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Align text to the bottom of the triangle */
+  padding-bottom: 3px; /* Fine-tune position */
+  transition: transform 0.1s ease;
+}
+
+/* Create the black border triangle as a pseudo-element */
+.preview-damage-counter .preview-damage-value::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000; /* Black border */
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  z-index: -2;
+}
+
+/* Create the inner yellow triangle */
+.preview-damage-counter .preview-damage-value::after {
+  content: '';
+  position: absolute;
+  top: 2px; /* Border thickness */
+  left: 2px;
+  right: 2px;
+  bottom: 1px; /* Reduced to balance with sides */
+  background-color: #ffda44; /* Yellow color */
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  z-index: -1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.preview-damage-counter:hover .preview-damage-value {
+  transform: scale(1.1);
+}
+
+/* Preview damage counter visibility */
+.preview-damage-counter.invisible .preview-damage-value {
+  opacity: 0.5;
+}
+
+.preview-damage-counter.invisible:hover .preview-damage-value {
+  opacity: 1;
+}
+
+.preview-damage-counter.visible .preview-damage-value {
+  opacity: 1;
+}
+
+/* Fix for damage counter positioning */
+.damage-counter .damage-value {
+  position: relative;
+  background-color: transparent;
+  color: #000;
+  font-weight: bold;
+  font-size: 16px; /* Increased from 14px */
+  width: 30px; /* Increased by 20% from 24px */
+  height: 30px; /* Increased by 20% from 24px */
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Align text to the bottom of the triangle */
+  padding-bottom: 1px; /* Adjusted for the border change */
+  line-height: 1;
+  transition: transform 0.1s ease;
+}
+
+/* Create the black border triangle as a pseudo-element */
+.damage-counter .damage-value::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000; /* Black border */
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  z-index: -2;
+}
+
+/* Create the inner yellow triangle */
+.damage-counter .damage-value::after {
+  content: '';
+  position: absolute;
+  top: 5px; /* Border thickness */
+  left: 4px;
+  right: 4px;
+  bottom: 2px; /* Reduced to balance with sides */
+  background-color: #ffda44; /* Yellow color */
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  z-index: -1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.damage-counter:hover .damage-value {
+  transform: scale(1.2);
+}

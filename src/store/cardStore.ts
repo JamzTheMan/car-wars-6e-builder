@@ -122,6 +122,10 @@ interface CardStore {
   reorderCardInArea: (draggedId: string, targetId: string | null, area: CardArea) => void;
   mobileView: 'collection' | 'left' | 'front' | 'right' | 'back' | 'turret' | 'crew' | 'gear' | 'deck';
   setMobileView: (view: CardStore['mobileView']) => void;
+  // New damage tracking methods
+  addDamage: (id: string) => void;
+  removeDamage: (id: string) => void;
+  setDamage: (id: string, damage: number) => void;
 }
 
 // Set up localStorage only in browser
@@ -712,6 +716,63 @@ export const useCardStore = create<CardStore>()(
       setMobileCardZoomOut: () => set(() => ({
         mobileCardZoom: 'double',
       })),
+      
+      // Damage tracking methods
+      addDamage: (id: string) => set(state => {
+        if (!state.currentDeck) return state;
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            cards: state.currentDeck.cards.map(card => {
+              if (card.id === id) {
+                const currentDamage = card.damage || 0;
+                // Ensure damage doesn't exceed 9
+                const newDamage = Math.min(currentDamage + 1, 9);
+                return { ...card, damage: newDamage };
+              }
+              return card;
+            }),
+          },
+        };
+      }),
+      
+      removeDamage: (id: string) => set(state => {
+        if (!state.currentDeck) return state;
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            cards: state.currentDeck.cards.map(card => {
+              if (card.id === id) {
+                const currentDamage = card.damage || 0;
+                // Ensure damage doesn't go below 0
+                const newDamage = Math.max(currentDamage - 1, 0);
+                // If damage is 0, remove the damage property entirely
+                return newDamage > 0 ? { ...card, damage: newDamage } : { ...card, damage: undefined };
+              }
+              return card;
+            }),
+          },
+        };
+      }),
+      
+      setDamage: (id: string, damage: number) => set(state => {
+        if (!state.currentDeck) return state;
+        // Validate damage value is between 0 and 9
+        const validDamage = Math.max(0, Math.min(damage, 9));
+        
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            cards: state.currentDeck.cards.map(card => {
+              if (card.id === id) {
+                // If damage is 0, remove the damage property entirely
+                return validDamage > 0 ? { ...card, damage: validDamage } : { ...card, damage: undefined };
+              }
+              return card;
+            }),
+          },
+        };
+      }),
 
       // For development: remove all data
       devReset: () => {
