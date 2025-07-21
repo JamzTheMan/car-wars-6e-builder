@@ -824,11 +824,9 @@ button:disabled {
 /* Damage Counter Styles */
 .damage-counter {
   position: absolute;
-  bottom: 2px;
+  top: 25%;
   left: 50%;
   transform: translateX(-50%);
-  width: 32px; /* Increased by 20% from 26px */
-  height: 32px; /* Increased by 20% from 26px */
   z-index: 30; /* Increase z-index to ensure visibility */
   display: flex;
   justify-content: center;
