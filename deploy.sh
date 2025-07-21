@@ -51,8 +51,10 @@ refresh_vehicles() {
 show_usage() {
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
-    echo "  --refresh   Refresh card assets on the server without deploying"
-    echo "  --help      Show this help message"
+    echo "  --refresh           Refresh card and vehicle assets on the server without deploying"
+    echo "  --refresh-cards     Refresh card assets on the server without deploying"
+    echo "  --refresh-vehicles  Refresh stock vehicles on the server without deploying"
+    echo "  --help              Show this help message"
     echo ""
     echo "Without options, the script performs a full build and deployment."
 }
