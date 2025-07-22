@@ -1055,13 +1055,13 @@ button:disabled {
   .card-container:active {
     transform: scale(0.98);
   }
-  
+
   /* Make the tap state persist until explicitly cleared */
   .card-container.touch-active {
     box-shadow: 0 0 0 2px rgba(255, 187, 0, 0.5);
     transition: all 0.2s ease;
   }
-  
+
   /* Hide the hover effect on touch devices for better touch detection */
   .card-container:hover:not(.touch-active) {
     transform: none;

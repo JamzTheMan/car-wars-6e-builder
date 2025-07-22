@@ -331,6 +331,7 @@ export function Card({
   const doubleTapDelay = 300; // milliseconds
   const [showTapMessage, setShowTapMessage] = useState(false);
   const [lastTapPosition, setLastTapPosition] = useState({ x: 0, y: 0 });
+  const [isPressing, setIsPressing] = useState(false);
 
   // Function to handle touch/mobile clicks separately from desktop clicks
   const handleCardClick = (e: React.MouseEvent) => {
@@ -355,6 +356,7 @@ export function Card({
 
         // Handle long press
         if (pressed) {
+          setIsPressing(true); // Show visual feedback immediately
           const timer = setTimeout(() => {
             if (!hasMoved) {
               setShowQuickAdd(true);
@@ -405,29 +407,10 @@ export function Card({
         }
       },
 
-      // // Handle press (replaces longPress which isn't a standard handler)
-      // onPointerDown: ({ event, pressed }) => {
-      //   if (!isMobile || isDragging || isPreviewOpen) return;
-      //
-      //   if (pressed) {
-      //     // Start timer for long press
-      //     const timer = setTimeout(() => {
-      //       if (!hasMoved) {
-      //         setShowQuickAdd(true);
-      //         setIsTouchActive(true); // Set touch-active state on long press
-      //       }
-      //     }, 500); // 500ms for long press
-      //
-      //     // Store timer so it can be cleared if needed
-      //     setLongPressTimer(timer);
-      //   }
-      // },
-
       onPointerUp: () => {
-        // Clear long press timer when touch ends
+        setIsPressing(false);
         if (longPressTimer) {
           clearTimeout(longPressTimer);
-          setLongPressTimer(null);
         }
       },
 
@@ -515,7 +498,9 @@ export function Card({
           isInCollection ? 'in-collection' : ''
         } ${
           card.position ? 'card-positioned' : ''
-        } ${isPreviewOpen ? 'card-preview-open' : ''} ${isTouchActive ? 'touch-active' : ''} ${zoomed ? 'z-[100] scale-400 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
+        } ${isPreviewOpen ? 'card-preview-open' : ''} ${isTouchActive ? 'touch-active' : ''} ${
+          isPressing ? 'scale-95' : ''
+        } ${zoomed ? 'z-[100] scale-400 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
         data-card-type={card.type}
         data-x={card.position?.x ?? undefined}
         data-y={card.position?.y ?? undefined}
