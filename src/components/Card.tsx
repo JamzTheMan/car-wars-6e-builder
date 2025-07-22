@@ -292,6 +292,7 @@ export function Card({
     setAssociatedCard(null);
     setShowingAssociatedCard(false);
     setShowQuickAdd(false); // Also reset quick add when closing preview
+    setIsTouchActive(false); // Reset touch-active state when closing preview
   };
   const swapCards = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -325,64 +326,102 @@ export function Card({
   // Touch handling variables
   const [hasMoved, setHasMoved] = useState(false);
   const [lastTapTime, setLastTapTime] = useState(0);
+  const [lastTappedCardId, setLastTappedCardId] = useState<string | null>(null);
+  const [isTouchActive, setIsTouchActive] = useState(false);
   const doubleTapDelay = 300; // milliseconds
+  const [showTapMessage, setShowTapMessage] = useState(false);
+  const [lastTapPosition, setLastTapPosition] = useState({ x: 0, y: 0 });
+
+  // Function to handle touch/mobile clicks separately from desktop clicks
+  const handleCardClick = (e: React.MouseEvent) => {
+    // For desktop only - mobile is handled by gesture system
+    if (!isMobile && !isDragging && !isPreviewOpen) {
+      e.stopPropagation();
+      openPreview();
+    }
+  };
 
   // Using react-gesture instead of manual touch events
-  // Using @use-gesture/react library for better touch gesture support
-  // Benefits:
-  // 1. More consistent and reliable touch detection across devices
-  // 2. Better handling of complex gestures (taps, long presses, drags)
-  // 3. Cleaner code with less boilerplate
-  // 4. Better performance due to optimized event handling
   const bindGestures = useGesture(
     {
-      // Handle tap and double tap
-      onClick: ({ event }) => {
-        // Prevent default behavior
+      onPointerDown: ({ event, xy, pressed }) => {
+        if (!isMobile || isDragging || isPreviewOpen) return;
+
         event.stopPropagation();
+        event.preventDefault();
 
-        if (!isMobile) return;
+        // Safely destructure xy with defaults if undefined
+        const [x, y] = xy || [0, 0];
 
-        if (hasMoved) {
-          setHasMoved(false);
+        // Handle long press
+        if (pressed) {
+          const timer = setTimeout(() => {
+            if (!hasMoved) {
+              setShowQuickAdd(true);
+              setIsTouchActive(true);
+            }
+          }, 500);
+          setLongPressTimer(timer);
           return;
         }
 
-        // Double tap detection
         const now = Date.now();
-        if (now - lastTapTime < doubleTapDelay) {
+        const timeDiff = now - lastTapTime;
+
+        // Check if this could be a double tap (time and position)
+        const isDoubleTap =
+          timeDiff < doubleTapDelay &&
+          Math.abs(x - lastTapPosition.x) < 20 &&
+          Math.abs(y - lastTapPosition.y) < 20 &&
+          lastTappedCardId === card.id; // Must be the same card
+
+        if (isDoubleTap) {
           // This is a double tap - open preview
+          setShowTapMessage(false);
           setShowQuickAdd(false);
+          setIsTouchActive(false);
           openPreview();
           // Reset tap tracking
           setLastTapTime(0);
+          setLastTapPosition({ x: 0, y: 0 });
+          setLastTappedCardId(null);
         } else {
           // This is a single tap
           setLastTapTime(now);
+          setLastTapPosition({ x, y });
+          setLastTappedCardId(card.id);
 
-          // If this is a collection card, show quick add overlay on single tap
-          if (isInCollection && !isPreviewOpen) {
-            setShowQuickAdd(prev => !prev); // Toggle quick add overlay
+          if (!isPreviewOpen) {
+            // Show "Double tap to preview" message briefly
+            setShowTapMessage(true);
+            setTimeout(() => {
+              setShowTapMessage(false);
+            }, 1500);
+
+            // Toggle button visibility
+            setShowQuickAdd(prev => !prev);
+            setIsTouchActive(prev => !prev);
           }
         }
       },
 
-      // Handle press (replaces longPress which isn't a standard handler)
-      onPointerDown: ({ event, pressed }) => {
-        if (!isMobile || isDragging || isPreviewOpen) return;
-
-        if (pressed) {
-          // Start timer for long press
-          const timer = setTimeout(() => {
-            if (!hasMoved) {
-              setShowQuickAdd(true);
-            }
-          }, 500); // 500ms for long press
-
-          // Store timer so it can be cleared if needed
-          setLongPressTimer(timer);
-        }
-      },
+      // // Handle press (replaces longPress which isn't a standard handler)
+      // onPointerDown: ({ event, pressed }) => {
+      //   if (!isMobile || isDragging || isPreviewOpen) return;
+      //
+      //   if (pressed) {
+      //     // Start timer for long press
+      //     const timer = setTimeout(() => {
+      //       if (!hasMoved) {
+      //         setShowQuickAdd(true);
+      //         setIsTouchActive(true); // Set touch-active state on long press
+      //       }
+      //     }, 500); // 500ms for long press
+      //
+      //     // Store timer so it can be cleared if needed
+      //     setLongPressTimer(timer);
+      //   }
+      // },
 
       onPointerUp: () => {
         // Clear long press timer when touch ends
@@ -398,11 +437,14 @@ export function Card({
           // On first movement, mark as moved to prevent tap actions
           if (Math.abs(mx) > 5 || Math.abs(my) > 5) {
             setHasMoved(true);
+            setShowTapMessage(false);
 
-            // Also clear any long press timer
-            if (longPressTimer) {
-              clearTimeout(longPressTimer);
-              setLongPressTimer(null);
+            // Clear states if dragging
+            if (isTouchActive) {
+              setIsTouchActive(false);
+            }
+            if (showQuickAdd) {
+              setShowQuickAdd(false);
             }
           }
         }
@@ -412,6 +454,12 @@ export function Card({
       // Configure gesture options
       drag: {
         threshold: 10, // Minimum distance before drag is detected
+        filterTaps: true,
+      },
+      // Prevent touch-action to ensure gestures work properly
+      pointer: {
+        touch: true,
+        preventDefault: true,
       },
     }
   );
@@ -436,6 +484,7 @@ export function Card({
       // Only close if clicked outside cards
       if (clickedOutside && isMobile && showQuickAdd) {
         setShowQuickAdd(false);
+        setIsTouchActive(false); // Also clear touch-active state
       }
     };
 
@@ -466,7 +515,7 @@ export function Card({
           isInCollection ? 'in-collection' : ''
         } ${
           card.position ? 'card-positioned' : ''
-        } ${isPreviewOpen ? 'card-preview-open' : ''} ${zoomed ? 'z-[100] scale-400 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
+        } ${isPreviewOpen ? 'card-preview-open' : ''} ${isTouchActive ? 'touch-active' : ''} ${zoomed ? 'z-[100] scale-400 shadow-2xl border-4 border-yellow-400 transition-transform duration-200' : ''}`}
         data-card-type={card.type}
         data-x={card.position?.x ?? undefined}
         data-y={card.position?.y ?? undefined}
@@ -477,8 +526,8 @@ export function Card({
                 onClick();
               }
             : isMobile
-              ? undefined // Handled by gesture now
-              : openPreview
+              ? undefined // Completely disabled for mobile - handled by gesture system
+              : handleCardClick // Use our dedicated handler for desktop
         }
         onMouseEnter={e => {
           setIsHovered(true);
@@ -490,6 +539,14 @@ export function Card({
         }}
         style={zoomed ? { pointerEvents: 'auto' } : {}}
       >
+        {/* Double tap message overlay */}
+        {showTapMessage && isMobile && (
+          <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-30 pointer-events-none">
+            <div className="bg-white bg-opacity-90 text-gray-900 px-4 py-2 rounded-lg text-center">
+              <p className="font-medium">Double tap to preview</p>
+            </div>
+          </div>
+        )}
         {/* For regular side-placement cards */}
         {isInCollection &&
           canBePlacedOnSides(card.type) &&

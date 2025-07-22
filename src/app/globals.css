@@ -151,6 +151,12 @@ body {
   }
 }
 
+/* Show quick add overlay for touch active state (for all devices) */
+.group.touch-active .quick-add-overlay {
+  opacity: 1;
+  pointer-events: auto; /* Enable pointer events when visible */
+}
+
 /* Always show quick add overlay when active in mobile */
 @media (max-width: 768px) {
   .quick-add-overlay.mobile-overlay.opacity-100 {
@@ -665,16 +671,19 @@ body {
   }
   
   /* Ensure delete button has higher z-index than quick-add overlays */
-  .delete-button {
-    z-index: 40 !important;
-  }
-  
-  /* Add a mobile-specific active state for cards */
-  .card-container:active {
-    transform: scale(0.98);
-  }
-  
-  /* Mobile-specific quick add button styles */
+.delete-button {
+  z-index: 40 !important;
+}
+
+/* Make delete buttons visible when card has touch-active class */
+.card-container.touch-active .delete-button.opacity-0 {
+  opacity: 1 !important;
+}
+
+/* Add a mobile-specific active state for cards */
+.card-container:active {
+  transform: scale(0.98);
+}  /* Mobile-specific quick add button styles */
   .quick-add-button {
     width: 2.5rem !important; /* Larger buttons on mobile */
     height: 2.5rem !important;
@@ -734,11 +743,11 @@ body {
 }
 
 /* Add subtle indication for cards with long-press previews */
+/* Removing this effect as it interferes with card preview clicks */
 .group:active::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.1);
   pointer-events: none;
 }
 
@@ -856,7 +865,8 @@ button:disabled {
   100% { transform: scale(1); }
 }
 
-.card-container:hover .damage-counter.invisible .damage-value {
+.card-container:hover .damage-counter.invisible .damage-value,
+.card-container.touch-active .damage-counter.invisible .damage-value {
   animation: subtlePulse 2s ease-in-out infinite;
 }
 
@@ -882,8 +892,9 @@ button:disabled {
 }
 
 /* Show damage counter when hovering over the card */
-.card-container:hover .damage-counter.invisible {
-  opacity: 0.9; /* Almost full opacity when hovering the card */
+.card-container:hover .damage-counter.invisible,
+.card-container.touch-active .damage-counter.invisible {
+  opacity: 0.9; /* Almost full opacity when hovering the card or touch active */
   transition: opacity 0.2s ease-in-out;
 }
 
@@ -1001,6 +1012,59 @@ button:disabled {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.damage-counter:hover .damage-value {
+.damage-counter:hover .damage-value,
+.touch-active .damage-counter .damage-value {
   transform: scale(1.2);
+}
+
+/* New touch interaction styles */
+
+/* Define touch-active class to simulate hover state on touch devices */
+.card-container.touch-active {
+  /* Gentle highlight to indicate active state */
+  box-shadow: 0 0 0 2px rgba(255, 187, 0, 0.5);
+}
+
+/* Make the quick add overlay not interfere with card clicks */
+.quick-add-overlay {
+  pointer-events: auto; /* Allow clicking through when needed */
+}
+
+/* Prevent the card preview from being blocked by quick add overlay */
+.quick-add-overlay.transparent-for-preview {
+  background-color: transparent;
+  pointer-events: none;
+}
+
+/* Make background partially transparent for double-tap detection */
+.quick-add-overlay.pointer-events-enabled {
+  pointer-events: auto;
+}
+
+/* Ensure consistent behavior between touch and mouse interactions */
+@media (hover: hover) {
+  /* Only apply hover styles on devices that support hover */
+  .card-container:hover .delete-button.opacity-0 {
+    opacity: 1;
+  }
+}
+
+/* Consistent behavior for touch devices */
+@media (hover: none) {
+  /* Touch device optimizations */
+  .card-container:active {
+    transform: scale(0.98);
+  }
+  
+  /* Make the tap state persist until explicitly cleared */
+  .card-container.touch-active {
+    box-shadow: 0 0 0 2px rgba(255, 187, 0, 0.5);
+    transition: all 0.2s ease;
+  }
+  
+  /* Hide the hover effect on touch devices for better touch detection */
+  .card-container:hover:not(.touch-active) {
+    transform: none;
+    box-shadow: none;
+  }
 }
