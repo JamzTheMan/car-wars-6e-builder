@@ -34,6 +34,7 @@ interface CardCollectionProps {
   totalCardsCount: number;
   subtypesByCardType: Record<string, string[]>;
   uniqueSources: string[];
+  showAlwaysDamageDeleteControls?: boolean;
 }
 
 export function CardCollection({
@@ -43,6 +44,7 @@ export function CardCollection({
   filterMinCost,
   filterMaxCost,
   filterSources,
+  showAlwaysDamageDeleteControls = false,
 }: CardCollectionProps) {
   // CSS for custom range sliders
   const rangeSliderStyle = `
@@ -517,7 +519,7 @@ export function CardCollection({
         >
           {filteredCards.length > 0 ? (
             filteredCards.map(card => (
-              <Card key={card.id} card={card} isInCollection={true} isDebug={isDebug} />
+              <Card key={card.id} card={card} isInCollection={true} isDebug={isDebug} showAlwaysDamageDeleteControls={showAlwaysDamageDeleteControls} />
             ))
           ) : (
             <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400 border-2 border-dashed border-gray-700 rounded-lg">

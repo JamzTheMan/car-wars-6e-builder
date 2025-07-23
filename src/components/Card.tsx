@@ -2,7 +2,7 @@
 
 import { useToast } from './Toast';
 import { useCardStore } from '@/store/cardStore';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import { useGesture } from '@use-gesture/react';
 import {
@@ -43,6 +43,7 @@ interface CardProps {
   zoomed?: boolean;
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
+  showAlwaysDamageDeleteControls?: boolean;
 }
 
 // Function to check if a card can be placed on car sides
@@ -65,6 +66,7 @@ export function Card({
   zoomed = false,
   onMouseEnter,
   onMouseLeave,
+  showAlwaysDamageDeleteControls = false,
 }: CardProps) {
   const {
     removeFromCollection,
@@ -332,6 +334,9 @@ export function Card({
   const [showTapMessage, setShowTapMessage] = useState(false);
   const [lastTapPosition, setLastTapPosition] = useState({ x: 0, y: 0 });
   const [isPressing, setIsPressing] = useState(false);
+  // New state for delete button visibility
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const deleteButtonTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Function to handle touch/mobile clicks separately from desktop clicks
   const handleCardClick = (e: React.MouseEvent) => {
@@ -347,13 +352,9 @@ export function Card({
     {
       onPointerDown: ({ event, xy, pressed }) => {
         if (!isMobile || isDragging || isPreviewOpen) return;
-
         event.stopPropagation();
         event.preventDefault();
-
-        // Safely destructure xy with defaults if undefined
         const [x, y] = xy || [0, 0];
-
         // Handle long press
         if (pressed) {
           setIsPressing(true); // Show visual feedback immediately
@@ -366,24 +367,19 @@ export function Card({
           setLongPressTimer(timer);
           return;
         }
-
         const now = Date.now();
         const timeDiff = now - lastTapTime;
-
         // Check if this could be a double tap (time and position)
         const isDoubleTap =
           timeDiff < doubleTapDelay &&
           Math.abs(x - lastTapPosition.x) < 20 &&
           Math.abs(y - lastTapPosition.y) < 20 &&
           lastTappedCardId === card.id; // Must be the same card
-
         if (isDoubleTap) {
-          // This is a double tap - open preview
           setShowTapMessage(false);
           setShowQuickAdd(false);
           setIsTouchActive(false);
           openPreview();
-          // Reset tap tracking
           setLastTapTime(0);
           setLastTapPosition({ x: 0, y: 0 });
           setLastTappedCardId(null);
@@ -392,17 +388,15 @@ export function Card({
           setLastTapTime(now);
           setLastTapPosition({ x, y });
           setLastTappedCardId(card.id);
-
           if (!isPreviewOpen) {
-            // Show "Double tap to preview" message briefly
-            setShowTapMessage(true);
-            setTimeout(() => {
-              setShowTapMessage(false);
-            }, 1500);
-
-            // Toggle button visibility
-            setShowQuickAdd(prev => !prev);
-            setIsTouchActive(prev => !prev);
+            // Show delete button for 2 seconds
+            setShowDeleteButton(true);
+            if (deleteButtonTimeoutRef.current) {
+              clearTimeout(deleteButtonTimeoutRef.current);
+            }
+            deleteButtonTimeoutRef.current = setTimeout(() => {
+              setShowDeleteButton(false);
+            }, 2000);
           }
         }
       },
@@ -680,7 +674,7 @@ export function Card({
         {/* Damage Counter - always show in deck, not in collection */}
         {!isInCollection && !isPreviewOpen && (
           <div
-            className={`damage-counter ${card.damage && card.damage > 0 ? 'visible' : isHovered ? 'hover-visible' : 'invisible'}`}
+            className={`damage-counter ${showAlwaysDamageDeleteControls ? 'visible' : card.damage && card.damage > 0 ? 'visible' : isHovered ? 'hover-visible' : 'invisible'}`}
             onClick={e => {
               e.stopPropagation();
               if (onClick) {
@@ -720,8 +714,8 @@ export function Card({
                 e.stopPropagation();
               }
             }}
-            className={`absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded z-30 
-              ${isMobile && !isInCollection ? 'mobile-delete-button' : 'opacity-0 group-hover:opacity-100 p-1'} 
+            className={`absolute bottom-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded z-30
+              ${showAlwaysDamageDeleteControls ? 'opacity-100 !opacity-100' : isMobile && !isInCollection ? 'mobile-delete-button' : 'opacity-0 group-hover:opacity-100 p-1'}
               ${isPreviewOpen ? 'pointer-events-none opacity-0' : ''}
               transition-opacity duration-200 delete-button`}
             title={isInCollection ? 'Delete card from collection' : 'Remove card from deck'}
@@ -783,6 +777,15 @@ export function Card({
             </button>
           )}
         {/* No damage counter for collection cards */}
+        {showDeleteButton && (
+          <button
+            className="absolute top-2 right-2 z-50 bg-red-600 text-white rounded-full p-2 transition-opacity duration-500"
+            style={{ opacity: showDeleteButton ? 1 : 0 }}
+            onClick={handleDelete}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        )}
       </div>{' '}
       {/* Card Preview Modal */}
       {isPreviewOpen && (

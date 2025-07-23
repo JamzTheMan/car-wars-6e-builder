@@ -22,9 +22,10 @@ export { VehicleName };
 
 interface DeckLayoutProps {
   area?: CardArea | 'crew' | 'gear';
+  showAlwaysDamageDeleteControls?: boolean;
 }
 
-export function DeckLayout({ area }: DeckLayoutProps = {}) {
+export function DeckLayout({ area, showAlwaysDamageDeleteControls = false }: DeckLayoutProps = {}) {
   const { currentDeck, addToDeck, canAddCardToDeck, updateCardArea, reorderCardInArea } =
     useCardStore();
   const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
@@ -279,6 +280,7 @@ export function DeckLayout({ area }: DeckLayoutProps = {}) {
                 isDraggable={true}
                 isInCollection={false}
                 onClick={() => handleCardClick(card)}
+                showAlwaysDamageDeleteControls={showAlwaysDamageDeleteControls}
               />
             </CardDropTarget>
           ))}

@@ -8,7 +8,7 @@ import { CardCollectionHeader } from '@/components/CardCollectionHeader';
 import { DeckLayout, VehicleName } from '@/components/DeckLayout';
 import { useCardStore } from '@/store/cardStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faSquareCaretDown, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faSquareCaretDown, faRotateLeft, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { ToastContext } from '@/components/Toast';
 import { PrintButton } from '@/components/PrintButton';
 import { FullScreenButton } from '@/components/FullScreenButton';
@@ -171,6 +171,7 @@ export default function Home() {
   const [showPrintOptions, setShowPrintOptions] = useState(false);
   const [printMode, setPrintMode] = useState<'full' | 'simple' | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showAlwaysDamageDeleteControls, setShowAlwaysDamageDeleteControls] = useState(false);
   // Mobile responsive state
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' && window.innerWidth <= 768
@@ -180,43 +181,6 @@ export default function Home() {
   const toggleFullScreen = () => {
     const newFullScreenState = !isFullScreen;
     setIsFullScreen(newFullScreenState);
-
-    // Toggle browser fullscreen mode
-    if (typeof document !== 'undefined') {
-      try {
-        if (newFullScreenState) {
-          // Enter browser fullscreen
-          if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-          } else if ((document.documentElement as any).mozRequestFullScreen) {
-            // Firefox
-            (document.documentElement as any).mozRequestFullScreen();
-          } else if ((document.documentElement as any).webkitRequestFullscreen) {
-            // Chrome, Safari
-            (document.documentElement as any).webkitRequestFullscreen();
-          } else if ((document.documentElement as any).msRequestFullscreen) {
-            // IE/Edge
-            (document.documentElement as any).msRequestFullscreen();
-          }
-        } else {
-          // Exit browser fullscreen
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if ((document as any).mozCancelFullScreen) {
-            // Firefox
-            (document as any).mozCancelFullScreen();
-          } else if ((document as any).webkitExitFullscreen) {
-            // Chrome, Safari
-            (document as any).webkitExitFullscreen();
-          } else if ((document as any).msExitFullscreen) {
-            // IE/Edge
-            (document as any).msExitFullscreen();
-          }
-        }
-      } catch (err) {
-        console.error('Error toggling fullscreen mode:', err);
-      }
-    }
 
     // Save preference when toggling
     import('../utils/userPreferences').then(({ saveFullScreenMode }) => {
@@ -448,7 +412,7 @@ export default function Home() {
                     <CardCollectionFilters {...filterProps} />
                   </div>
                   <div className="flex-1 overflow-auto">
-                    <CardCollection {...filterProps} />
+                    <CardCollection {...filterProps} showAlwaysDamageDeleteControls={showAlwaysDamageDeleteControls} />
                   </div>
                 </div>
 
@@ -466,6 +430,16 @@ export default function Home() {
                     </div>
                     {/* Right: Print & Reset absolute */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      {/* New toggle button for always-visible damage/delete controls */}
+                      <button
+                        onClick={() => setShowAlwaysDamageDeleteControls(v => !v)}
+                        className={`text-gray-400 hover:text-white ${showAlwaysDamageDeleteControls ? 'text-yellow-300 font-bold' : ''} scale-110 mr-3`}
+                        title={showAlwaysDamageDeleteControls ? 'Always show damage/delete controls (ON)' : 'Always show damage/delete controls (OFF)'}
+                        aria-label="Toggle always show damage/delete controls"
+                        style={{ transform: 'scale(1.2)' }}
+                      >
+                        <FontAwesomeIcon icon={faTriangleExclamation} />
+                      </button>
                       <ZoomControls />
                       <FullScreenButton
                         isFullScreen={isFullScreen}
@@ -496,7 +470,7 @@ export default function Home() {
                     <div className="invisible h-0">&nbsp;</div>
                   </div>
                   <div className="flex-1 overflow-auto">
-                    <DeckLayout />
+                    <DeckLayout showAlwaysDamageDeleteControls={showAlwaysDamageDeleteControls} />
                   </div>
                 </div>
               </div>
