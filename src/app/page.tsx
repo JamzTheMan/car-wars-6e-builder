@@ -443,7 +443,7 @@ export default function Home() {
                       <ZoomControls />
                       <FullScreenButton
                         isFullScreen={isFullScreen}
-                        toggleFullScreen={toggleFullScreen}
+                        toggleFullScreenAction={toggleFullScreen}
                       />
                       <PrintButton onOpenPrintDialog={() => setShowPrintOptions(true)} />
                       <button

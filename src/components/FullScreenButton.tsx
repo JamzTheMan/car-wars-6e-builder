@@ -5,14 +5,14 @@ import { faExpand, faCompress } from '@fortawesome/free-solid-svg-icons';
 
 export function FullScreenButton({
   isFullScreen,
-  toggleFullScreen,
+  toggleFullScreenAction,
 }: {
   isFullScreen: boolean;
-  toggleFullScreen: () => void;
+  toggleFullScreenAction: () => void;
 }) {
   return (
     <button
-      onClick={toggleFullScreen}
+      onClick={toggleFullScreenAction}
       className="text-gray-400 hover:text-gray-200"
       title={isFullScreen ? 'Exit Full Screen Mode' : 'Full Screen Mode (hides card collection)'}
       aria-label={isFullScreen ? 'Exit Full Screen Mode' : 'Full Screen Mode'}
