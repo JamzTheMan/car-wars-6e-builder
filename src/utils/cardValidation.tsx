@@ -163,10 +163,10 @@ export function validateCardForDeck(
     }
   }
 
-  // Special rule: Weapons that cost 6 or more cannot be equipped in games using 24 BP or less
+  // Special rule: Weapons that cost 6 or more cannot be equipped in games using less than pointLimit BP
   if (card.type === 'Weapon' && card.buildPointCost >= 6) {
-    // Check if the current deck has 24 BP or less
-    if (pointLimits.buildPoints <= 24) {
+    // Check if the current deck has less than pointLimit BP
+    if (pointLimits.buildPoints < 24) {
       return {
         allowed: false,
         reason: 'weapon_cost_limit',
@@ -441,7 +441,7 @@ export function useCardValidationErrors() {
         break;
       case 'weapon_cost_limit':
         showToast(
-          `Weapons that cost 6+ BP cannot be used in games with ${validationResult.pointLimit} BP or less. This weapon costs ${validationResult.weaponCost} BP.`,
+          `Weapons that cost 6+ BP cannot be on vehicles with less than ${validationResult.pointLimit} BP. This weapon costs ${validationResult.weaponCost} BP.`,
           'error'
         );
         break;
