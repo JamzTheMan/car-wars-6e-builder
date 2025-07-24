@@ -279,7 +279,7 @@ export function DeckLayout({ area, showAlwaysDamageDeleteControls = false }: Dec
                 card={card}
                 isDraggable={true}
                 isInCollection={false}
-                onClick={() => handleCardClick(card)}
+                onClickAction={() => handleCardClick(card)}
                 showAlwaysDamageDeleteControls={showAlwaysDamageDeleteControls}
               />
             </CardDropTarget>

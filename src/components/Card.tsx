@@ -39,7 +39,7 @@ interface CardProps {
   isDraggable?: boolean;
   isInCollection?: boolean;
   isDebug?: boolean;
-  onClick?: () => void;
+  onClickAction?: () => void;
   zoomed?: boolean;
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
   onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
@@ -62,7 +62,7 @@ export function Card({
   isDraggable = true,
   isInCollection = true,
   isDebug = false,
-  onClick,
+  onClickAction,
   zoomed = false,
   onMouseEnter,
   onMouseLeave,
@@ -499,10 +499,10 @@ export function Card({
         data-x={card.position?.x ?? undefined}
         data-y={card.position?.y ?? undefined}
         onClick={
-          onClick
+          onClickAction
             ? e => {
                 e.stopPropagation();
-                onClick();
+                onClickAction();
               }
             : isMobile
               ? undefined // Completely disabled for mobile - handled by gesture system
@@ -677,7 +677,7 @@ export function Card({
             className={`damage-counter ${showAlwaysDamageDeleteControls ? 'visible' : card.damage && card.damage > 0 ? 'visible' : isHovered ? 'hover-visible' : 'invisible'}`}
             onClick={e => {
               e.stopPropagation();
-              if (onClick) {
+              if (onClickAction) {
                 // If card has a click handler (like in DeckLayout), we need to prevent the default
                 // behavior of opening the preview
                 e.preventDefault();
