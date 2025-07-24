@@ -441,7 +441,7 @@ export function useCardValidationErrors() {
         break;
       case 'weapon_cost_limit':
         showToast(
-          `Weapons that cost 6+ BP cannot be on vehicles with less than ${validationResult.pointLimit} BP. This weapon costs ${validationResult.weaponCost} BP.`,
+          `Weapons that cost 6+ BP can only be on vehicles that cost 24 or more BP (Division 6+).`,
           'error'
         );
         break;
