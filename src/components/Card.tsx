@@ -350,11 +350,12 @@ export function Card({
   // Using react-gesture instead of manual touch events
   const bindGestures = useGesture(
     {
-      onPointerDown: ({ event, xy, pressed }) => {
+      onPointerDown: ({ event, pressed }) => {
         if (!isMobile || isDragging || isPreviewOpen) return;
         event.stopPropagation();
         event.preventDefault();
-        const [x, y] = xy || [0, 0];
+        const x = event instanceof PointerEvent ? event.clientX : 0;
+        const y = event instanceof PointerEvent ? event.clientY : 0;
         // Handle long press
         if (pressed) {
           setIsPressing(true); // Show visual feedback immediately
