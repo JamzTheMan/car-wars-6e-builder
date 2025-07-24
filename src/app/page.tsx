@@ -169,7 +169,7 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [isSavedVehiclesOpen, setIsSavedVehiclesOpen] = useState(false);
   const [showPrintOptions, setShowPrintOptions] = useState(false);
-  const [printMode, setPrintMode] = useState<'full' | 'simple' | null>(null);
+  const [printMode] = useState<'full' | 'simple' | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showAlwaysDamageDeleteControls, setShowAlwaysDamageDeleteControls] = useState(false);
   // Mobile responsive state
