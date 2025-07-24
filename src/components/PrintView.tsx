@@ -6,10 +6,10 @@ import { Card as CardType, CardArea } from '@/types/types';
 
 interface PrintViewProps {
   printMode: 'full' | 'simple';
-  onClose: () => void;
+  onCloseAction: () => void;
 }
 
-export function PrintView({ printMode, onClose }: PrintViewProps) {
+export function PrintView({ printMode, onCloseAction }: PrintViewProps) {
   const { currentDeck } = useCardStore();
   const printRef = useRef<HTMLDivElement>(null);
   const hasPrinted = useRef(false);
@@ -99,7 +99,7 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
       window.print();
 
       // Close after printing
-      setTimeout(onClose, 200);
+      setTimeout(onCloseAction, 200);
     }, 300);
 
     return () => {
@@ -107,12 +107,12 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
       document.head.removeChild(style);
       clearTimeout(printTimeout);
     };
-  }, [onClose, printMode]);
+  }, [onCloseAction, printMode]);
 
   // Handle afterprint event
   useEffect(() => {
     const handleAfterPrint = () => {
-      onClose();
+      onCloseAction();
     };
 
     window.addEventListener('afterprint', handleAfterPrint);
@@ -120,7 +120,7 @@ export function PrintView({ printMode, onClose }: PrintViewProps) {
     return () => {
       window.removeEventListener('afterprint', handleAfterPrint);
     };
-  }, [onClose]);
+  }, [onCloseAction]);
 
   if (!currentDeck) return null;
 

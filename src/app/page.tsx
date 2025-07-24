@@ -386,7 +386,7 @@ export default function Home() {
         />
         {confirmationDialog}
         {showPrintOptions && (
-          <PrintView printMode={printMode} onClose={() => setShowPrintOptions(false)} />
+          <PrintView printMode={printMode} onCloseAction={() => setShowPrintOptions(false)} />
         )}
       </>
     );
@@ -484,7 +484,7 @@ export default function Home() {
       />
       {confirmationDialog}
       {showPrintOptions && (
-        <PrintView printMode={printMode} onClose={() => setShowPrintOptions(false)} />
+        <PrintView printMode={printMode} onCloseAction={() => setShowPrintOptions(false)} />
       )}
     </>
   );
