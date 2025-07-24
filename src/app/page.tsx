@@ -445,7 +445,7 @@ export default function Home() {
                         isFullScreen={isFullScreen}
                         toggleFullScreenAction={toggleFullScreen}
                       />
-                      <PrintButton onOpenPrintDialog={() => setShowPrintOptions(true)} />
+                      <PrintButton onOpenPrintDialogAction={() => setShowPrintOptions(true)} />
                       <button
                         onClick={async () => {
                           const confirmed = await confirm({

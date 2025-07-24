@@ -45,7 +45,7 @@ const MobileSwipeView: React.FC<MobileSwipeViewProps> = ({
             </div>
             {/* Vehicle Name with Save/Load */}
             <div>
-              <VehicleName onOpenSavedVehicles={onOpenSavedVehicles} />
+              <VehicleName onOpenSavedVehiclesAction={onOpenSavedVehicles} />
             </div>
             {/* Filters - directly use the CardCollectionFilters component */}
             <div className="bg-gray-700 rounded">

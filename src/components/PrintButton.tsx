@@ -3,10 +3,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPrint } from '@fortawesome/free-solid-svg-icons';
 
-export function PrintButton({ onOpenPrintDialog }: { onOpenPrintDialog?: () => void }) {
+export function PrintButton({ onOpenPrintDialogAction }: { onOpenPrintDialogAction?: () => void }) {
   return (
     <button
-      onClick={onOpenPrintDialog}
+      onClick={onOpenPrintDialogAction}
       className="text-gray-400 hover:text-gray-200"
       title="Print Deck"
       aria-label="Print Deck"
