@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faFolderOpen, faPencil } from '@fortawesome/free-solid-svg-icons';
 import { saveVehicle } from '@/utils/savedVehicles';
 
-export function VehicleName({ onOpenSavedVehicles }: { onOpenSavedVehicles?: () => void }) {
+export function VehicleName({ onOpenSavedVehiclesAction }: { onOpenSavedVehiclesAction?: () => void }) {
   const { currentDeck, updateDeckName} = useCardStore();
   const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
@@ -65,8 +65,8 @@ export function VehicleName({ onOpenSavedVehicles }: { onOpenSavedVehicles?: () 
   };
 
   const handleLoadFromStorage = () => {
-    if (onOpenSavedVehicles) {
-      onOpenSavedVehicles();
+    if (onOpenSavedVehiclesAction) {
+      onOpenSavedVehiclesAction();
     }
   };
 
