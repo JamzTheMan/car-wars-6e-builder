@@ -39,6 +39,9 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
   // Confirmation dialog state
   const [pendingLoadKey, setPendingLoadKey] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
+  // Delete confirmation dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<{ storageKey: string; name: string } | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -127,16 +130,20 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
   };
 
   const handleDeleteVehicle = (storageKey: string, vehicleName: string) => {
-    if (!confirm(`Are you sure you want to delete "${vehicleName}"?`)) {
-      return;
-    }
+    setPendingDelete({ storageKey, name: vehicleName });
+    setDeleteDialogOpen(true);
+  };
 
-    if (deleteVehicle(storageKey)) {
+  const confirmDeleteVehicle = () => {
+    if (!pendingDelete) return;
+    if (deleteVehicle(pendingDelete.storageKey)) {
       showToast('Vehicle deleted successfully', 'success');
       refreshVehicleList();
     } else {
       showToast('Failed to delete vehicle', 'error');
     }
+    setDeleteDialogOpen(false);
+    setPendingDelete(null);
   };
 
   const handleImportClick = () => {
@@ -501,6 +508,18 @@ export function SavedVehiclesDialog({ isOpen, onClose }: SavedVehiclesDialogProp
         onCancel={() => {
           setShowConfirm(false);
           setPendingLoadKey(null);
+        }}
+      />
+      <ConfirmationDialog
+        isOpen={deleteDialogOpen}
+        title="Delete Vehicle?"
+        message={pendingDelete ? `Are you sure you want to delete "${pendingDelete.name}"?` : ''}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDeleteVehicle}
+        onCancel={() => {
+          setDeleteDialogOpen(false);
+          setPendingDelete(null);
         }}
       />
     </>

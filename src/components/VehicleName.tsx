@@ -6,7 +6,9 @@ import { generateVehicleNames } from '@/utils/vehicleNameGenerator';
 import { useToast } from '@/components/Toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faFolderOpen, faPencil } from '@fortawesome/free-solid-svg-icons';
-import { saveVehicle } from '@/utils/savedVehicles';
+import { saveVehicle, getSavedVehicles } from '@/utils/savedVehicles';
+import { ConfirmationDialog } from './ConfirmationDialog';
+import { createPortal } from 'react-dom';
 
 export function VehicleName({ onOpenSavedVehiclesAction }: { onOpenSavedVehiclesAction?: () => void }) {
   const { currentDeck, updateDeckName} = useCardStore();
@@ -16,6 +18,10 @@ export function VehicleName({ onOpenSavedVehiclesAction }: { onOpenSavedVehicles
   const [nameOptions, setNameOptions] = useState<string[]>([]);
   const randomButtonRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Confirmation dialog state
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingSave, setPendingSave] = useState(false);
 
   // Update component state when deck name changes
   useEffect(() => {
@@ -56,12 +62,29 @@ export function VehicleName({ onOpenSavedVehiclesAction }: { onOpenSavedVehicles
 
   const handleSaveToStorage = () => {
     if (!currentDeck) return;
+    const vehicles = getSavedVehicles();
+    // Check for name+division collision, not just storageKey
+    const exists = vehicles.some(v =>
+      v.name.trim().toLowerCase() === currentDeck.name.trim().toLowerCase() &&
+      v.division === currentDeck.division
+    );
+    if (exists) {
+      setPendingSave(true);
+      setShowConfirm(true);
+      return;
+    }
+    doSaveVehicle();
+  };
 
+  const doSaveVehicle = () => {
+    if (!currentDeck) return;
     if (saveVehicle(currentDeck)) {
       showToast('Vehicle saved to local storage', 'success');
     } else {
-      showToast('Failed to save vehicle to local storage', 'error');
+      showToast('Failed to save vehicle', 'error');
     }
+    setShowConfirm(false);
+    setPendingSave(false);
   };
 
   const handleLoadFromStorage = () => {
@@ -69,6 +92,25 @@ export function VehicleName({ onOpenSavedVehiclesAction }: { onOpenSavedVehicles
       onOpenSavedVehiclesAction();
     }
   };
+
+  // Update: Added a useEffect to handle the pending save state
+  useEffect(() => {
+    if (pendingSave) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+          doSaveVehicle();
+        } else if (e.key === 'Escape') {
+          setShowConfirm(false);
+          setPendingSave(false);
+        }
+      };
+
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [pendingSave, doSaveVehicle]);
 
   if (isEditing) {
     return (
@@ -179,31 +221,49 @@ export function VehicleName({ onOpenSavedVehiclesAction }: { onOpenSavedVehicles
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <button
-        onClick={handleLoadFromStorage}
-        className="text-gray-400 hover:text-gray-200"
-        title="Load vehicle from local storage"
-      >
-        <FontAwesomeIcon icon={faFolderOpen} className="h-4 w-4" />
-      </button>
-      <button
-        onClick={handleSaveToStorage}
-        className="text-gray-400 hover:text-gray-200"
-        title="Save vehicle to local storage"
-      >
-        <FontAwesomeIcon icon={faFloppyDisk} className="h-4 w-4" />
-      </button>
-      <h2 className="text-gray-100 text-lg font-medium">
-        {currentDeck?.name || 'Unnamed Vehicle'}
-      </h2>
-      <button
-        onClick={() => setIsEditing(true)}
-        className="text-gray-400 hover:text-gray-200"
-        title="Edit vehicle name"
-      >
-        <FontAwesomeIcon icon={faPencil} className="h-4 w-4" />
-      </button>
-    </div>
+    <>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleLoadFromStorage}
+          className="text-gray-400 hover:text-gray-200"
+          title="Load vehicle from local storage"
+        >
+          <FontAwesomeIcon icon={faFolderOpen} className="h-4 w-4" />
+        </button>
+        <button
+          onClick={handleSaveToStorage}
+          className="text-gray-400 hover:text-gray-200"
+          title="Save vehicle to local storage"
+        >
+          <FontAwesomeIcon icon={faFloppyDisk} className="h-4 w-4" />
+        </button>
+        <h2 className="text-gray-100 text-lg font-medium">
+          {currentDeck?.name || 'Unnamed Vehicle'}
+        </h2>
+        <button
+          onClick={() => setIsEditing(true)}
+          className="text-gray-400 hover:text-gray-200"
+          title="Edit vehicle name"
+        >
+          <FontAwesomeIcon icon={faPencil} className="h-4 w-4" />
+        </button>
+      </div>
+
+      {createPortal(
+        <ConfirmationDialog
+          isOpen={showConfirm}
+          title="Overwrite Saved Vehicle?"
+          message="A vehicle with this name already exists. Do you want to overwrite it?"
+          confirmText="Overwrite"
+          cancelText="Cancel"
+          onConfirm={doSaveVehicle}
+          onCancel={() => {
+            setShowConfirm(false);
+            setPendingSave(false);
+          }}
+        />,
+        typeof window !== 'undefined' ? document.body : undefined
+      )}
+    </>
   );
 }
