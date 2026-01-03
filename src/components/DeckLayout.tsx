@@ -155,44 +155,41 @@ export function DeckLayout({ area, showAlwaysDamageDeleteControls = false, isFul
       CardType & { source: 'collection' | 'deck'; id: string },
       unknown,
       { isOver: boolean }
-    >(
-      () => ({
-        accept: 'CARD',
-        canDrop: (item: CardType & { source: 'collection' | 'deck'; id: string }) => {
-          // Check if the card type can go in this area
-          const cardToCheck =
-            item.source === 'collection'
-              ? collectionCards.find((c: CardType) => c.id === item.id)
-              : currentDeck.cards.find((c: CardType) => c.id === item.id);
+    >({
+      accept: 'CARD',
+      canDrop: (item: CardType & { source: 'collection' | 'deck'; id: string }) => {
+        // Check if the card type can go in this area
+        const cardToCheck =
+          item.source === 'collection'
+            ? collectionCards.find((c: CardType) => c.id === item.id)
+            : currentDeck.cards.find((c: CardType) => c.id === item.id);
 
-          return cardToCheck ? canCardTypeGoInArea(cardToCheck.type, area) : false;
-        },
-        drop: async (item: CardType & { source: 'collection' | 'deck' }) => {
-          if (item.source === 'collection') {
-            // Add all copies from collection to deck using the same logic as addCopiesToDeck
-            const cardToAdd = collectionCards.find((c: CardType) => c.id === item.id);
-            if (cardToAdd) {
-              await addCopiesToDeckDnD(cardToAdd, area);
-            }
-          } else if (item.source === 'deck') {
-            // Use the centralized validation function for card movements
-            const canMove = validateCardMovement(item, area, currentDeck.cards, showToast);
-
-            if (!canMove) {
-              return;
-            }
-
-            // Move card between areas
-            updateCardArea(item.id, area);
-            showToast(`Moved ${item.name} to the ${area} area`, 'info');
+        return cardToCheck ? canCardTypeGoInArea(cardToCheck.type, area) : false;
+      },
+      drop: async (item: CardType & { source: 'collection' | 'deck' }) => {
+        if (item.source === 'collection') {
+          // Add all copies from collection to deck using the same logic as addCopiesToDeck
+          const cardToAdd = collectionCards.find((c: CardType) => c.id === item.id);
+          if (cardToAdd) {
+            await addCopiesToDeckDnD(cardToAdd, area);
           }
-        },
-        collect: (monitor: any) => ({
-          isOver: !!monitor.isOver(),
-        }),
+        } else if (item.source === 'deck') {
+          // Use the centralized validation function for card movements
+          const canMove = validateCardMovement(item, area, currentDeck.cards, showToast);
+
+          if (!canMove) {
+            return;
+          }
+
+          // Move card between areas
+          updateCardArea(item.id, area);
+          showToast(`Moved ${item.name} to the ${area} area`, 'info');
+        }
+      },
+      collect: (monitor: any) => ({
+        isOver: !!monitor.isOver(),
       }),
-      [area, collectionCards, currentDeck.cards] // <-- fix: wrap in a single array
-    );
+    });
 
     // Card drop target for reordering within area
     const CardDropTarget = ({ card, children }: { card: CardType; children: React.ReactNode }) => {
@@ -200,29 +197,26 @@ export function DeckLayout({ area, showAlwaysDamageDeleteControls = false, isFul
         CardType & { source: 'deck'; id: string },
         unknown,
         { isOver: boolean; canDrop: boolean }
-      >(
-        () => ({
-          accept: 'CARD',
-          canDrop: item => {
-            // Only allow reordering if dragging from deck, same area, and not self
-            return (
-              item.source === 'deck' &&
-              item.id !== card.id &&
-              currentDeck.cards.find(c => c.id === item.id)?.area === card.area
-            );
-          },
-          drop: item => {
-            if (item.source === 'deck' && item.id !== card.id) {
-              reorderCardInArea(item.id, card.id, card.area!);
-            }
-          },
-          collect: monitor => ({
-            isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop(),
-          }),
+      >({
+        accept: 'CARD',
+        canDrop: item => {
+          // Only allow reordering if dragging from deck, same area, and not self
+          return (
+            item.source === 'deck' &&
+            item.id !== card.id &&
+            currentDeck.cards.find(c => c.id === item.id)?.area === card.area
+          );
+        },
+        drop: item => {
+          if (item.source === 'deck' && item.id !== card.id) {
+            reorderCardInArea(item.id, card.id, card.area!);
+          }
+        },
+        collect: monitor => ({
+          isOver: !!monitor.isOver(),
+          canDrop: !!monitor.canDrop(),
         }),
-        [card, currentDeck.cards] // <-- fix: wrap in a single array
-      );
+      });
       return (
         <div
           ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>}
@@ -303,17 +297,14 @@ export function DeckLayout({ area, showAlwaysDamageDeleteControls = false, isFul
 
   // Drop target for end of area (empty space)
   const DropEndTarget = ({ area }: { area: CardArea }) => {
-    const [, dropRef] = useDrop<CardType & { source: 'deck'; id: string }, unknown, unknown>(
-      () => ({
-        accept: 'CARD',
-        canDrop: item =>
-          item.source === 'deck' && currentDeck.cards.find(c => c.id === item.id)?.area === area,
-        drop: item => {
-          reorderCardInArea(item.id, null, item.area); // Use the dragged card's area
-        },
-      }),
-      [area, currentDeck.cards] // <-- fix: wrap in a single array
-    );
+    const [, dropRef] = useDrop<CardType & { source: 'deck'; id: string }, unknown, {}>({
+      accept: 'CARD',
+      canDrop: item =>
+        item.source === 'deck' && currentDeck.cards.find(c => c.id === item.id)?.area === area,
+      drop: item => {
+        reorderCardInArea(item.id, null, item.area); // Use the dragged card's area
+      },
+    });
     return <div ref={dropRef as unknown as React.LegacyRef<HTMLDivElement>} className="w-6 h-6" />;
   };
 
