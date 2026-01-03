@@ -10,6 +10,7 @@ import { CardArea, canCardTypeGoInArea } from '@/types/types';
 import { VehicleName } from './VehicleName';
 import { useToast } from './Toast';
 import { useConfirmationDialog } from './useConfirmationDialog';
+import { ArmorDisplay } from './ArmorDisplay';
 import {
   useCardValidationErrors,
   validateAndAddCard,
@@ -23,9 +24,10 @@ export { VehicleName };
 interface DeckLayoutProps {
   area?: CardArea | 'crew' | 'gear';
   showAlwaysDamageDeleteControls?: boolean;
+  isFullScreen?: boolean;
 }
 
-export function DeckLayout({ area, showAlwaysDamageDeleteControls = false }: DeckLayoutProps = {}) {
+export function DeckLayout({ area, showAlwaysDamageDeleteControls = false, isFullScreen = false }: DeckLayoutProps = {}) {
   const { currentDeck, addToDeck, canAddCardToDeck, updateCardArea, reorderCardInArea } =
     useCardStore();
   const [zoomedCard, setZoomedCard] = useState<CardType | null>(null);
@@ -266,9 +268,15 @@ export function DeckLayout({ area, showAlwaysDamageDeleteControls = false }: Dec
           transition-all duration-200 ${area !== CardArea.Turret ? 'backdrop-blur-sm' : ''} pt-6`}
       >
         {/* Area label as an overlay that doesn't take up space */}
-        <div className="absolute top-0 left-0 right-0 text-gray-300 text-sm font-medium text-center opacity-70 pointer-events-none">
-          {label}
-        </div>{' '}
+        <div className="absolute top-0 left-0 right-0 px-2 py-0.5 text-gray-300 text-sm font-medium opacity-70 pointer-events-auto text-center">
+          <span>{label}</span>
+          {/* Show armor display only for sides and when in fullscreen mode */}
+          {isFullScreen && (area === CardArea.Front || area === CardArea.Back || area === CardArea.Left || area === CardArea.Right) && (
+            <div className="absolute right-2 top-0">
+              <ArmorDisplay side={area as 'front' | 'back' | 'left' | 'right'} />
+            </div>
+          )}
+        </div>
         {/* Cards layout - special centering for Turret area */}
         <div
           className={`${area === CardArea.Turret ? 'flex justify-center items-center h-full' : 'flex flex-wrap gap-2'}`}

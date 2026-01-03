@@ -126,6 +126,11 @@ interface CardStore {
   addDamage: (id: string) => void;
   removeDamage: (id: string) => void;
   setDamage: (id: string, damage: number) => void;
+  // Armor tracking methods
+  incrementArmor: (side: 'front' | 'back' | 'left' | 'right') => void;
+  decrementArmor: (side: 'front' | 'back' | 'left' | 'right') => void;
+  initializeArmor: () => void;
+  toggleFire: (side: 'front' | 'back' | 'left' | 'right') => void;
 }
 
 // Set up localStorage only in browser
@@ -169,6 +174,12 @@ const createEmptyDeck = (collectionCards: Card[] = []): DeckLayout => {
       crewPoints: 4,
     },
     pointsUsed,
+    armor: {
+      front: { current: 4, max: 4 },
+      back: { current: 4, max: 4 },
+      left: { current: 4, max: 4 },
+      right: { current: 4, max: 4 },
+    },
   };
 };
 
@@ -591,6 +602,16 @@ export const useCardStore = create<CardStore>()(
       },
 
       setDeck: (deck: DeckLayout) => {
+        // Initialize armor if not present
+        if (!deck.armor) {
+          const division = parseInt(deck.division) || 4;
+          deck.armor = {
+            front: { current: division, max: division },
+            back: { current: division, max: division },
+            left: { current: division, max: division },
+            right: { current: division, max: division },
+          };
+        }
         set({ currentDeck: deck });
       },
 
@@ -654,10 +675,19 @@ export const useCardStore = create<CardStore>()(
         set(state => {
           if (!state.currentDeck) return state;
 
+          const divisionNum = parseInt(division) || 4;
+
+          // Reset armor to match the new division value and clear fire status
           return {
             currentDeck: {
               ...state.currentDeck,
               division,
+              armor: {
+                front: { current: divisionNum, max: divisionNum, onFire: false },
+                back: { current: divisionNum, max: divisionNum, onFire: false },
+                left: { current: divisionNum, max: divisionNum, onFire: false },
+                right: { current: divisionNum, max: divisionNum, onFire: false },
+              },
             },
           };
         });
@@ -770,6 +800,95 @@ export const useCardStore = create<CardStore>()(
               }
               return card;
             }),
+          },
+        };
+      }),
+
+      // Armor tracking methods
+      incrementArmor: (side: 'front' | 'back' | 'left' | 'right') => set(state => {
+        if (!state.currentDeck) return state;
+        const division = parseInt(state.currentDeck.division) || 4;
+        const armor = state.currentDeck.armor || {
+          front: { current: division, max: division },
+          back: { current: division, max: division },
+          left: { current: division, max: division },
+          right: { current: division, max: division },
+        };
+
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            armor: {
+              ...armor,
+              [side]: {
+                ...armor[side],
+                current: armor[side].current + 1,
+              },
+            },
+          },
+        };
+      }),
+
+      decrementArmor: (side: 'front' | 'back' | 'left' | 'right') => set(state => {
+        if (!state.currentDeck) return state;
+        const division = parseInt(state.currentDeck.division) || 4;
+        const armor = state.currentDeck.armor || {
+          front: { current: division, max: division },
+          back: { current: division, max: division },
+          left: { current: division, max: division },
+          right: { current: division, max: division },
+        };
+
+        // Allow going down to 0
+        const newCurrent = Math.max(0, armor[side].current - 1);
+
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            armor: {
+              ...armor,
+              [side]: {
+                ...armor[side],
+                current: newCurrent,
+              },
+            },
+          },
+        };
+      }),
+
+      initializeArmor: () => set(state => {
+        if (!state.currentDeck) return state;
+
+        const division = parseInt(state.currentDeck.division) || 4;
+
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            armor: {
+              front: { current: division, max: division },
+              back: { current: division, max: division },
+              left: { current: division, max: division },
+              right: { current: division, max: division },
+            },
+          },
+        };
+      }),
+
+      toggleFire: (side: 'front' | 'back' | 'left' | 'right') => set(state => {
+        if (!state.currentDeck || !state.currentDeck.armor) return state;
+
+        const currentOnFire = state.currentDeck.armor[side].onFire || false;
+
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            armor: {
+              ...state.currentDeck.armor,
+              [side]: {
+                ...state.currentDeck.armor[side],
+                onFire: !currentOnFire,
+              },
+            },
           },
         };
       }),

@@ -23,7 +23,7 @@ import dynamic from 'next/dynamic';
 const MobileSwipeView = dynamic(() => import('@/components/MobileSwipeView'));
 
 function PointsSummary() {
-  const { currentDeck, setDeck, updatePointLimits } = useCardStore();
+  const { currentDeck, setDivision, updatePointLimits } = useCardStore();
   if (!currentDeck) return null;
   const { pointsUsed, pointLimits, division } = currentDeck;
   // Inline division select logic
@@ -45,17 +45,8 @@ function PointsSummary() {
     const numValue = parseInt(value);
     setLocalDivision(numValue);
     if (currentDeck) {
-      setDeck({
-        ...currentDeck,
-        division: String(numValue),
-        pointLimits: {
-          ...currentDeck.pointLimits,
-          buildPoints: numValue * 4,
-          crewPoints: numValue,
-        },
-        // Optionally reset pointsUsed if you want to clear spent points on division change:
-        // pointsUsed: { buildPoints: 0, crewPoints: 0 },
-      });
+      // Use setDivision which properly updates armor values
+      setDivision(String(numValue));
     }
     updatePointLimits({ buildPoints: numValue * 4, crewPoints: numValue });
   };
@@ -470,7 +461,7 @@ export default function Home() {
                     <div className="invisible h-0">&nbsp;</div>
                   </div>
                   <div className="flex-1 overflow-auto">
-                    <DeckLayout showAlwaysDamageDeleteControls={showAlwaysDamageDeleteControls} />
+                    <DeckLayout showAlwaysDamageDeleteControls={showAlwaysDamageDeleteControls} isFullScreen={isFullScreen} />
                   </div>
                 </div>
               </div>

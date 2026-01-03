@@ -69,6 +69,13 @@ export interface PointsUsed {
   crewPoints: number;
 }
 
+export interface ArmorValues {
+  front: { current: number; max: number; onFire?: boolean };
+  back: { current: number; max: number; onFire?: boolean };
+  left: { current: number; max: number; onFire?: boolean };
+  right: { current: number; max: number; onFire?: boolean };
+}
+
 export interface DeckLayout {
   id: string;
   name: string;
@@ -77,6 +84,7 @@ export interface DeckLayout {
   cards: Card[];
   pointLimits: PointLimits;
   pointsUsed: PointsUsed;
+  armor?: ArmorValues; // Track armor for each side/area
 }
 
 // Helper function to check if a card type can be placed in an area
