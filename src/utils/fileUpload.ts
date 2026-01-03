@@ -1,6 +1,7 @@
 import { writeFile } from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
+import { validateUploadedFile, sanitizeFileName } from './fileValidation';
 
 export type UploadType = 'cards' | 'backgrounds';
 
@@ -13,8 +14,14 @@ export interface SavedFileInfo {
 }
 
 export async function saveUploadedFile(file: File, type: UploadType): Promise<SavedFileInfo> {
-  // Clean up the filename without adding a timestamp
-  const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-_]/g, '_');
+  // Validate the file before processing
+  const validation = validateUploadedFile(file, type, 10); // 10MB max
+  if (!validation.valid) {
+    throw new Error(validation.error || 'File validation failed');
+  }
+
+  // Use the sanitized filename from validation
+  const sanitizedName = validation.sanitizedName || sanitizeFileName(file.name);
 
   // Create the file path
   const uploadDir = path.join(process.cwd(), 'public', 'uploads', type);

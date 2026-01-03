@@ -133,6 +133,20 @@ export async function POST(request: NextRequest) {
     const cards = readCards();
     const newCard = await request.json();
 
+    // Validate that the newCard is a valid object with expected structure
+    if (!newCard || typeof newCard !== 'object') {
+      return NextResponse.json({ error: 'Invalid card data' }, { status: 400 });
+    }
+
+    // Validate required fields
+    if (!newCard.name || typeof newCard.name !== 'string') {
+      return NextResponse.json({ error: 'Card must have a valid name' }, { status: 400 });
+    }
+
+    if (!newCard.type || typeof newCard.type !== 'string') {
+      return NextResponse.json({ error: 'Card must have a valid type' }, { status: 400 });
+    }
+
     // Generate a new UUID regardless of whether an ID was provided
     const newId = crypto.randomUUID();
 
@@ -167,6 +181,24 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const newCards = await request.json();
+
+    // Validate that newCards is an array
+    if (!Array.isArray(newCards)) {
+      return NextResponse.json({ error: 'Cards data must be an array' }, { status: 400 });
+    }
+
+    // Validate each card in the array
+    for (const card of newCards) {
+      if (!card || typeof card !== 'object') {
+        return NextResponse.json({ error: 'Invalid card data in collection' }, { status: 400 });
+      }
+      if (!card.name || typeof card.name !== 'string') {
+        return NextResponse.json({ error: 'Each card must have a valid name' }, { status: 400 });
+      }
+      if (!card.type || typeof card.type !== 'string') {
+        return NextResponse.json({ error: 'Each card must have a valid type' }, { status: 400 });
+      }
+    }
 
     // Sort cards before saving
     const sortedCards = sortCards(newCards);

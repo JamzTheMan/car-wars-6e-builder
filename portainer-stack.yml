@@ -26,12 +26,15 @@ services:
       - type: bind
         source: /srv/carwars-6e-builder/public/uploads
         target: /app/public/uploads
+        read_only: true
       - type: bind
         source: /srv/carwars-6e-builder/public/stock-vehicles/
         target: /app/public/stock-vehicles
+        read_only: true
       - type: bind
         source: /srv/carwars-6e-builder/app/data
         target: /app/src/data
+        read_only: true
 networks:
   proxy:
     external: true

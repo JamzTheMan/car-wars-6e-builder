@@ -12,6 +12,33 @@ A digital deck builder application for Car Wars 6th Edition, allowing players to
 - AADA division support
 - Responsive design
 
+## Version Management
+
+The application displays its version number in the bottom-right corner of the UI (subtle, semi-transparent). The version is managed in two locations:
+
+- `package.json` - Main version definition
+- `src/config/version.ts` - Used by the UI component
+
+### Incrementing Version During Deployment
+
+The version is automatically incremented when deploying using the `deploy.sh` script:
+
+```bash
+# Increment patch version (1.0.0 -> 1.0.1) and deploy
+./deploy.sh --version-patch
+
+# Increment minor version (1.0.0 -> 1.1.0) and deploy
+./deploy.sh --version-minor
+
+# Increment major version (1.0.0 -> 2.0.0) and deploy
+./deploy.sh --version-major
+
+# Deploy without changing version
+./deploy.sh
+```
+
+The script will automatically update both `package.json` and `src/config/version.ts` before building and deploying.
+
 ## Getting Started
 
 First, run the development server:

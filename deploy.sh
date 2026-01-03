@@ -11,6 +11,57 @@ REMOTE_APP_PATH="/srv/carwars-6e-builder"
 LOCAL_CARDS_PATH="./public/uploads/cards"
 LOCAL_STOCK_VEHICLES_PATH="./public/stock-vehicles"
 
+# Function to increment version
+increment_version() {
+    local version_type=$1
+
+    # Read current version from package.json
+    current_version=$(grep -oP '"version": "\K[^"]+' package.json)
+
+    if [ -z "$current_version" ]; then
+        echo "Error: Could not read version from package.json"
+        exit 1
+    fi
+
+    echo "Current version: $current_version"
+
+    # Split version into major.minor.patch
+    IFS='.' read -r major minor patch <<< "$current_version"
+
+    # Increment based on type
+    case $version_type in
+        major)
+            major=$((major + 1))
+            minor=0
+            patch=0
+            ;;
+        minor)
+            minor=$((minor + 1))
+            patch=0
+            ;;
+        patch)
+            patch=$((patch + 1))
+            ;;
+        *)
+            echo "Error: Invalid version type. Use major, minor, or patch"
+            exit 1
+            ;;
+    esac
+
+    new_version="${major}.${minor}.${patch}"
+    echo "New version: $new_version"
+
+    # Update package.json
+    sed -i "s/\"version\": \"$current_version\"/\"version\": \"$new_version\"/" package.json
+
+    # Update src/config/version.ts
+    echo "export const APP_VERSION = '$new_version';" > src/config/version.ts
+
+    echo "✓ Version updated to $new_version"
+    echo "  - Updated package.json"
+    echo "  - Updated src/config/version.ts"
+}
+
 # Function to refresh card assets on the server
 refresh_cards() {
     echo "Refreshing card assets on server..."
@@ -51,16 +102,27 @@ refresh_vehicles() {
 show_usage() {
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
+    echo "  --version-patch     Increment patch version (x.y.Z) and deploy"
+    echo "  --version-minor     Increment minor version (x.Y.0) and deploy"
+    echo "  --version-major     Increment major version (X.0.0) and deploy"
     echo "  --refresh           Refresh card and vehicle assets on the server without deploying"
     echo "  --refresh-cards     Refresh card assets on the server without deploying"
     echo "  --refresh-vehicles  Refresh stock vehicles on the server without deploying"
     echo "  --help              Show this help message"
     echo ""
-    echo "Without options, the script performs a full build and deployment."
+    echo "Without options, the script performs a full build and deployment without version change."
 }
 
 # Parse command line arguments
-if [ "$1" = "--refresh" ]; then
+VERSION_INCREMENT=""
+
+if [ "$1" = "--version-patch" ]; then
+    VERSION_INCREMENT="patch"
+elif [ "$1" = "--version-minor" ]; then
+    VERSION_INCREMENT="minor"
+elif [ "$1" = "--version-major" ]; then
+    VERSION_INCREMENT="major"
+elif [ "$1" = "--refresh" ]; then
     refresh_cards
     refresh_vehicles
     exit 0
@@ -73,6 +135,12 @@ elif [ "$1" = "--refresh-vehicles" ]; then
 elif [ "$1" = "--help" ]; then
     show_usage
     exit 0
+fi
+
+# Increment version if requested
+if [ -n "$VERSION_INCREMENT" ]; then
+    increment_version $VERSION_INCREMENT
+    echo ""
 fi
 
 # Check if Docker is available

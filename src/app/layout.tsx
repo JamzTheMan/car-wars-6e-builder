@@ -4,6 +4,7 @@ import './globals.css';
 import ClientOnly from '@/components/ClientOnly';
 import StoreProvider from '@/components/StoreProvider';
 import { ToastProvider } from '@/components/Toast';
+import { Version } from '@/components/Version';
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -31,6 +32,7 @@ export default function RootLayout({
             </ClientOnly>
           </ToastProvider>
         </StoreProvider>
+        <Version />
       </body>
     </html>
   );

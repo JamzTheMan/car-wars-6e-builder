@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { ALLOWED_FILE_TYPES } from '@/utils/fileValidation';
 
 export async function POST(request: Request) {
   try {
@@ -20,8 +21,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid file path' }, { status: 400 });
     }
 
+    // Additional security: Validate file extension
+    const fileExt = path.extname(filePath).toLowerCase();
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+
+    if (!allowedExtensions.includes(fileExt)) {
+      console.error('Attempted to delete non-image file:', filePath);
+      return NextResponse.json({ error: 'Only image files can be deleted' }, { status: 403 });
+    }
+
     // Convert from URL path to file system path
     const fullPath = path.join(process.cwd(), 'public', filePath);
+
+    // Ensure normalized path is still within uploads (prevent directory traversal)
+    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+    const normalizedPath = path.normalize(fullPath);
+    if (!normalizedPath.startsWith(uploadsDir)) {
+      console.error('Path traversal attempt detected:', filePath);
+      return NextResponse.json({ error: 'Invalid file path' }, { status: 403 });
+    }
     // Log the file path for debugging
     console.log('Attempting to delete file:', fullPath);
 
