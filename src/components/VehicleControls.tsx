@@ -26,17 +26,23 @@ function VerticalSlider({ label, value, onChange, min = 0, max = 10, className =
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <div className="text-white text-[0.6rem] font-bold mb-0.5 text-shadow">{label}</div>
-      <div className="relative flex flex-col items-center bg-gray-800 bg-opacity-70 rounded p-1 border border-gray-600">
+      <div className="text-white font-bold mb-0.5 text-shadow" style={{ fontSize: 'clamp(0.495rem, 1.32vh, 0.825rem)' }}>{label}</div>
+      <div className="relative flex flex-col items-center bg-gray-800 bg-opacity-70 rounded border border-gray-600" style={{ padding: 'clamp(1.1px, 0.44vh, 6.6px)' }}>
         {values.map((val) => (
           <button
             key={val}
             onClick={() => onChange(val)}
-            className={`w-6 h-5 mb-0.5 last:mb-0 flex items-center justify-center text-[0.6rem] font-bold rounded transition-all ${
+            className={`flex items-center justify-center font-bold rounded transition-all ${
               value === val
                 ? getActiveColor()
                 : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
+            style={{
+              width: 'clamp(17.6px, 2.42vh, 35.2px)',
+              height: 'clamp(13.2px, 1.76vh, 30.8px)',
+              fontSize: 'clamp(0.495rem, 1.32vh, 0.825rem)',
+              marginBottom: val !== min ? 'clamp(0.55px, 0.33vh, 3.3px)' : '0',
+            }}
           >
             {val}
           </button>
@@ -55,10 +61,11 @@ interface SpeedSliderProps {
 function SpeedSlider({ value, onChange, className = '' }: SpeedSliderProps) {
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <div className="text-white text-[0.6rem] font-bold mb-0.5 text-shadow">SPEED</div>
-      <div className="relative flex flex-col items-center bg-gray-900 bg-opacity-80 rounded p-1 border border-gray-700"
+      <div className="text-white font-bold mb-0.5 text-shadow" style={{ fontSize: 'clamp(0.495rem, 1.32vh, 0.825rem)' }}>SPEED</div>
+      <div className="relative flex flex-col items-center bg-gray-900 bg-opacity-80 rounded border border-gray-700"
            style={{
              background: 'linear-gradient(180deg, rgba(30,30,30,0.9) 0%, rgba(20,20,20,0.95) 100%)',
+             padding: 'clamp(1.1px, 0.44vh, 6.6px)',
            }}>
         {/* Gear shift pattern */}
         {SPEED_VALUES.map((speed) => {
@@ -69,7 +76,7 @@ function SpeedSlider({ value, onChange, className = '' }: SpeedSliderProps) {
             <button
               key={speed}
               onClick={() => onChange(speed)}
-              className={`relative w-11 h-8 mb-0.5 last:mb-0 flex items-center justify-center text-[0.65rem] font-bold rounded transition-all ${
+              className={`relative flex items-center justify-center font-bold rounded transition-all ${
                 isActive
                   ? 'bg-yellow-500 text-black shadow-md shadow-yellow-500/50 scale-105'
                   : isReverse
@@ -77,6 +84,10 @@ function SpeedSlider({ value, onChange, className = '' }: SpeedSliderProps) {
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
               style={{
+                width: 'clamp(26.4px, 3.85vh, 61.6px)',
+                height: 'clamp(19.8px, 2.75vh, 48.4px)',
+                fontSize: 'clamp(0.55rem, 1.43vh, 0.935rem)',
+                marginBottom: speed !== 'R' ? 'clamp(0.55px, 0.33vh, 3.3px)' : '0',
                 border: isActive ? '1px solid white' : '1px solid rgba(255,255,255,0.3)',
               }}
             >
@@ -104,7 +115,13 @@ export function VehicleControls() {
   return (
     <>
       {/* Left side: Tires and Power */}
-      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex gap-2 pointer-events-auto">
+      <div
+        className="absolute top-1/2 transform -translate-y-1/2 flex pointer-events-auto"
+        style={{
+          left: 'clamp(4.4px, 1.32vh, 17.6px)',
+          gap: 'clamp(2.2px, 0.88vh, 13.2px)'
+        }}
+      >
         <VerticalSlider
           label="TIRES"
           value={tires}
@@ -122,7 +139,12 @@ export function VehicleControls() {
       </div>
 
       {/* Right side: Speed */}
-      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-auto">
+      <div
+        className="absolute top-1/2 transform -translate-y-1/2 pointer-events-auto"
+        style={{
+          right: 'clamp(4.4px, 1.32vh, 17.6px)'
+        }}
+      >
         <SpeedSlider
           value={speed}
           onChange={setSpeed}
