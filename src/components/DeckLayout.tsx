@@ -275,7 +275,7 @@ export function DeckLayout({ area, showAlwaysDamageDeleteControls = false, isFul
         </div>
         {/* Cards layout - special centering for Turret area */}
         <div
-          className={`${area === CardArea.Turret ? 'flex justify-center items-center h-full' : 'flex flex-wrap gap-2'}`}
+          className={`${area === CardArea.Turret ? 'flex justify-center items-center h-full' : 'flex flex-wrap gap-2 mt-2'}`}
         >
           {areaCards.map(card => (
             <CardDropTarget key={card.id} card={card}>
