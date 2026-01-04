@@ -11,6 +11,7 @@ import { VehicleName } from './VehicleName';
 import { useToast } from './Toast';
 import { useConfirmationDialog } from './useConfirmationDialog';
 import { ArmorDisplay } from './ArmorDisplay';
+import { VehicleControls } from './VehicleControls';
 import {
   useCardValidationErrors,
   validateAndAddCard,
@@ -424,15 +425,21 @@ export function DeckLayout({ area, showAlwaysDamageDeleteControls = false, isFul
           <AreaDropTarget area={CardArea.Left} label="Left Side" className="row-span-2 h-full" />
           {/* Center row is for the turret location */}
           <div className="row-span-1 relative">
-            <div className="absolute inset-0 bg-red-950 bg-opacity-60 rounded"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 bg-red-950 bg-opacity-60 rounded z-0"></div>
+            <div className="absolute inset-0 flex items-center justify-center z-0">
               <img
                 src="/assets/car_with_logo.webp"
                 alt="Car with Logo"
                 className="w-[90%] h-[90%] object-contain max-w-[90%] max-h-[90%]"
               />
             </div>
-            <AreaDropTarget area={CardArea.Turret} label="Turret" className="h-full z-10" />
+            <div className="absolute inset-0 z-10">
+              <AreaDropTarget area={CardArea.Turret} label="Turret" className="h-full" />
+            </div>
+            {/* Vehicle Controls - Tires/Power on left, Speed on right */}
+            <div className="absolute inset-0 z-30">
+              <VehicleControls />
+            </div>
           </div>
           <AreaDropTarget area={CardArea.Right} label="Right Side" className="row-span-2 h-full" />
           {/* Bottom center has the Back area */}

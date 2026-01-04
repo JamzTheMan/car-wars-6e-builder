@@ -76,6 +76,14 @@ export interface ArmorValues {
   right: { current: number; max: number; onFire?: boolean };
 }
 
+export type SpeedValue = 'R' | '0' | '1' | '2' | '3' | '4' | '5';
+
+export interface VehicleControls {
+  tires: number; // 0-10
+  power: number; // 0-10
+  speed: SpeedValue; // R, 0-5
+}
+
 export interface DeckLayout {
   id: string;
   name: string;
@@ -85,6 +93,7 @@ export interface DeckLayout {
   pointLimits: PointLimits;
   pointsUsed: PointsUsed;
   armor?: ArmorValues; // Track armor for each side/area
+  vehicleControls?: VehicleControls; // Track tires, power, and speed
 }
 
 // Helper function to check if a card type can be placed in an area

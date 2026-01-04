@@ -131,6 +131,10 @@ interface CardStore {
   decrementArmor: (side: 'front' | 'back' | 'left' | 'right') => void;
   initializeArmor: () => void;
   toggleFire: (side: 'front' | 'back' | 'left' | 'right') => void;
+  // Vehicle control methods
+  setTires: (value: number) => void;
+  setPower: (value: number) => void;
+  setSpeed: (value: 'R' | '0' | '1' | '2' | '3' | '4' | '5') => void;
 }
 
 // Set up localStorage only in browser
@@ -179,6 +183,11 @@ const createEmptyDeck = (collectionCards: Card[] = []): DeckLayout => {
       back: { current: 4, max: 4 },
       left: { current: 4, max: 4 },
       right: { current: 4, max: 4 },
+    },
+    vehicleControls: {
+      tires: 10,
+      power: 10,
+      speed: '2',
     },
   };
 };
@@ -612,6 +621,14 @@ export const useCardStore = create<CardStore>()(
             right: { current: division, max: division },
           };
         }
+        // Initialize vehicle controls if not present
+        if (!deck.vehicleControls) {
+          deck.vehicleControls = {
+            tires: 10,
+            power: 10,
+            speed: '2',
+          };
+        }
         set({ currentDeck: deck });
       },
 
@@ -893,6 +910,53 @@ export const useCardStore = create<CardStore>()(
         };
       }),
 
+      // Vehicle control methods
+      setTires: (value: number) => set(state => {
+        if (!state.currentDeck) return state;
+
+        const clampedValue = Math.max(0, Math.min(10, value));
+
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            vehicleControls: {
+              ...(state.currentDeck.vehicleControls || { tires: 10, power: 10, speed: '2' }),
+              tires: clampedValue,
+            },
+          },
+        };
+      }),
+
+      setPower: (value: number) => set(state => {
+        if (!state.currentDeck) return state;
+
+        const clampedValue = Math.max(0, Math.min(10, value));
+
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            vehicleControls: {
+              ...(state.currentDeck.vehicleControls || { tires: 10, power: 10, speed: '2' }),
+              power: clampedValue,
+            },
+          },
+        };
+      }),
+
+      setSpeed: (value: 'R' | '0' | '1' | '2' | '3' | '4' | '5') => set(state => {
+        if (!state.currentDeck) return state;
+
+        return {
+          currentDeck: {
+            ...state.currentDeck,
+            vehicleControls: {
+              ...(state.currentDeck.vehicleControls || { tires: 10, power: 10, speed: '2' }),
+              speed: value,
+            },
+          },
+        };
+      }),
+
       // For development: remove all data
       devReset: () => {
         set({ collectionCards: [], currentDeck: null });
@@ -902,6 +966,16 @@ export const useCardStore = create<CardStore>()(
       name: 'car-wars-storage',
       storage,
       partialize: state => ({ currentDeck: state.currentDeck }),
+      onRehydrateStorage: () => (state) => {
+        // Initialize vehicleControls for existing decks that don't have it
+        if (state?.currentDeck && !state.currentDeck.vehicleControls) {
+          state.currentDeck.vehicleControls = {
+            tires: 10,
+            power: 10,
+            speed: '2',
+          };
+        }
+      },
     }
   )
 );
