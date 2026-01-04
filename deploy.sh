@@ -3,11 +3,30 @@
 # deploy.sh - Script to build and deploy Docker image for Car Wars 6E
 # Expected to run in a WSL environment with Docker Desktop installed
 
+# Load deployment configuration
+CONFIG_FILE=".deploy.config"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Configuration file '$CONFIG_FILE' not found"
+    echo "Please copy .deploy.config.template to .deploy.config and fill in your values:"
+    echo "  cp .deploy.config.template .deploy.config"
+    echo "  nano .deploy.config  # or use your preferred editor"
+    exit 1
+fi
+
+# Source the configuration file
+source "$CONFIG_FILE"
+
+# Validate required configuration variables
+if [ -z "$VM_SSH_CONNECTION" ] || [ -z "$PORTAINER_API_URL" ] || [ -z "$REMOTE_APP_PATH" ] || [ -z "$PORTAINER_TOKEN" ]; then
+    echo "Error: Missing required configuration in $CONFIG_FILE"
+    echo "Please ensure VM_SSH_CONNECTION, PORTAINER_API_URL, REMOTE_APP_PATH, and PORTAINER_TOKEN are set"
+    exit 1
+fi
+
 # Configuration
 IMAGE_NAME="car-wars-6e-builder"
 IMAGE_TAG="latest"
-VM_SSH_CONNECTION="nerps.net"
-REMOTE_APP_PATH="/srv/carwars-6e-builder"
 LOCAL_CARDS_PATH="./public/uploads/cards"
 LOCAL_STOCK_VEHICLES_PATH="./public/stock-vehicles"
 
@@ -172,14 +191,63 @@ docker save ${IMAGE_NAME}:${IMAGE_TAG} | gzip >${IMAGE_NAME}.tar.gz
 echo "Copying image to VM..."
 scp -p ${IMAGE_NAME}.tar.gz ${VM_SSH_CONNECTION}:/tmp/
 
-# SSH into VM and load the image (optional, only if not using registry)
-echo "Loading image on VM..."
-# ssh ${VM_SSH_CONNECTION} "docker load < /tmp/${IMAGE_NAME}.tar.gz && rm /tmp/${IMAGE_NAME}.tar.gz"
+echo "Image size is $(du -h ${IMAGE_NAME}.tar.gz | cut -f1)"
+
+# SSH into VM and perform deployment steps
+echo "Deploying on VM..."
+
+# Load the new image first
+echo "Loading new image..."
 ssh ${VM_SSH_CONNECTION} "docker load < /tmp/${IMAGE_NAME}.tar.gz"
 
-echo "Image size is $(du -h ${IMAGE_NAME}.tar.gz | cut -f1)"
+# Find the stack ID and endpoint ID
+echo "Finding Portainer stack information..."
+STACK_INFO=$(curl -s -H "X-API-Key: ${PORTAINER_TOKEN}" ${PORTAINER_API_URL} | jq -r '.[] | select(.Name=="car-wars-6e-builder") | "\(.Id) \(.EndpointId)"')
+
+if [ -z "$STACK_INFO" ]; then
+    echo "Error: Could not find stack 'car-wars-6e-builder' in Portainer"
+    echo "Available stacks:"
+    curl -s -H "X-API-Key: ${PORTAINER_TOKEN}" ${PORTAINER_API_URL} | jq -r '.[].Name'
+    exit 1
+fi
+
+STACK_ID=$(echo $STACK_INFO | awk '{print $1}')
+ENDPOINT_ID=$(echo $STACK_INFO | awk '{print $2}')
+
+echo "Found stack: ID=$STACK_ID, EndpointID=$ENDPOINT_ID"
+
+# Stop the stack
+echo "Stopping stack via Portainer API..."
+curl -s -X POST -H "X-API-Key: ${PORTAINER_TOKEN}" ${PORTAINER_API_URL}/${STACK_ID}/stop?endpointId=${ENDPOINT_ID}
+
+echo "Waiting for stack to stop..."
+sleep 3
+
+# Start the stack (this will pull the new image)
+echo "Starting stack via Portainer API..."
+curl -s -X POST -H "X-API-Key: ${PORTAINER_TOKEN}" ${PORTAINER_API_URL}/${STACK_ID}/start?endpointId=${ENDPOINT_ID}
+
+echo "Waiting for stack to start with new image..."
+sleep 5
+
+# Check container status
+echo "Checking container status..."
+ssh ${VM_SSH_CONNECTION} "docker ps --filter name=car-wars-6e-builder --format 'Container: {{.Names}} | Status: {{.Status}} | Image: {{.Image}}'"
+
+# Verify the image ID matches
+echo "Verifying image update..."
+ssh ${VM_SSH_CONNECTION} "docker images ${IMAGE_NAME}:${IMAGE_TAG} --format 'Image: {{.Repository}}:{{.Tag}} | ID: {{.ID}} | Created: {{.CreatedSince}}'"
+
+# Clean up old unused images
+echo "Cleaning up old unused images..."
+ssh ${VM_SSH_CONNECTION} "docker image prune -f"
+
+# Remove the tar file from VM
+echo "Removing temporary tar file from VM..."
+ssh ${VM_SSH_CONNECTION} "rm /tmp/${IMAGE_NAME}.tar.gz"
 
 echo "Cleaning up local files..."
 rm -f ${IMAGE_NAME}.tar.gz
 
-echo "Deployment prepared! Now login to Portainer and update your container."
+echo "✓ Deployment completed successfully!"
+echo "The container has been restarted with the new image."

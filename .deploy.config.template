@@ -1,0 +1,15 @@
+# Deployment Configuration Template
+# Copy this file to .deploy.config and fill in your actual values
+# The .deploy.config file is ignored by git and will not be committed
+
+# SSH connection to your deployment server
+VM_SSH_CONNECTION="your-server.example.com"
+
+# Portainer stacks API management URL
+PORTAINER_API_URL="https://portainer.example.com/api.stacks"
+
+# Remote application path on the server
+REMOTE_APP_PATH="/srv/cw6e-app"
+
+# Portainer API Token
+PORTAINER_TOKEN="your-api-token-here"

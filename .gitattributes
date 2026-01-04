@@ -1,0 +1,4 @@
+# Ensure shell scripts and config files use LF line endings
+*.sh text eol=lf
+.deploy.config text eol=lf
+.deploy.config.template text eol=lf
