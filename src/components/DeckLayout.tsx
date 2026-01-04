@@ -262,7 +262,8 @@ export function DeckLayout({ area, showAlwaysDamageDeleteControls = false, isFul
           transition-all duration-200 ${area !== CardArea.Turret ? 'backdrop-blur-sm' : ''} pt-6`}
       >
         {/* Area label as an overlay that doesn't take up space */}
-        <div className="absolute top-0 left-0 right-0 px-2 py-0.5 text-gray-300 text-sm font-medium opacity-70 pointer-events-auto text-center">
+        <div className="absolute top-0 left-0 right-0 px-2 py-0.5 text-gray-300 text-sm font-medium opacity-70 pointer-events-auto text-center"
+             style={{textShadow: '0 0 3px black, 0 0 5px black, 1px 1px 2px black'}}>
           <span>{label}</span>
           {/* Show armor display only for sides and when in fullscreen mode */}
           {isFullScreen && (area === CardArea.Front || area === CardArea.Back || area === CardArea.Left || area === CardArea.Right) && (
